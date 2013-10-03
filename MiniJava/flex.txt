@@ -1,15 +1,12 @@
 %{
 #include <stdio.h>
+#pragma warning(disable:4273)
+#pragma warning(disable:4996)
 %}
-
+%option noyywrap
 %% 
 begin  printf("Started\n");
 hello  printf("Hello yourself!\n");
 thanks printf("Your welcome\n");
 end    printf("Stopped\n");
 %%
-
-yywrap()
-{
-
-}
