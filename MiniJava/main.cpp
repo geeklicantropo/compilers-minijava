@@ -1,7 +1,9 @@
 #include <iostream>
 
+extern int yylex( void );
 
 int main()
 {
-	return (0);
+	yylex();
+	return 0;
 }
