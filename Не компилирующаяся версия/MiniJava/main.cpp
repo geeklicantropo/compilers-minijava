@@ -1,9 +1,10 @@
 #include <iostream>
 
 extern int yylex( void );
+extern int yyparse( void );
 
 int main()
 {
-	yylex();
+	yyparse();
 	return 0;
 }

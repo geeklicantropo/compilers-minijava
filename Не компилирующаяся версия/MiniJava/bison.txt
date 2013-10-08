@@ -12,15 +12,10 @@ int yywrap()
 	return 1;
 }
 
-int main()
-{
-	yyparse();
-}
-
 %}
 
-%token Binop
-%token Number
+%token BINOP
+%token NUMBER
 %token CLASS
 %token PUBLIC
 %token STATIC
@@ -39,7 +34,10 @@ int main()
 %token THIS
 %token NEW
 %token ID
-%token Comment
+%token COMMENT
+%token RETURN
+%token INTEGERLITERAL
+%token EXTENDS
 
 %%
 
@@ -89,7 +87,7 @@ FormalRest:
 
 Type:
 	INT '['']'
-	| BOOLEAN
+	| BOOL
 	| INT
 	| ID
 	;
@@ -99,9 +97,9 @@ StatementStar:
 	;
 
 Statement:
-	'(' StatementStar ')'
-	| IF '(' Expression ')' Statenent ELSE Statement
-	| WHILE '(' Expression ')' Statenent
+	'{' StatementStar '}'
+	| IF '(' Expression ')' Statement ELSE Statement
+	| WHILE '(' Expression ')' Statement
 	| SYSOUT '(' Expression ')' ';'
 	| ID '=' Expression';'
 	| ID '[' Expression ']' '=' Expression ';'
@@ -132,7 +130,7 @@ ExpRestStar:
 	;
 
 ExpRest:
-	| ' ' ',' Expression
+	| ',' Expression
 	; 
 
 %%
@@ -140,10 +138,4 @@ ExpRest:
 void yyerror(const char *s) 
 {
   fprintf(stderr, "%s\n", s);
-}
-
-int main()
-{
-	yyparse();
-	return 0;
 }
