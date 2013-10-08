@@ -38,6 +38,7 @@
 "false" printf( "FALSE" );
 "this" printf( "THIS" );
 "new" printf( "NEW" );
+"return" printf( "RETURN" );
 
 [a-zA-Z_][a-zA-Z_0-9]* printf( "ID\n" );
 
