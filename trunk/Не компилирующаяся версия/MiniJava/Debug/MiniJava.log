@@ -1,0 +1,14 @@
+﻿Построение начато Вт 08.10.2013 21:47:06.
+     1>Проект "C:\Users\53146\Desktop\Компилятор\MiniJava\MiniJava.vcxproj" в узле 2 (целевые объекты Build).
+     1>PreBuildEvent:
+         flex.exe -+ -oflex.cpp flex.txt
+         :VCEnd
+         "flex.exe" не является внутренней или внешней
+         командой, исполняемой программой или пакетным файлом.
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppCommon.targets(124,5): error MSB3073: выход из команды "flex.exe -+ -oflex.cpp flex.txt
+C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppCommon.targets(124,5): error MSB3073: :VCEnd" с кодом 9009.
+     1>Построение проекта "C:\Users\53146\Desktop\Компилятор\MiniJava\MiniJava.vcxproj" завершено (целевые объекты Build) с ошибкой.
+
+Сбой построения.
+
+Затраченное время: 00:00:00.18

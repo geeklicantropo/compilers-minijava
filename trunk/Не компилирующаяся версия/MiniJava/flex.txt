@@ -1,0 +1,58 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include "miniJava.h"
+#pragma warning(disable:4273)
+#pragma warning(disable:4996)
+%}
+
+%option noyywrap
+%%
+
+
+&& printf( "Binop\n" );
+"<" printf( "Binop\n" );
+"+" printf( "Binop\n" );
+"-" printf( "Binop\n" );
+"*" printf( "Binop\n" );
+
+(-)?[0-9]+ {
+	//yyval.Int = atoi(yytext);
+	//TODO: return token::Number;
+}
+
+"class" printf( "CLASS" );
+"public" printf( "PUBLIC" );
+"static" printf( "STATIC" );
+"void" printf( "VOID" );
+"main" printf( "MAIN" );
+"String" printf( "STRING" );
+"int" printf( "INT" );
+"boolean" printf( "BOOL" );
+"if" printf( "IF" );
+"else" printf( "ELSE" );
+"while" printf( "WHILE" );
+"System.out.println" printf( "SYSOUT" );
+"length" printf( "LENGTH" );
+"true" printf( "TRUE" );
+"false" printf( "FALSE" );
+"this" printf( "THIS" );
+"new" printf( "NEW" );
+
+[a-zA-Z_][a-zA-Z_0-9]* printf( "ID\n" );
+
+\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/|\/\/.* printf( "Comment\n" );
+
+
+
+[+-/*()_=;,!.{}[]] return *yytext;
+
+[\n]+ return '\n';
+[ \t] ;
+
+. {
+	printf("Unknown symbol: %s ", yytext); 
+	//yyerror("Unknown symbol\n");
+}
+
+%%
