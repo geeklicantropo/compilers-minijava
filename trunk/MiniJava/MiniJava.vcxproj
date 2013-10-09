@@ -68,6 +68,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bison.cpp" />
     <ClCompile Include="flex.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -80,6 +81,17 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Flex...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).c;%(Outputs)</Outputs>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="bison.txt">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">bison.exe -d -v -o bison.cpp "%(FullPath)"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Bison</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">bison.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="bison.hpp" />
+    <ClInclude Include="miniJava.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
