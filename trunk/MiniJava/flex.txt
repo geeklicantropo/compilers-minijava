@@ -32,39 +32,40 @@
 	return BINOP;
 }
 
-(-)?[0-9]+ {
+[0-9]+ {
 	yylval.Int = atoi(yytext);
 	return NUMBER;
 }
 
-"class" return CLASS;
-"public" return PUBLIC;
-"static" return STATIC;
-"void" return VOID;
-"main" return MAIN;
-"String" return STRING;
-"int" return INT_T;
-"boolean" return BOOL_T;
-"if" return IF;
-"else" return ELSE;
-"while" return WHILE;
-"System.out.println" return SYSOUT;
-"length" return LENGTH;
-"true" return TRUE;
-"false" return FALSE;
-"this" return THIS;
-"new" return NEW;
-"return" return RETURN;
+"class" {return CLASS;}
+"public" {return PUBLIC;}
+"static" {return STATIC;}
+"void" {return VOID;}
+"main" {return MAIN;}
+"String" {return STRING;}
+"int" {return INT_T;}
+"boolean" {return BOOL_T;}
+"if" {return IF;}
+"else" {return ELSE;}
+"while" {return WHILE;}
+"System.out.println" {return SYSOUT;}
+"length" {return LENGTH;}
+"true" {return TRUE;}
+"false" {return FALSE;}
+"this" {return THIS;}
+"new" {return NEW;}
+"return" {return RETURN;}
 
 (_)?[a-zA-Z][a-zA-Z_0-9]* {
 	strcpy(yylval.Val, yytext);
 	return ID;
 }
-\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/|\/\/.* return COMMENT;
+
+\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/|\/\/.* ; 
 
 [(){}=\[\];.,] return *yytext;
 
-[\n]+ return '\n';
+[\n]+ ;
 [ \t] ;
 
 . {

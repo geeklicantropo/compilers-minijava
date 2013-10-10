@@ -42,7 +42,7 @@ int yywrap()
 %token FALSE
 %token THIS
 %token NEW
-%token ID
+%token <Val> ID
 %token COMMENT
 %token RETURN
 %token INTEGERLITERAL
@@ -58,7 +58,7 @@ Program:
 	;
 
 MainClass:
-	CLASS ID '{' PUBLIC STATIC VOID MAIN '(' STRING '['']' ID ')' '{' Statement '}''}'
+	CLASS ID '{' PUBLIC STATIC VOID MAIN '(' STRING '[' ']' ID ')' '{' StatementStar '}' '}'
 	;
 
 ClassDeclStar:
@@ -122,7 +122,7 @@ Expression:
 	| Expression '[' Expression ']'
 	| Expression '.' LENGTH
 	| Expression '.' ID '(' ExpList ')'
-	| INTEGERLITERAL
+	| NUMBER
 	| TRUE
 	| FALSE
 	| ID
@@ -132,7 +132,7 @@ Expression:
 	| '!' Expression
 	| '(' Expression ')'
 	;
-
+	 
 ExpList:
 	| Expression
 	| ExpRest ',' Expression
