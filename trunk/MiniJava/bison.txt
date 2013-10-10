@@ -3,6 +3,12 @@
 #include <string.h>
 #include <miniJava.h>
 
+int yyerror(char* error)
+{
+	printf("Error: %s\n", error);
+	return 0;
+}
+
 int yylex();
 
 int yywrap()
@@ -44,33 +50,47 @@ int yywrap()
 
 %left '.' '['
 %left <BinopType> BINOP
-%right '!'
+%left '!'
 
 %%
-
 Program:
-	MainClass ClassDecl
+	MainClass ClassDeclStar
 	;
 
 MainClass:
 	CLASS ID '{' PUBLIC STATIC VOID MAIN '(' STRING '['']' ID ')' '{' Statement '}''}'
 	;
 
+ClassDeclStar:
+	| ClassDeclStar ClassDecl
+
 ClassDecl:
-	CLASS ID '{' VarDecl MethodDecl '}'
-	| CLASS ID EXTENDS ID '{' VarDecl MethodDecl '}'
+	CLASS ID '{' VarDeclStar MethodDeclStar '}'
+	| CLASS ID EXTENDS ID '{' VarDeclStar MethodDeclStar '}'
+	;
+
+VarDeclStar: 
+	| VarDeclStar VarDecl
 	;
 
 VarDecl:
 	Type ID ';'
 	;
 
+MethodDeclStar:
+	| MethodDeclStar MethodDecl
+	;
+
 MethodDecl:
-	PUBLIC Type ID '(' FormalList ')' '{' VarDecl Statement RETURN Expression ';' '}'
+	PUBLIC Type ID '(' FormalList ')' '{' VarDeclStar StatementStar RETURN Expression ';' '}'
 	;
 
 FormalList:
-	| Type ID FormalRest
+	| Type ID FormalRestStar
+	;
+
+FormalRestStar:
+	| FormalRestStar FormalRest
 	;
 
 FormalRest:
@@ -84,8 +104,12 @@ Type:
 	| ID
 	;
 
+StatementStar:
+	| Statement StatementStar
+	;
+
 Statement:
-	'{' Statement '}'
+	'{' StatementStar '}'
 	| IF '(' Expression ')' Statement ELSE Statement
 	| WHILE '(' Expression ')' Statement
 	| SYSOUT '(' Expression ')' ';'
@@ -105,16 +129,17 @@ Expression:
 	| THIS
 	| NEW INT_T '[' Expression ']'
 	| NEW ID '(' ')'
-	| '(' Expression ')'
 	| '!' Expression
+	| '(' Expression ')'
 	;
 
 ExpList:
-	| ExpRest Expression
-	;
+	| Expression
+	| ExpRest ',' Expression
 
 ExpRest:
-	',' Expression
+	ExpRest ',' Expression
+	| Expression
 	; 
 
 %%
