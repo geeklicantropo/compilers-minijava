@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "miniJava.h"
 #include "bison.hpp"
 #pragma warning(disable:4273)
@@ -10,42 +11,58 @@
 %option noyywrap
 %%
 
-
-&& printf( "Binop\n" );
-"<" printf( "Binop\n" );
-"+" printf( "Binop\n" );
-"-" printf( "Binop\n" );
-"*" printf( "Binop\n" );
-
-(-)?[0-9]+ {
-	//yyval.Int = atoi(yytext);
-	//TODO: return token::Number;
+&& {
+	yylval.BinopType = AND;
+	return BINOP;
+}
+"<" {
+	yylval.BinopType = LESS;
+	return BINOP;
+}
+"+" {
+	yylval.BinopType = PLUS;
+	return BINOP;
+}
+"-" {
+	yylval.BinopType = MINUS;
+	return BINOP;
+}
+"*" {
+	yylval.BinopType = TIMES;
+	return BINOP;
 }
 
-"class" printf( "CLASS" );
-"public" printf( "PUBLIC" );
-"static" printf( "STATIC" );
-"void" printf( "VOID" );
-"main" printf( "MAIN" );
-"String" printf( "STRING" );
-"int" printf( "INT" );
-"boolean" printf( "BOOL" );
-"if" printf( "IF" );
-"else" printf( "ELSE" );
-"while" printf( "WHILE" );
-"System.out.println" printf( "SYSOUT" );
-"length" printf( "LENGTH" );
-"true" printf( "TRUE" );
-"false" printf( "FALSE" );
-"this" printf( "THIS" );
-"new" printf( "NEW" );
-"return" printf( "RETURN" );
+(-)?[0-9]+ {
+	yylval.Int = atoi(yytext);
+	return NUMBER;
+}
 
-[a-zA-Z_][a-zA-Z_0-9]* printf( "ID\n" );
+"class" return CLASS;
+"public" return PUBLIC;
+"static" return STATIC;
+"void" return VOID;
+"main" return MAIN;
+"String" return STRING;
+"int" return INT_T;
+"boolean" return BOOL_T;
+"if" return IF;
+"else" return ELSE;
+"while" return WHILE;
+"System.out.println" return SYSOUT;
+"length" return LENGTH;
+"true" return TRUE;
+"false" return FALSE;
+"this" return THIS;
+"new" return NEW;
+"return" return RETURN;
 
-\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/|\/\/.* printf( "Comment\n" );
+(_)?[a-zA-Z][a-zA-Z_0-9]* {
+	strcpy(yylval.Val, yytext);
+	return ID;
+}
+\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/|\/\/.* return COMMENT;
 
-[-+*\/()_;,!.{}[]=] return *yytext;
+[(){}=\[\];.,] return *yytext;
 
 [\n]+ return '\n';
 [ \t] ;
