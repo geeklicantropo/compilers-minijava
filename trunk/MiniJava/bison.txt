@@ -1,13 +1,9 @@
 %{
 #include <stdio.h>
 #include <string.h>
+#include <miniJava.h>
 
 int yylex();
-
-void yyerror( const char *str )
-{
-	fprintf( stderr, "error: %s\n", str );
-}
 
 int yywrap()
 {
@@ -16,7 +12,13 @@ int yywrap()
 
 %}
 
-%token NUMBER
+%union{
+	char Val[256];
+	int Int;
+	TBinaryOperation BinopType;
+}
+
+%token <Int> NUMBER
 %token CLASS
 %token PUBLIC
 %token STATIC
@@ -40,7 +42,8 @@ int yywrap()
 %token INTEGERLITERAL
 %token EXTENDS
 
-%left '.' '['BINOP
+%left '.' '['
+%left <BinopType> BINOP
 %right '!'
 
 %%
