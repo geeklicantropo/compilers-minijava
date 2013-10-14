@@ -3,11 +3,7 @@
 #include <string.h>
 #include <miniJava.h>
 
-int yyerror(char* error)
-{
-	printf("Error: %s\n", error);
-	return 0;
-}
+void yyerror (const char *s);
 
 int yylex();
 
@@ -17,6 +13,8 @@ int yywrap()
 }
 
 %}
+
+%locations 
 
 %union{
 	char Val[256];
@@ -143,3 +141,8 @@ ExpRest:
 	; 
 
 %%
+
+void yyerror (const char *s)
+{
+	printf("Error in line %d: %s", yylloc.first_line, s);
+}
