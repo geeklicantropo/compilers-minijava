@@ -6,9 +6,12 @@
 #include "bison.hpp"
 #pragma warning(disable:4273)
 #pragma warning(disable:4996)
+#define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno;
 %}
 
+%option yylineno
 %option noyywrap
+
 %%
 
 && {
@@ -68,9 +71,5 @@
 [\n]+ ;
 [ \t] ;
 
-. {
-	printf("Unknown symbol: %s ", yytext); 
-	//yyerror("Unknown symbol\n");
-}
 
 %%
