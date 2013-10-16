@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
+int yylex();
+
 void yyerror( const char *str )
 {
 	fprintf( stderr, "error: %s\n", str );
@@ -14,7 +16,6 @@ int yywrap()
 
 %}
 
-%token BINOP
 %token NUMBER
 %token CLASS
 %token PUBLIC
@@ -22,8 +23,8 @@ int yywrap()
 %token VOID
 %token MAIN
 %token STRING 
-%token INT
-%token BOOL
+%token INT_T
+%token BOOL_T
 %token IF
 %token ELSE
 %token WHILE
@@ -39,46 +40,34 @@ int yywrap()
 %token INTEGERLITERAL
 %token EXTENDS
 
+%left '.' '['BINOP
+%right '!'
+
 %%
 
 Program:
-	MainClass ClassDeclStar
+	MainClass ClassDecl
 	;
 
 MainClass:
 	CLASS ID '{' PUBLIC STATIC VOID MAIN '(' STRING '['']' ID ')' '{' Statement '}''}'
 	;
 
-ClassDeclStar:
-	| ClassDeclStar ClassDecl
-
 ClassDecl:
-	CLASS ID '{' VarDeclStar MethodDeclStar '}'
-	| CLASS ID EXTENDS ID '{' VarDeclStar MethodDeclStar '}'
-	;
-
-VarDeclStar: 
-	| VarDeclStar VarDecl
+	CLASS ID '{' VarDecl MethodDecl '}'
+	| CLASS ID EXTENDS ID '{' VarDecl MethodDecl '}'
 	;
 
 VarDecl:
 	Type ID ';'
 	;
 
-MethodDeclStar:
-	| MethodDeclStar MethodDecl
-	;
-
 MethodDecl:
-	PUBLIC Type ID '(' FormalList ')' '{' VarDeclStar StatementStar RETURN Expression ';' '}'
+	PUBLIC Type ID '(' FormalList ')' '{' VarDecl Statement RETURN Expression ';' '}'
 	;
 
 FormalList:
-	| Type ID FormalRestStar
-	;
-
-FormalRestStar:
-	| FormalRestStar FormalRest
+	| Type ID FormalRest
 	;
 
 FormalRest:
@@ -86,18 +75,14 @@ FormalRest:
 	;
 
 Type:
-	INT '['']'
-	| BOOL
-	| INT
+	INT_T '['']'
+	| BOOL_T
+	| INT_T
 	| ID
 	;
 
-StatementStar:
-	| StatementStar Statement
-	;
-
 Statement:
-	'{' StatementStar '}'
+	'{' Statement '}'
 	| IF '(' Expression ')' Statement ELSE Statement
 	| WHILE '(' Expression ')' Statement
 	| SYSOUT '(' Expression ')' ';'
@@ -115,27 +100,18 @@ Expression:
 	| FALSE
 	| ID
 	| THIS
-	| NEW INT '[' Expression ']'
+	| NEW INT_T '[' Expression ']'
 	| NEW ID '(' ')'
-	| '!' Expression
 	| '(' Expression ')'
+	| '!' Expression
 	;
 
 ExpList:
-	| ExpRestStar Expression
-	;
-
-ExpRestStar:
-	| ExpRestStar ExpRest
+	| ExpRest Expression
 	;
 
 ExpRest:
-	| ',' Expression
+	',' Expression
 	; 
 
 %%
-
-void yyerror(const char *s) 
-{
-  fprintf(stderr, "%s\n", s);
-}
