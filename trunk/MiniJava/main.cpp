@@ -5,7 +5,6 @@ extern int yyparse( void );
 
 int main()
 {
-	yyparse();
-	system( "pause" );
+	yyparse();	
 	return 0;
 }

@@ -21,6 +21,9 @@
     <ClCompile Include="flex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="bison.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="flex.txt">
@@ -29,5 +32,10 @@
     <CustomBuild Include="bison.txt">
       <Filter>Source Files</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="bison.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

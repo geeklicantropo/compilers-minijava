@@ -56,7 +56,7 @@ Program:
 	;
 
 MainClass:
-	CLASS ID '{' PUBLIC STATIC VOID MAIN '(' STRING '[' ']' ID ')' '{' StatementStar '}' '}'
+	CLASS ID '{' PUBLIC STATIC VOID MAIN '(' STRING '[' ']' ID ')' '{' Statement '}' '}'
 	;
 
 ClassDeclStar:

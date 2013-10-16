@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "miniJava.h"
+#include "bison.hpp"
 #pragma warning(disable:4273)
 #pragma warning(disable:4996)
 %}
@@ -44,9 +45,7 @@
 
 \/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/|\/\/.* printf( "Comment\n" );
 
-
-
-[+-/*()_=;,!.{}[]] return *yytext;
+[-+*\/()_;,!.{}[]=] return *yytext;
 
 [\n]+ return '\n';
 [ \t] ;
