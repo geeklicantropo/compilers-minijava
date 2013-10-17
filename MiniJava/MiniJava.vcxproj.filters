@@ -21,10 +21,25 @@
     <ClCompile Include="flex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="bison.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="miniJava.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="flex.txt">
       <Filter>Source Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="bison.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="bison.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="miniJava.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

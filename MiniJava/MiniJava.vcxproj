@@ -71,6 +71,7 @@
     <ClCompile Include="bison.cpp" />
     <ClCompile Include="flex.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="miniJava.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="flex.txt">
