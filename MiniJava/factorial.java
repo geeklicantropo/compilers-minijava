@@ -30,11 +30,11 @@ class BBS{
     // Sort array of integers using Bublesort method
     public int Sort(){
 	int nt ;
-	int i ;
+	int lkhj i ;
 	int aux02 ;
-	int aux04;
+	int saux04;
 	int aux05 ;
-	int aux06 ;
+	int aux06 jhgk ;
 	int aux07 ;
 	int j ;
 	int t ;
