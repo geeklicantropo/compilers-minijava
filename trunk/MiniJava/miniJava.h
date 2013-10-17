@@ -118,8 +118,7 @@ private:
 	const CMethodDeclareStar* const methodDeclareStar;
 };
 
-class CVarDeclareStar
-{
+class CVarDeclareStar {
 public:
 	CVarDeclareStar( const CVarDeclareStar* varDecStar, const CVarDeclare* varDec ) :
 		varDeclareStar( varDecStar ), varDeclare( varDec ) 
@@ -131,8 +130,7 @@ private:
 	const CVarDeclare* const varDeclare;
 };
 
-class CVarDeclare
-{
+class CVarDeclare {
 public:
 	CVarDeclare( const TDataTypes* _dataType, const char* _id ) :
 		dataType (_dataType ), id( _id )
@@ -146,8 +144,7 @@ private:
 	const char* const id;
 };
 
-class CMethodDeclareStar
-{
+class CMethodDeclareStar {
 public:
 	CMethodDeclareStar( const CMethodDeclareStar* methodDecStar, const CMethodDeclare* methodDec ) :
 		methodDeclareStar( methodDecStar ), methodDeclare( methodDec )
@@ -160,8 +157,7 @@ private:
 	const CMethodDeclare* const methodDeclare;
 };
 
-class CMethodDeclare
-{
+class CMethodDeclare {
 public:
 	CMethodDeclare( const TDataTypes* _dataType, const char* _id, const CFormalList* _formalList, const CVarDeclareStar* varDecStar, 
 		const CStatementStar* _statementStar, const IExpression* _expression ) :
@@ -184,8 +180,7 @@ private:
 	const IExpression* const expression;
 };
 
-class CFormalList
-{
+class CFormalList {
 public:
 	CFormalList( const TDataTypes* _dataType, const char* _id, const CFormalRestStar* _formalRestStar ) :
 		dataType( _dataType ), id( _id ), formalRestStar( _formalRestStar )
@@ -200,8 +195,7 @@ private:
 	const CFormalRestStar* const formalRestStar;
 };
 
-class CFormalRestStar
-{
+class CFormalRestStar {
 public:
 	CFormalRestStar( const CFormalRestStar* _formalRestStar, const CFormalRest* _formalRest ) :
 		formalRestStar( _formalRestStar ), formalRest( _formalRest )
@@ -213,8 +207,7 @@ private:
 	const CFormalRest* const formalRest;
 };
 
-class CFormalRest
-{
+class CFormalRest {
 public:
 	CFormalRest( const TDataTypes* _dataType, const char* _id ) :
 		dataType( _dataType ), id( _id )
@@ -227,14 +220,12 @@ private:
 	const char* const id;
 };
 
-class IStatement
-{
+class IStatement {
 public:
 	~IStatement();
 };
 
-class CStatementStar
-{
+class CStatementStar {
 public:
 	CStatementStar(const IStatement* _statement, const CStatementStar* _statementStar) :
 		statement( _statement ), statementStar( _statementStar )
@@ -246,8 +237,7 @@ private:
 	const IStatement* const statement;
 };
 
-class CStatement : public IStatement
-{
+class CStatement : public IStatement {
 public:
 	CStatement( const CStatementStar* _statementStar ) :
 		statementStar( _statementStar )
@@ -258,8 +248,7 @@ private:
 	const CStatementStar* const statementStar;
 };
 
-class CStatementIf : public IStatement
-{
+class CStatementIf : public IStatement {
 public:
 	CStatementIf( const IExpression* _expression, const IStatement* _statementIf, const IStatement* _statementElse ) :
 		expression( _expression ), statementIf( _statementIf ), statementElse( _statementElse )
@@ -274,8 +263,7 @@ private:
 	const IStatement* const statementElse;
 };
 
-class CStatementWhile : public IStatement
-{
+class CStatementWhile : public IStatement {
 public:
 	CStatementWhile( const IExpression* _expression, const IStatement* _statement ) :
 		expression( _expression ), statement( _statement )
@@ -288,8 +276,7 @@ private:
 	const IStatement* const statement;
 };
 
-class CStatementSysOut : public IStatement
-{
+class CStatementSysOut : public IStatement {
 public:
 	CStatementSysOut( const IExpression* _expression ) :
 		expression( _expression )
@@ -300,8 +287,7 @@ private:
 	const IExpression* const expression;
 };
 
-class CStatementAssignment : public IStatement
-{
+class CStatementAssignment : public IStatement {
 public:
 	CStatementAssignment( const char* _id, const IExpression* _expression ) :
 		id( _id ), expression( _expression )
@@ -315,8 +301,7 @@ private:
 	const IExpression* const expression;
 };
 
-class CStatementArrayAssignment : public IStatement
-{
+class CStatementArrayAssignment : public IStatement {
 public:
 	CStatementArrayAssignment( const char* _id, const IExpression* _expressionArray, const IExpression* _expression ) :
 		id( _id ), expressionArray( _expressionArray ), expression( _expression )
@@ -330,5 +315,10 @@ private:
 	const char* const id;
 	const IExpression* const expressionArray;
 	const IExpression* const expression;
+};
+
+class IExpression {
+public:
+	~IExpression();
 };
 
