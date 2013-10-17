@@ -1,7 +1,8 @@
 class BubbleSort{
     public static void main(String[] a){
 	System.out.println(new BBS().Start(10));
-    }
+	asdad
+	}
 }
 
 
@@ -16,12 +17,12 @@ class BBS{
     // Invoke the Initialization, Sort and Printing
     // Methods
     public int Start(int sz){
-	int aux01 ;
+	int aux01;
 	aux01 = this.Init(sz);
 	aux01 = this.Print();
 	System.out.println(99999);
-	aux01 = this.Sort();
-	aux01 = this.Print();
+	aux03asda = this.Sort();
+	sda aux01 = this.Print();
 	return 0 ;
     }
 
@@ -31,7 +32,7 @@ class BBS{
 	int nt ;
 	int i ;
 	int aux02 ;
-	int aux04 ;
+	int aux04;
 	int aux05 ;
 	int aux06 ;
 	int aux07 ;

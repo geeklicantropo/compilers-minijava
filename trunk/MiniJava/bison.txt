@@ -57,6 +57,8 @@ Program:
 
 MainClass:
 	CLASS ID '{' PUBLIC STATIC VOID MAIN '(' STRING '[' ']' ID ')' '{' Statement '}' '}'
+	| CLASS ID '{' error '}' { printf ("error1 in Main class in line %d\n", yylloc.first_line); }
+	| CLASS ID '{' PUBLIC STATIC VOID MAIN '(' STRING '[' ']' ID ')' '{' error '}' '}' { printf ("error2 in Main class in line %d \n", yylloc.first_line); }
 	;
 
 ClassDeclStar:
@@ -65,6 +67,9 @@ ClassDeclStar:
 ClassDecl:
 	CLASS ID '{' VarDeclStar MethodDeclStar '}'
 	| CLASS ID EXTENDS ID '{' VarDeclStar MethodDeclStar '}'
+	| CLASS ID '{' error '}'			{ printf ("error1 in class declaration in line %d\n", yylloc.first_line); }
+	| CLASS ID EXTENDS ID '{' error '}' { printf ("error2 in class declaration in line %d\n", yylloc.first_line); }
+
 	;
 
 VarDeclStar: 
@@ -88,11 +93,7 @@ FormalList:
 	;
 
 FormalRestStar:
-	| FormalRestStar FormalRest
-	;
-
-FormalRest:
-	','' ' Type ID
+	| ','' ' Type ID FormalRestStar
 	;
 
 Type:
@@ -113,6 +114,7 @@ Statement:
 	| SYSOUT '(' Expression ')' ';'
 	| ID '=' Expression';'
 	| ID '[' Expression ']' '=' Expression ';'
+	| error ';' { printf ("statement error in line %d\n", yylloc.first_line); }
 	;
 
 Expression:
@@ -139,10 +141,10 @@ ExpRest:
 	ExpRest ',' Expression
 	| Expression
 	; 
-
+ 
 %%
 
 void yyerror (const char *s)
 {
-	printf("Error in line %d: %s", yylloc.first_line, s);
+	//printf("Error in line %d: %s \n", yylloc.first_line, s);
 }
