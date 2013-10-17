@@ -78,6 +78,7 @@ VarDeclStar:
 
 VarDecl:
 	Type ID ';'
+	| Type ID error ';' { printf ("var declaration in line %d\n", yylloc.first_line); }
 	;
 
 MethodDeclStar:
