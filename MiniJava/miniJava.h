@@ -77,7 +77,6 @@ public:
 	CClassDeclareStar(const CClassDeclareStar* classDecStar, const IClassDeclare* classDec ) :
 	classDeclareStar( classDecStar ), classDeclare( classDec )
 	{
-		assert( classDeclareStar != 0);
 		assert( classDeclare != 0 );
 	}
 
@@ -125,7 +124,6 @@ public:
 	CVarDeclareStar( const CVarDeclareStar* varDecStar, const CVarDeclare* varDec ) :
 		varDeclareStar( varDecStar ), varDeclare( varDec ) 
 	{
-		assert( varDeclareStar != 0 );
 		assert( varDeclare != 0);
 	}
 private:
@@ -154,7 +152,6 @@ public:
 	CMethodDeclareStar( const CMethodDeclareStar* methodDecStar, const CMethodDeclare* methodDec ) :
 		methodDeclareStar( methodDecStar ), methodDeclare( methodDec )
 	{
-		assert( methodDeclareStar != 0 );
 		assert( methodDeclare != 0 );
 	}
 
@@ -209,7 +206,6 @@ public:
 	CFormalRestStar( const CFormalRestStar* _formalRestStar, const CFormalRest* _formalRest ) :
 		formalRestStar( _formalRestStar ), formalRest( _formalRest )
 	{
-		assert( formalRestStar != 0 );
 		assert( formalRest != 0 );
 	}
 private:
@@ -244,7 +240,6 @@ public:
 		statement( _statement ), statementStar( _statementStar )
 	{
 		assert( statement != 0 );
-		assert( statementStar != 0 );
 	}
 private:
 	const CStatementStar* const statementStar;
