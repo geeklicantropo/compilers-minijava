@@ -1,5 +1,7 @@
+#pragma once
 #include <assert.h>
-class IVisitor;
+#include "Visitor.h"
+#include "Interpreter.h"
 
 enum TDataTypes {
 	INT, BOOLEAN, INTARRAY
@@ -115,6 +117,9 @@ class CProgram : public IProgram {
 public:
 	int Accept(IVisitor *v) const;
 	CProgram( const IMainClass* , const IClassDeclareStar* );
+	
+	const IMainClass* GetMainClass() const;
+	const IClassDeclareStar* GetClassDeclareStar() const;
 
 private:
 	const IMainClass* const mainClass;
@@ -432,77 +437,4 @@ public:
 private:
 	const IExpression* const expression;
 	const IExpList* const expList;
-};
-
-class IVisitor {
-public:
-	~IVisitor();
-	virtual int Visit( const CProgram *n ) = 0;
-	virtual int Visit( const CMainClass* n ) = 0;
-	virtual int Visit( const CClassDeclareStar* n ) = 0;
-	virtual int Visit( const CClassDeclare* n ) = 0;
-	virtual int Visit( const CClassDeclareExtends* n ) = 0;
-	virtual int Visit( const CVarDeclareStar* n ) = 0;
-	virtual int Visit( const CVarDeclare* n ) = 0;
-	virtual int Visit( const CMethodDeclare* n ) = 0;
-	virtual int Visit( const CMethodDeclareStar* n ) = 0;
-	virtual int Visit( const CFormalList* n ) = 0;
-	virtual int Visit( const CFormalRestStar* n ) = 0;
-	virtual int Visit( const CStatement* n ) = 0;
-	virtual int Visit( const CStatementStar* n ) = 0;
-	virtual int Visit( const CStatementIf* n ) = 0;
-	virtual int Visit( const CStatementWhile* n ) = 0;
-	virtual int Visit( const CStatementSysOut* n ) = 0;
-	virtual int Visit( const CStatementAssignment* n ) = 0;
-	virtual int Visit( const CStatementArrayAssignment* n ) = 0;
-	virtual int Visit( const CExpressionBinOp* n ) = 0;
-	virtual int Visit( const CExpressionArray* n ) = 0;
-	virtual int Visit( const CExpressionLength* n ) = 0;
-	virtual int Visit( const CExpressionCallMethod* n ) = 0;
-	virtual int Visit( const CExpressionNumber* n ) = 0;
-	virtual int Visit( const CExpressionBool* n ) = 0;
-	virtual int Visit( const CExpressionVar* n ) = 0;
-	virtual int Visit( const CExpressionThis* n ) = 0;
-	virtual int Visit( const CExpressionNewInt* n ) = 0;
-	virtual int Visit( const CExpressionNewId* n ) = 0;
-	virtual int Visit( const CExpressionNegation* n ) = 0;
-	virtual int Visit( const CExpression* n ) = 0;
-	virtual int Visit( const CExpList* n ) = 0;
-	virtual int Visit( const CExpListNext* n ) = 0;
-};
-
-class CInterpreter: public IVisitor {
-public:
-	int Visit( const CProgram* n ){}
-	int Visit( const CMainClass* n ){}
-	int Visit( const CClassDeclareStar* n ){}
-	int Visit( const CClassDeclare* n ){}
-	int Visit( const CClassDeclareExtends* n ){}
-	int Visit( const CVarDeclareStar* n ){}
-	int Visit( const CVarDeclare* n ){}
-	int Visit( const CMethodDeclare* n ){}
-	int Visit( const CMethodDeclareStar* n ){}
-	int Visit( const CFormalList* n ){}
-	int Visit( const CFormalRestStar* n ){}
-	int Visit( const CStatement* n ){}
-	int Visit( const CStatementStar* n ){}
-	int Visit( const CStatementIf* n ){}
-	int Visit( const CStatementWhile* n ){}
-	int Visit( const CStatementSysOut* n ){}
-	int Visit( const CStatementAssignment* n ){}
-	int Visit( const CStatementArrayAssignment* n ){}
-	int Visit( const CExpressionBinOp* n ){}
-	int Visit( const CExpressionArray* n ){}
-	int Visit( const CExpressionLength* n ){}
-	int Visit( const CExpressionCallMethod* n ){}
-	int Visit( const CExpressionNumber* n ){}
-	int Visit( const CExpressionBool* n ){}
-	int Visit( const CExpressionVar* n ){}
-	int Visit( const CExpressionThis* n ){}
-	int Visit( const CExpressionNewInt* n ){}
-	int Visit( const CExpressionNewId* n ){}
-	int Visit( const CExpressionNegation* n ){}
-	int Visit( const CExpression* n ){}
-	int Visit( const CExpList* n ){}
-	int Visit( const CExpListNext* n ){}
 };

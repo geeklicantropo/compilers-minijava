@@ -1,11 +1,22 @@
 #include <cstdio>
 #include "miniJava.h"
+#include "Visitor.h"
 
 CProgram::CProgram( const IMainClass* _mainClass, const IClassDeclareStar* _classDeclareStar ) :
 	mainClass( _mainClass), classDeclareStar( _classDeclareStar )
 	{
 		assert( mainClass != 0 );
 	}
+
+const IMainClass* CProgram::GetMainClass() const
+{
+	return mainClass;
+}
+
+const IClassDeclareStar* CProgram::GetClassDeclareStar() const
+{
+	return classDeclareStar;
+}
 
 CMainClass::CMainClass( const char* _id, const char* _argsId, const IStatement* _stm ) :
 	id( _id ), argsId( _argsId ), stm( _stm )
@@ -178,35 +189,115 @@ CExpList::CExpList( const IExpression* _expression ) :
 CExpListNext::CExpListNext( const IExpList* _expList, const IExpression* _expression ) :
 		expList( _expList ), expression( _expression ) {}
 
-int CProgram::Accept(IVisitor *v) const { return v->Visit(this); }
-int CMainClass::Accept(IVisitor *v) const { return v->Visit(this); }
-int CClassDeclareStar::Accept(IVisitor *v) const { return v->Visit(this); }
-int CClassDeclare::Accept(IVisitor *v) const { return v->Visit(this); }
-int CClassDeclareExtends::Accept(IVisitor *v) const { return v->Visit(this); }
-int CVarDeclareStar::Accept(IVisitor *v) const { return v->Visit(this); }
-int CVarDeclare::Accept(IVisitor *v) const { return v->Visit(this); }
-int CMethodDeclareStar::Accept(IVisitor *v) const { return v->Visit(this); }
-int CMethodDeclare::Accept(IVisitor *v) const { return v->Visit(this); }
-int CFormalList::Accept(IVisitor *v) const { return v->Visit(this); }
-int CFormalRestStar::Accept(IVisitor *v) const { return v->Visit(this); }
-int CStatementStar::Accept(IVisitor *v) const { return v->Visit(this); }
-int CStatement::Accept(IVisitor *v) const { return v->Visit(this); }
-int CStatementIf::Accept(IVisitor *v) const { return v->Visit(this); }
-int CStatementWhile::Accept(IVisitor *v) const { return v->Visit(this); }
-int CStatementSysOut::Accept(IVisitor *v) const { return v->Visit(this); }
-int CStatementAssignment::Accept(IVisitor *v) const { return v->Visit(this); }
-int CStatementArrayAssignment::Accept(IVisitor *v) const { return v->Visit(this); }
-int CExpressionBinOp::Accept(IVisitor *v) const { return v->Visit(this); }
-int CExpressionArray::Accept(IVisitor *v) const { return v->Visit(this); }
-int CExpressionLength::Accept(IVisitor *v) const { return v->Visit(this); }
-int CExpressionCallMethod::Accept(IVisitor *v) const { return v->Visit(this); }
-int CExpressionNumber::Accept(IVisitor *v) const { return v->Visit(this); }
-int CExpressionBool::Accept(IVisitor *v) const { return v->Visit(this); }
-int CExpressionVar::Accept(IVisitor *v) const { return v->Visit(this); }
-int CExpressionThis::Accept(IVisitor *v) const { return v->Visit(this); }
-int CExpressionNewInt::Accept(IVisitor *v) const { return v->Visit(this); }
-int CExpressionNewId::Accept(IVisitor *v) const { return v->Visit(this); }
-int CExpressionNegation::Accept(IVisitor *v) const { return v->Visit(this); }
-int CExpression::Accept(IVisitor *v) const { return v->Visit(this); }
-int CExpList::Accept(IVisitor *v) const { return v->Visit(this); }
-int CExpListNext::Accept(IVisitor *v) const { return v->Visit(this); }
+
+int CProgram::Accept(IVisitor *v) const 
+{ 
+	return v->Visit( this ); 
+}
+
+int CMainClass::Accept(IVisitor *v) const 
+{ 
+	return v->Visit( this ); 
+}
+
+int CClassDeclareStar::Accept(IVisitor *v) const 
+{ 
+	return v->Visit( this ); 
+}
+
+int CClassDeclare::Accept(IVisitor *v) const 
+{ 
+	return v->Visit( this ); 
+}
+
+int CClassDeclareExtends::Accept(IVisitor *v) const 
+{ 
+	return v->Visit( this );
+}
+
+int CVarDeclareStar::Accept(IVisitor *v) const 
+{ 
+	return v->Visit( this );
+}
+
+int CVarDeclare::Accept(IVisitor *v) const 
+{ 
+	return v->Visit( this );
+}
+
+int CMethodDeclareStar::Accept(IVisitor *v) const 
+{ 
+	return v->Visit( this ); 
+}
+
+int CMethodDeclare::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CFormalList::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CFormalRestStar::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CStatementStar::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CStatement::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CStatementIf::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CStatementWhile::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CStatementSysOut::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CStatementAssignment::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CStatementArrayAssignment::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CExpressionBinOp::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CExpressionArray::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CExpressionLength::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CExpressionCallMethod::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CExpressionNumber::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CExpressionBool::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CExpressionVar::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CExpressionThis::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CExpressionNewInt::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CExpressionNewId::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CExpressionNegation::Accept(IVisitor *v) const
+{ return v->Visit( this ); }
+
+int CExpression::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CExpList::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
+
+int CExpListNext::Accept(IVisitor *v) const 
+{ return v->Visit( this ); }
