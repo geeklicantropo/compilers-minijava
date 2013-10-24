@@ -5,7 +5,6 @@ CProgram::CProgram( const IMainClass* _mainClass, const IClassDeclareStar* _clas
 	mainClass( _mainClass), classDeclareStar( _classDeclareStar )
 	{
 		assert( mainClass != 0 );
-		assert( classDeclareStar != 0 );
 	}
 
 CMainClass::CMainClass( const char* _id, const char* _argsId, const IStatement* _stm ) :
@@ -27,8 +26,6 @@ CClassDeclare::CClassDeclare( const char* _id, const IVarDeclareStar* _varDeclar
 	id( _id ), varDeclareStar( _varDeclareStar), methodDeclareStar( _methodDeclareStar )
 	{
 		assert( id != 0 );
-		assert( varDeclareStar != 0 );
-		assert( methodDeclareStar != 0 );
 	}
 
 CClassDeclareExtends::CClassDeclareExtends( const char* _id, const char* _extendsId, const IVarDeclareStar* _varDeclareStar, 
@@ -37,8 +34,6 @@ CClassDeclareExtends::CClassDeclareExtends( const char* _id, const char* _extend
 	{
 		assert( id != 0 );
 		assert( extendsId != 0 );
-		assert( varDeclareStar != 0 );
-		assert( methodDeclareStar != 0 );
 	}
 
 CVarDeclareStar::CVarDeclareStar( const IVarDeclareStar* varDecStar, const IVarDeclare* varDec ) :
@@ -50,8 +45,7 @@ CVarDeclareStar::CVarDeclareStar( const IVarDeclareStar* varDecStar, const IVarD
 CVarDeclare::CVarDeclare( const TDataTypes _dataType, const char* _id ) :
 		dataType (_dataType ), id( _id )
 	{
-		assert( dataType != 0 );
-		assert( id != _id );
+		assert( id != 0 );
 	}
 
 CMethodDeclareStar::CMethodDeclareStar( const IMethodDeclareStar* methodDecStar, const IMethodDeclare* methodDec ) :
@@ -65,26 +59,21 @@ CMethodDeclare::CMethodDeclare( const TDataTypes _dataType, const char* _id, con
 	dataType( _dataType ), id( _id ), formalList( _formalList ), varDeclareStar( varDecStar ), statementStar( _statementStar ),
 	expression( _expression )
 	{
-		assert( dataType != 0 );
+		//
 		assert( id != 0 );
-		assert( formalList != 0 );
-		assert( varDeclareStar != 0 );
-		assert( statementStar != 0 );
 		assert( expression != 0 );
 	}
 
 CFormalList::CFormalList( const TDataTypes _dataType, const char* _id, const IFormalRestStar* _formalRestStar ) :
 	dataType( _dataType ), id( _id ), formalRestStar( _formalRestStar )
 	{
-		assert( dataType != 0 );
 		assert( id != 0 );
-		assert( formalRestStar != 0 );
 	}
 
 CFormalRestStar::CFormalRestStar( const TDataTypes _dataType, const char* _id, const IFormalRestStar* _formalRestStar ) :
 	dataType( _dataType ), id( _id ), formalRestStar( _formalRestStar )
 	{
-		assert( dataType != 0 );
+		
 		assert( id != 0 );
 	}
 
@@ -97,7 +86,6 @@ CStatementStar::CStatementStar(const IStatement* _statement, const IStatementSta
 CStatement::CStatement( const IStatementStar* _statementStar ) :
 	statementStar( _statementStar )
 	{
-		assert( statementStar != 0 );
 	}
 
 CStatementIf::CStatementIf( const IExpression* _expression, const IStatement* _statementIf, const IStatement* _statementElse ) :
@@ -162,7 +150,6 @@ CExpressionCallMethod::CExpressionCallMethod( const IExpression* _expression, co
 	{
 		assert( expression != 0 );
 		assert( id != 0 );
-		assert( expList != 0 );
 	}
 
 CExpressionNumber::CExpressionNumber( const int _number ) : number( _number ) {}
@@ -190,3 +177,36 @@ CExpList::CExpList( const IExpression* _expression ) :
 
 CExpListNext::CExpListNext( const IExpList* _expList, const IExpression* _expression ) :
 		expList( _expList ), expression( _expression ) {}
+
+int CProgram::Accept(IVisitor *v) const { return v->Visit(this); }
+int CMainClass::Accept(IVisitor *v) const { return v->Visit(this); }
+int CClassDeclareStar::Accept(IVisitor *v) const { return v->Visit(this); }
+int CClassDeclare::Accept(IVisitor *v) const { return v->Visit(this); }
+int CClassDeclareExtends::Accept(IVisitor *v) const { return v->Visit(this); }
+int CVarDeclareStar::Accept(IVisitor *v) const { return v->Visit(this); }
+int CVarDeclare::Accept(IVisitor *v) const { return v->Visit(this); }
+int CMethodDeclareStar::Accept(IVisitor *v) const { return v->Visit(this); }
+int CMethodDeclare::Accept(IVisitor *v) const { return v->Visit(this); }
+int CFormalList::Accept(IVisitor *v) const { return v->Visit(this); }
+int CFormalRestStar::Accept(IVisitor *v) const { return v->Visit(this); }
+int CStatementStar::Accept(IVisitor *v) const { return v->Visit(this); }
+int CStatement::Accept(IVisitor *v) const { return v->Visit(this); }
+int CStatementIf::Accept(IVisitor *v) const { return v->Visit(this); }
+int CStatementWhile::Accept(IVisitor *v) const { return v->Visit(this); }
+int CStatementSysOut::Accept(IVisitor *v) const { return v->Visit(this); }
+int CStatementAssignment::Accept(IVisitor *v) const { return v->Visit(this); }
+int CStatementArrayAssignment::Accept(IVisitor *v) const { return v->Visit(this); }
+int CExpressionBinOp::Accept(IVisitor *v) const { return v->Visit(this); }
+int CExpressionArray::Accept(IVisitor *v) const { return v->Visit(this); }
+int CExpressionLength::Accept(IVisitor *v) const { return v->Visit(this); }
+int CExpressionCallMethod::Accept(IVisitor *v) const { return v->Visit(this); }
+int CExpressionNumber::Accept(IVisitor *v) const { return v->Visit(this); }
+int CExpressionBool::Accept(IVisitor *v) const { return v->Visit(this); }
+int CExpressionVar::Accept(IVisitor *v) const { return v->Visit(this); }
+int CExpressionThis::Accept(IVisitor *v) const { return v->Visit(this); }
+int CExpressionNewInt::Accept(IVisitor *v) const { return v->Visit(this); }
+int CExpressionNewId::Accept(IVisitor *v) const { return v->Visit(this); }
+int CExpressionNegation::Accept(IVisitor *v) const { return v->Visit(this); }
+int CExpression::Accept(IVisitor *v) const { return v->Visit(this); }
+int CExpList::Accept(IVisitor *v) const { return v->Visit(this); }
+int CExpListNext::Accept(IVisitor *v) const { return v->Visit(this); }
