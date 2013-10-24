@@ -70,6 +70,7 @@
   <ItemGroup>
     <ClCompile Include="bison.cpp" />
     <ClCompile Include="flex.cpp" />
+    <ClCompile Include="Interpreter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="miniJava.cpp" />
   </ItemGroup>
@@ -92,7 +93,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bison.hpp" />
+    <ClInclude Include="Interpreter.h" />
     <ClInclude Include="miniJava.h" />
+    <ClInclude Include="Visitor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
