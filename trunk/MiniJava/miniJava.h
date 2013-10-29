@@ -130,6 +130,9 @@ class CMainClass : public IMainClass {
 public:
 	CMainClass( const char*, const char*, const IStatement* );
 	int Accept(IVisitor *v) const;
+	const IStatement* GetStatement() const;
+	const char* GetId() const;
+	const char* GetArgsId() const;
 		
 private:
 	const char* const id;
@@ -141,6 +144,8 @@ class CClassDeclareStar : public IClassDeclareStar {
 public:
 	CClassDeclareStar(const IClassDeclareStar*, const IClassDeclare* );
 	int Accept(IVisitor *v) const;
+	const IClassDeclareStar* GetClassDeclareStar() const;
+	const IClassDeclare* GetClassDeclare() const;
 
 private:
 	const IClassDeclareStar* const classDeclareStar;
@@ -151,6 +156,9 @@ class CClassDeclare : public IClassDeclare {
 public:
 	CClassDeclare( const char*, const IVarDeclareStar*, const IMethodDeclareStar* );
 	int Accept(IVisitor *v) const;
+	const IVarDeclareStar* GetVarDeclareStar() const;
+	const IMethodDeclareStar* GetmethodDeclareStar() const;
+	const char* GetId() const;
 
 private:
 	const char* const id;
@@ -163,6 +171,10 @@ public:
 	CClassDeclareExtends( const char*, const char*, const IVarDeclareStar*, 
 		const IMethodDeclareStar* );
 	int Accept(IVisitor *v) const;
+	const IMethodDeclareStar* GetMethodDeclareStar() const;
+	const IVarDeclareStar* GetVarDeclareStar() const;
+	const char* GetId() const;
+	const char* GetExtendsId() const;
 
 private:
 	const char* const id;
@@ -175,7 +187,9 @@ class CVarDeclareStar : public IVarDeclareStar {
 public:
 	CVarDeclareStar( const IVarDeclareStar*, const IVarDeclare* );
 	int Accept(IVisitor *v) const;
-	
+	const IVarDeclareStar* GetVarDeclareStar() const;
+	const IVarDeclare* GetVarDeclare() const;
+
 private:
 	const IVarDeclareStar* const varDeclareStar;
 	const IVarDeclare* const varDeclare;
@@ -185,6 +199,8 @@ class CVarDeclare : public IVarDeclare {
 public:
 	CVarDeclare( const TDataTypes, const char* );
 	int Accept(IVisitor *v) const;
+	const TDataTypes GetDataType() const;
+	const char* GetId() const;
 
 private:
 	const TDataTypes dataType;
@@ -195,6 +211,8 @@ class CMethodDeclareStar : public IMethodDeclareStar {
 public:
 	CMethodDeclareStar( const IMethodDeclareStar*, const IMethodDeclare* );
 	int Accept(IVisitor *v) const;
+	const IMethodDeclareStar* GetMethodDeclareStar() const ;
+	const IMethodDeclare* GetMethodDeclare() const;
 
 private:
 	const IMethodDeclareStar* const methodDeclareStar;
@@ -206,6 +224,12 @@ public:
 	CMethodDeclare( const TDataTypes, const char*, const IFormalList*, const IVarDeclareStar*, 
 		const IStatementStar*, const IExpression* );
 	int Accept(IVisitor *v) const;
+	const TDataTypes GetDataType() const;
+	const char* GetId() const;
+	const IFormalList*  GetFormalList() const;
+	const IVarDeclareStar* GetVarDeclareStar() const;
+	const IStatementStar* GetStatementStar() const;
+	const IExpression* GetExpression() const;
 
 private:
 	const TDataTypes dataType;
@@ -220,6 +244,9 @@ class CFormalList : public IFormalList {
 public:
 	CFormalList( const TDataTypes, const char*, const IFormalRestStar* );
 	int Accept(IVisitor *v) const;
+	const TDataTypes GetDataType() const;
+	const char* GetId() const;
+	const IFormalRestStar* GetFormalRestStar() const;
 
 private:
 	const TDataTypes dataType;
@@ -231,6 +258,9 @@ class CFormalRestStar : public IFormalRestStar {
 public:
 	CFormalRestStar( const TDataTypes, const char*, const IFormalRestStar* );
 	int Accept(IVisitor *v) const;
+	const TDataTypes GetDataType() const;
+	const char* GetId() const;
+	const IFormalRestStar* GetFormalRestStar() const;
 
 private:
 	const TDataTypes dataType;
@@ -242,6 +272,8 @@ class CStatementStar : public IStatementStar {
 public:
 	CStatementStar(const IStatement*, const IStatementStar* );
 	int Accept(IVisitor *v) const;
+	const IStatementStar* GetStatementStar() const;
+	const IStatement* GetStatement() const;
 
 private:
 	const IStatementStar* const statementStar;
@@ -252,6 +284,7 @@ class CStatement : public IStatement {
 public:
 	CStatement( const IStatementStar* );
 	int Accept(IVisitor *v) const;
+	const IStatementStar* GetStatementStar() const;
 
 private:
 	const IStatementStar* const statementStar;
@@ -261,6 +294,9 @@ class CStatementIf : public IStatement {
 public:
 	CStatementIf( const IExpression*, const IStatement*, const IStatement* );
 	int Accept(IVisitor *v) const;
+	const IExpression* GetExpression() const;
+	const IStatement* GetStatementIf() const;
+	const IStatement* GetStatementElse() const;
 
 private:
 	const IExpression* const expression;
@@ -272,6 +308,8 @@ class CStatementWhile : public IStatement {
 public:
 	CStatementWhile( const IExpression*, const IStatement* );
 	int Accept(IVisitor *v) const;
+	const IExpression* GetExpression() const;
+	const IStatement* GetStatement() const;
 
 private:
 	const IExpression* const expression;
@@ -282,6 +320,7 @@ class CStatementSysOut : public IStatement {
 public:
 	CStatementSysOut( const IExpression* );
 	int Accept(IVisitor *v) const;
+	const IExpression* GetExpression() const;
 
 private:
 	const IExpression* const expression;
@@ -291,6 +330,8 @@ class CStatementAssignment : public IStatement {
 public:
 	CStatementAssignment( const char*, const IExpression* );
 	int Accept(IVisitor *v) const;
+	const char* GetId() const;
+	const IExpression* GetExpression() const;
 
 private:
 	const char* const id;
@@ -301,6 +342,9 @@ class CStatementArrayAssignment : public IStatement {
 public:
 	CStatementArrayAssignment( const char*, const IExpression*, const IExpression* );
 	int Accept(IVisitor *v) const;
+	const char* GetId() const;
+	const IExpression* GetExpressionArray() const;
+	const IExpression* GetExpression() const;
 
 private:
 	const char* const id;
@@ -312,6 +356,9 @@ class CExpressionBinOp : public IExpression {
 public:
 	CExpressionBinOp( const IExpression*, const TBinaryOperation, const IExpression* );
 	int Accept(IVisitor *v) const;
+	const IExpression* GetExpressionFirst() const;
+	const TBinaryOperation GetOperation() const;
+	const IExpression* GetExpressionSecond() const;
 
 private:
 	const IExpression* const expressionFirst;
@@ -323,6 +370,8 @@ class CExpressionArray : public IExpression {
 public:
 	CExpressionArray( const IExpression*, const IExpression*);
 	int Accept(IVisitor *v) const;
+	const IExpression* GetExpression1() const;
+	const IExpression* GetExpression2() const;
 
 private:
 	const IExpression* const expression1;
@@ -333,6 +382,7 @@ class CExpressionLength : public IExpression {
 public:
 	CExpressionLength( const IExpression* );
 	int Accept(IVisitor *v) const;
+	const IExpression* GetExpression() const;
 
 private:
 	const IExpression* const expression;
@@ -342,6 +392,9 @@ class CExpressionCallMethod : public IExpression {
 public:
 	CExpressionCallMethod( const IExpression*, const char*, const IExpList* );
 	int Accept(IVisitor *v) const;
+	const IExpression* GetExpression() const;
+	const char* const GetId() const;
+	const IExpList* const GetExpList() const;
 
 private:
 	const IExpression* const expression;
@@ -353,6 +406,7 @@ class CExpressionNumber : public IExpression {
 public:
 	CExpressionNumber( const int );
 	int Accept(IVisitor *v) const;
+	const int GetNumber() const;
 
 private:
 	const int number;
@@ -362,6 +416,7 @@ class CExpressionBool : public IExpression {
 public:
 	CExpressionBool( const bool );
 	int Accept(IVisitor *v) const;
+	const bool GetValue() const;
 
 private:
 	const bool value;
@@ -371,6 +426,7 @@ class CExpressionVar : public IExpression {
 public:
 	CExpressionVar( const char* );
 	int Accept(IVisitor *v) const;
+	const char* GetId() const;
 
 private:
 	const char* const id;
@@ -388,6 +444,7 @@ class CExpressionNewInt : public IExpression {
 public:
 	CExpressionNewInt( const IExpression* );
 	int Accept(IVisitor *v) const;
+	const IExpression* GetExpression() const;
 
 private:
 	const IExpression* const expression;
@@ -397,6 +454,7 @@ class CExpressionNewId : public IExpression {
 public:
 	CExpressionNewId( const char* );
 	int Accept(IVisitor *v) const;
+	const char* GetId() const;
 
 private:
 	const char* const id;
@@ -406,6 +464,7 @@ class CExpressionNegation : public IExpression {
 public:
 	CExpressionNegation( const IExpression* );
 	int Accept(IVisitor *v) const;
+	const IExpression* GetExpression() const;
 
 private:
 	const IExpression* const expression;
@@ -415,6 +474,7 @@ class CExpression : public IExpression {
 public:
 	CExpression( const IExpression* );
 	int Accept(IVisitor *v) const;
+	const IExpression* GetExpression() const;
 
 private:
 	const IExpression* const expression;
@@ -424,6 +484,7 @@ class CExpList : public IExpList {
 public:
 	CExpList( const IExpression* );
 	int Accept(IVisitor *v) const;
+	const IExpression* GetExpression() const;
 
 private:
 	const IExpression* const expression;
@@ -433,6 +494,8 @@ class CExpListNext : public IExpList {
 public:
 	CExpListNext( const IExpList*, const IExpression* );
 	int Accept(IVisitor *v) const;
+	const IExpression* GetExpression() const;
+	const IExpList* GetExpList() const;
 
 private:
 	const IExpression* const expression;
