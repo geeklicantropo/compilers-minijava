@@ -5,7 +5,7 @@
 int CInterpreter::Visit( const CProgram* n )
 {
 	n->GetMainClass()->Accept( this );
-	n->GetClassDeclareStar()->Accept( this );
+	if ( n->GetClassDeclareStar() != NULL ) n->GetClassDeclareStar()->Accept( this );
 	return 0;
 }
 
@@ -18,15 +18,15 @@ int CInterpreter::Visit( const CMainClass* n )
 }
 
 int CInterpreter::Visit( const CClassDeclareStar* n )  {
-	n->GetClassDeclareStar()->Accept( this );
+	if ( n->GetClassDeclareStar() != NULL ) n->GetClassDeclareStar()->Accept( this );
 	n->GetClassDeclare()->Accept( this );
 	return 0; 
 }
 
 int CInterpreter::Visit( const CClassDeclare* n )  { 
 	std::cout << "class" << " " << n->GetId() << std::endl << "{" << std::endl << "\t";
-	n->GetVarDeclareStar()->Accept( this );
-	n->GetmethodDeclareStar()->Accept( this );
+	if ( n->GetVarDeclareStar() != NULL ) n->GetVarDeclareStar()->Accept( this );
+	if ( n->GetmethodDeclareStar() != NULL ) n->GetmethodDeclareStar()->Accept( this );
 	std::cout << std::endl << "}";
 	return 0; 
 }
@@ -56,10 +56,10 @@ int CInterpreter::Visit( const CVarDeclare* n )
 int CInterpreter::Visit( const CMethodDeclare* n )  
 { 
 	std::cout << "public" << n->GetDataType() << " " << n->GetId() << "(";
-	n->GetFormalList()->Accept( this );
+	if (n->GetFormalList() != NULL) n->GetFormalList()->Accept( this );
 	std::cout << ")" << std::endl << "{" << std::endl << "\t";
-	n->GetVarDeclareStar()->Accept( this );
-	n->GetStatementStar()->Accept( this );
+	if (n->GetVarDeclareStar() != NULL) n->GetVarDeclareStar()->Accept( this );
+	if (n->GetStatementStar() != NULL) n->GetStatementStar()->Accept( this );
 	std::cout << "return";
 	n->GetExpression()->Accept( this );
 	std::cout << ";" << std::endl << "}";
@@ -68,7 +68,7 @@ int CInterpreter::Visit( const CMethodDeclare* n )
 
 int CInterpreter::Visit( const CMethodDeclareStar* n ) 
 {
-	n->GetMethodDeclareStar()->Accept( this );
+	if (n->GetMethodDeclareStar() != NULL) n->GetMethodDeclareStar()->Accept( this );
 	n->GetMethodDeclare()->Accept( this );
 	return 0; 
 }
@@ -76,27 +76,27 @@ int CInterpreter::Visit( const CMethodDeclareStar* n )
 int CInterpreter::Visit( const CFormalList* n )  
 {
 	std::cout << n->GetDataType() << " " << n->GetId() << " ";
-	n->GetFormalRestStar()->Accept( this );
+	if (n->GetFormalRestStar() != NULL) n->GetFormalRestStar()->Accept( this );
 	return 0; 
 }
 
 int CInterpreter::Visit( const CFormalRestStar* n )  { 
 	std::cout << ", " << n->GetDataType() << " " << n->GetId() << " ";
-	n->GetFormalRestStar()->Accept( this );
+	if (n->GetFormalRestStar() != NULL) n->GetFormalRestStar()->Accept( this );
 	return 0; 
 }
 
 int CInterpreter::Visit( const CStatement* n )  
 { 
 	std::cout << "{ ";
-	n->GetStatementStar()->Accept( this );
+	if (n->GetStatementStar() != NULL) n->GetStatementStar()->Accept( this );
 	std::cout << " }";
 	return 0; 
 }
 
 int CInterpreter::Visit( const CStatementStar* n )  { 
 	n->GetStatement()->Accept( this );
-	n->GetStatementStar()->Accept( this );
+	if (n->GetStatementStar() != NULL) n->GetStatementStar()->Accept( this );
 	return 0; 
 }
 
