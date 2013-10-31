@@ -11,7 +11,6 @@ enum TBinaryOperation {
 	AND, LESS, PLUS,  MINUS, TIMES
 };
 
-
 struct CValue {
 	TDataTypes Type;
 	int Int;
