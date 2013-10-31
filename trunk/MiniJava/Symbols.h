@@ -17,7 +17,11 @@ namespace Symbols {
 		CSymbolStorage();
 		const CSymbol* CSymbolGet( string );
 	private:
-		map<string, CSymbol*> storage;
+		struct comparer {
+		public:
+			bool operator() ( const string&, const string& );
+		};
+		map<string, CSymbol*, comparer> storage;
 	};
 
 };
