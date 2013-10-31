@@ -5,10 +5,10 @@ using namespace std;
 
 class CSymbol {
 public:
-	CSymbol(string);
 	string getString();
 	static const CSymbol* CSymbolGet( string );
 private:
+	CSymbol(string);
 	string s;
 	static struct comparer {
 	public:
