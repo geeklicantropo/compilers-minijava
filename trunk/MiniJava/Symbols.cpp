@@ -1,6 +1,6 @@
 #include "Symbols.h"
 
-using namespace Symbols;
+map<string, CSymbol*, CSymbol::comparer> CSymbol::storage;
 
 CSymbol::CSymbol( string _s ) :
 	s( _s ) {}
@@ -10,16 +10,13 @@ string CSymbol::getString()
 	return s;
 }
 
-CSymbolStorage::CSymbolStorage()
-{
-}
 
-bool CSymbolStorage::comparer::operator() (const string& first, const string& second)
+bool CSymbol::comparer::operator() (const string& first, const string& second)
 {
 	return first.compare( second ) == 0;
 }
 
-const CSymbol* CSymbolStorage::CSymbolGet( string s )
+const CSymbol* CSymbol::CSymbolGet( string s )
 {
 	if( storage.find( s ) != storage.end() )
 		return storage.find( s )->second;

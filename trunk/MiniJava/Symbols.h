@@ -2,26 +2,17 @@
 #include <string.h>
 using namespace std;
 
-namespace Symbols {
 
-	class CSymbol {
+class CSymbol {
+public:
+	CSymbol(string);
+	string getString();
+	static const CSymbol* CSymbolGet( string );
+private:
+	string s;
+	static struct comparer {
 	public:
-		CSymbol(string);
-		string getString(); 
-	private:
-		string s;
+		bool operator() ( const string&, const string& );
 	};
-
-	class CSymbolStorage {
-	public:
-		CSymbolStorage();
-		const CSymbol* CSymbolGet( string );
-	private:
-		struct comparer {
-		public:
-			bool operator() ( const string&, const string& );
-		};
-		map<string, CSymbol*, comparer> storage;
-	};
-
+	static map<string, CSymbol*, comparer> storage;
 };

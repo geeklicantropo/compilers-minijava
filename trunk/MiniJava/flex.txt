@@ -4,6 +4,7 @@
 #include <string.h>
 #include "miniJava.h"
 #include "bison.hpp"
+
 #pragma warning(disable:4273)
 #pragma warning(disable:4996)
 #define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno;
