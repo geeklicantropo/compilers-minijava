@@ -6,6 +6,11 @@ class Factorial{
 
 class Nactorial{
     public int M() {
-     return 1;
+    	int c;
+     	if (b < 0)
+     		c = 1;
+     	else
+     		c = 0;
+ 		return c;
     }
 }
