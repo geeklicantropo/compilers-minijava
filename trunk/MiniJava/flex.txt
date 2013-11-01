@@ -37,7 +37,7 @@
 }
 
 [0-9]+ {
-	yylval.Int = atoi(yytext);
+	yylval.Name = CSymbol::CSymbolGet( string(yytext, yyleng) );
 	return NUMBER;
 }
 
@@ -61,7 +61,7 @@
 "return" {return RETURN;}
 
 (_)?[a-zA-Z][a-zA-Z_0-9]* {
-	strcpy(yylval.Val, yytext);
+	yylval.Name = CSymbol::CSymbolGet( string(yytext, yyleng) );
 	return ID;
 }
 

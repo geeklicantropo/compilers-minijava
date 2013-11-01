@@ -2,6 +2,7 @@
 #include <assert.h>
 #include "Visitor.h"
 #include "Interpreter.h"
+#include "Symbols.h"
 
 enum TDataTypes {
 	INT, BOOLEAN, INTARRAY
@@ -127,15 +128,15 @@ private:
 
 class CMainClass : public IMainClass {
 public:
-	CMainClass( const char*, const char*, const IStatement* );
+	CMainClass( const CSymbol*, const CSymbol*, const IStatement* );
 	int Accept(IVisitor *v) const;
 	const IStatement* GetStatement() const;
-	const char* GetId() const;
-	const char* GetArgsId() const;
+	const CSymbol* GetId() const;
+	const CSymbol* GetArgsId() const;
 		
 private:
-	const char* const id;
-	const char* const argsId;
+	const CSymbol* id;
+	const CSymbol* argsId;
 	const IStatement* const stm;
 };
 
@@ -153,31 +154,31 @@ private:
 
 class CClassDeclare : public IClassDeclare {
 public:
-	CClassDeclare( const char*, const IVarDeclareStar*, const IMethodDeclareStar* );
+	CClassDeclare( const CSymbol*, const IVarDeclareStar*, const IMethodDeclareStar* );
 	int Accept(IVisitor *v) const;
 	const IVarDeclareStar* GetVarDeclareStar() const;
 	const IMethodDeclareStar* GetmethodDeclareStar() const;
-	const char* GetId() const;
+	const CSymbol* GetId() const;
 
 private:
-	const char* const id;
+	const CSymbol* id;
 	const IVarDeclareStar* const varDeclareStar;
 	const IMethodDeclareStar* const methodDeclareStar;
 };
 
 class CClassDeclareExtends : public IClassDeclare {
 public:
-	CClassDeclareExtends( const char*, const char*, const IVarDeclareStar*, 
+	CClassDeclareExtends( const CSymbol*, const CSymbol*, const IVarDeclareStar*, 
 		const IMethodDeclareStar* );
 	int Accept(IVisitor *v) const;
 	const IMethodDeclareStar* GetMethodDeclareStar() const;
 	const IVarDeclareStar* GetVarDeclareStar() const;
-	const char* GetId() const;
-	const char* GetExtendsId() const;
+	const CSymbol* GetId() const;
+	const CSymbol* GetExtendsId() const;
 
 private:
-	const char* const id;
-	const char* const extendsId;
+	const CSymbol* id;
+	const CSymbol* extendsId;
 	const IVarDeclareStar* const varDeclareStar;
 	const IMethodDeclareStar* const methodDeclareStar;
 };
@@ -196,14 +197,14 @@ private:
 
 class CVarDeclare : public IVarDeclare {
 public:
-	CVarDeclare( const TDataTypes, const char* );
+	CVarDeclare( const TDataTypes, const CSymbol* );
 	int Accept(IVisitor *v) const;
 	const TDataTypes GetDataType() const;
-	const char* GetId() const;
+	const CSymbol* GetId() const;
 
 private:
 	const TDataTypes dataType;
-	const char* const id;
+	const CSymbol* id;
 };
 
 class CMethodDeclareStar : public IMethodDeclareStar {
@@ -220,11 +221,11 @@ private:
 
 class CMethodDeclare : public IMethodDeclare {
 public:
-	CMethodDeclare( const TDataTypes, const char*, const IFormalList*, const IVarDeclareStar*, 
+	CMethodDeclare( const TDataTypes, const CSymbol*, const IFormalList*, const IVarDeclareStar*, 
 		const IStatementStar*, const IExpression* );
 	int Accept(IVisitor *v) const;
 	const TDataTypes GetDataType() const;
-	const char* GetId() const;
+	const CSymbol* GetId() const;
 	const IFormalList*  GetFormalList() const;
 	const IVarDeclareStar* GetVarDeclareStar() const;
 	const IStatementStar* GetStatementStar() const;
@@ -232,7 +233,7 @@ public:
 
 private:
 	const TDataTypes dataType;
-	const char* const id;
+	const CSymbol* id;
 	const IFormalList* const formalList;
 	const IVarDeclareStar* const varDeclareStar;
 	const IStatementStar* const statementStar;
@@ -241,29 +242,29 @@ private:
 
 class CFormalList : public IFormalList {
 public:
-	CFormalList( const TDataTypes, const char*, const IFormalRestStar* );
+	CFormalList( const TDataTypes, const CSymbol*, const IFormalRestStar* );
 	int Accept(IVisitor *v) const;
 	const TDataTypes GetDataType() const;
-	const char* GetId() const;
+	const CSymbol* GetId() const;
 	const IFormalRestStar* GetFormalRestStar() const;
 
 private:
 	const TDataTypes dataType;
-	const char* const id;
+	const CSymbol* id;
 	const IFormalRestStar* const formalRestStar;
 };
 
 class CFormalRestStar : public IFormalRestStar {
 public:
-	CFormalRestStar( const TDataTypes, const char*, const IFormalRestStar* );
+	CFormalRestStar( const TDataTypes, const CSymbol*, const IFormalRestStar* );
 	int Accept(IVisitor *v) const;
 	const TDataTypes GetDataType() const;
-	const char* GetId() const;
+	const CSymbol* GetId() const;
 	const IFormalRestStar* GetFormalRestStar() const;
 
 private:
 	const TDataTypes dataType;
-	const char* const id;
+	const CSymbol* id;
 	const IFormalRestStar* const formalRestStar;
 };
 
@@ -327,26 +328,26 @@ private:
 
 class CStatementAssignment : public IStatement {
 public:
-	CStatementAssignment( const char*, const IExpression* );
+	CStatementAssignment( const CSymbol*, const IExpression* );
 	int Accept(IVisitor *v) const;
-	const char* GetId() const;
+	const CSymbol* GetId() const;
 	const IExpression* GetExpression() const;
 
 private:
-	const char* const id;
+	const CSymbol* id;
 	const IExpression* const expression;
 };
 
 class CStatementArrayAssignment : public IStatement {
 public:
-	CStatementArrayAssignment( const char*, const IExpression*, const IExpression* );
+	CStatementArrayAssignment( const CSymbol*, const IExpression*, const IExpression* );
 	int Accept(IVisitor *v) const;
-	const char* GetId() const;
+	const CSymbol* GetId() const;
 	const IExpression* GetExpressionArray() const;
 	const IExpression* GetExpression() const;
 
 private:
-	const char* const id;
+	const CSymbol* id;
 	const IExpression* const expressionArray;
 	const IExpression* const expression;
 };
@@ -389,26 +390,26 @@ private:
 
 class CExpressionCallMethod : public IExpression {
 public:
-	CExpressionCallMethod( const IExpression*, const char*, const IExpList* );
+	CExpressionCallMethod( const IExpression*, const CSymbol*, const IExpList* );
 	int Accept(IVisitor *v) const;
 	const IExpression* GetExpression() const;
-	const char* const GetId() const;
+	const CSymbol* const GetId() const;
 	const IExpList* const GetExpList() const;
 
 private:
 	const IExpression* const expression;
-	const char* const id;
+	const CSymbol* id;
 	const IExpList* const expList;
 };
 
 class CExpressionNumber : public IExpression {
 public:
-	CExpressionNumber( const int );
+	CExpressionNumber( const CSymbol* );
 	int Accept(IVisitor *v) const;
-	const int GetNumber() const;
+	const CSymbol* GetNumber() const;
 
 private:
-	const int number;
+	const CSymbol* number;
 };
 
 class CExpressionBool : public IExpression {
@@ -423,12 +424,12 @@ private:
 
 class CExpressionVar : public IExpression {
 public:
-	CExpressionVar( const char* );
+	CExpressionVar( const CSymbol* );
 	int Accept(IVisitor *v) const;
-	const char* GetId() const;
+	const CSymbol* GetId() const;
 
 private:
-	const char* const id;
+	const CSymbol* id;
 };
 
 class CExpressionThis : public IExpression {
@@ -451,12 +452,12 @@ private:
 
 class CExpressionNewId : public IExpression {
 public:
-	CExpressionNewId( const char* );
+	CExpressionNewId( const CSymbol* );
 	int Accept(IVisitor *v) const;
-	const char* GetId() const;
+	const CSymbol* GetId() const;
 
 private:
-	const char* const id;
+	const CSymbol* id;
 };
 
 class CExpressionNegation : public IExpression {

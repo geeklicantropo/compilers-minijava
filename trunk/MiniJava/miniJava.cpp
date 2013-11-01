@@ -1,6 +1,9 @@
 #include <cstdio>
 #include "miniJava.h"
 #include "Visitor.h"
+#include "iostream"
+
+using namespace std;
 
 CProgram::CProgram( const IMainClass* _mainClass, const IClassDeclareStar* _classDeclareStar ) :
 	mainClass( _mainClass), classDeclareStar( _classDeclareStar )
@@ -18,19 +21,19 @@ const IClassDeclareStar* CProgram::GetClassDeclareStar() const
 	return classDeclareStar;
 }
 
-CMainClass::CMainClass( const char* _id, const char* _argsId, const IStatement* _stm ) :
+CMainClass::CMainClass( const CSymbol* _id, const CSymbol* _argsId, const IStatement* _stm ) :
 	id( _id ), argsId( _argsId ), stm( _stm )
 	{
 		assert( id != 0 );
 		assert( argsId != 0 );
 		assert( stm != 0 );
 	}
-const char* CMainClass::GetId() const
+const CSymbol* CMainClass::GetId() const
 {
 	return id;
 }
 
-const char* CMainClass::GetArgsId() const
+const CSymbol* CMainClass::GetArgsId() const
 {
 	return argsId;
 }
@@ -56,13 +59,13 @@ const IClassDeclare* CClassDeclareStar::GetClassDeclare() const
 	return classDeclare;
 }
 
-CClassDeclare::CClassDeclare( const char* _id, const IVarDeclareStar* _varDeclareStar, const IMethodDeclareStar* _methodDeclareStar) :
+CClassDeclare::CClassDeclare( const CSymbol* _id, const IVarDeclareStar* _varDeclareStar, const IMethodDeclareStar* _methodDeclareStar) :
 	id( _id ), varDeclareStar( _varDeclareStar), methodDeclareStar( _methodDeclareStar )
 	{
 		assert( id != 0 );
 	}
 
-const char* CClassDeclare::GetId() const
+const CSymbol* CClassDeclare::GetId() const
 {
 	return id;
 }
@@ -77,7 +80,7 @@ const IMethodDeclareStar* CClassDeclare::GetmethodDeclareStar() const
 	return methodDeclareStar;
 }
 
-CClassDeclareExtends::CClassDeclareExtends( const char* _id, const char* _extendsId, const IVarDeclareStar* _varDeclareStar, 
+CClassDeclareExtends::CClassDeclareExtends( const CSymbol* _id, const CSymbol* _extendsId, const IVarDeclareStar* _varDeclareStar, 
 		const IMethodDeclareStar* _methodDeclareStar) :
 	id( _id ), extendsId( _extendsId ), varDeclareStar( _varDeclareStar), methodDeclareStar( _methodDeclareStar )
 	{
@@ -85,12 +88,12 @@ CClassDeclareExtends::CClassDeclareExtends( const char* _id, const char* _extend
 		assert( extendsId != 0 );
 	}
 
-const char* CClassDeclareExtends::GetId() const 
+const CSymbol* CClassDeclareExtends::GetId() const 
 {
 	return id;
 }
 
-const char* CClassDeclareExtends::GetExtendsId() const
+const CSymbol* CClassDeclareExtends::GetExtendsId() const
 {
 	return extendsId;
 }
@@ -121,7 +124,7 @@ const IVarDeclare* CVarDeclareStar::GetVarDeclare() const
 	return varDeclare;
 }
 
-CVarDeclare::CVarDeclare( const TDataTypes _dataType, const char* _id ) :
+CVarDeclare::CVarDeclare( const TDataTypes _dataType, const CSymbol* _id ) :
 		dataType (_dataType ), id( _id )
 	{
 		assert( id != 0 );
@@ -132,7 +135,7 @@ const TDataTypes CVarDeclare::GetDataType() const
 	return dataType;
 }
 
-const char* CVarDeclare::GetId() const
+const CSymbol* CVarDeclare::GetId() const
 {
 	return id;
 }
@@ -153,7 +156,7 @@ const IMethodDeclare* CMethodDeclareStar::GetMethodDeclare() const
 	return methodDeclare;
 }
 
-CMethodDeclare::CMethodDeclare( const TDataTypes _dataType, const char* _id, const IFormalList* _formalList, const IVarDeclareStar* varDecStar, 
+CMethodDeclare::CMethodDeclare( const TDataTypes _dataType, const CSymbol* _id, const IFormalList* _formalList, const IVarDeclareStar* varDecStar, 
 		const IStatementStar* _statementStar, const IExpression* _expression ) :
 	dataType( _dataType ), id( _id ), formalList( _formalList ), varDeclareStar( varDecStar ), statementStar( _statementStar ),
 	expression( _expression )
@@ -166,7 +169,7 @@ const TDataTypes CMethodDeclare::GetDataType() const
 {
 	return dataType;	
 }
-const char* CMethodDeclare::GetId() const
+const CSymbol* CMethodDeclare::GetId() const
 {
 	return id;
 }
@@ -187,7 +190,7 @@ const IExpression* CMethodDeclare::GetExpression() const
 	return expression;
 }
 
-CFormalList::CFormalList( const TDataTypes _dataType, const char* _id, const IFormalRestStar* _formalRestStar ) :
+CFormalList::CFormalList( const TDataTypes _dataType, const CSymbol* _id, const IFormalRestStar* _formalRestStar ) :
 	dataType( _dataType ), id( _id ), formalRestStar( _formalRestStar )
 	{
 		assert( id != 0 );
@@ -198,7 +201,7 @@ const TDataTypes CFormalList::GetDataType() const
 	return dataType;
 }
 
-const char* CFormalList::GetId() const
+const CSymbol* CFormalList::GetId() const
 {
 	return id;
 }
@@ -208,7 +211,7 @@ const IFormalRestStar* CFormalList::GetFormalRestStar() const
 	return formalRestStar;
 }
 
-CFormalRestStar::CFormalRestStar( const TDataTypes _dataType, const char* _id, const IFormalRestStar* _formalRestStar ) :
+CFormalRestStar::CFormalRestStar( const TDataTypes _dataType, const CSymbol* _id, const IFormalRestStar* _formalRestStar ) :
 	dataType( _dataType ), id( _id ), formalRestStar( _formalRestStar )
 	{
 		
@@ -220,7 +223,7 @@ const TDataTypes CFormalRestStar::GetDataType() const
 	return dataType;
 }
 
-const char* CFormalRestStar::GetId() const
+const CSymbol* CFormalRestStar::GetId() const
 {
 	return id;
 }
@@ -304,14 +307,14 @@ const IExpression* CStatementSysOut::GetExpression() const
 	return expression;
 }
 
-CStatementAssignment::CStatementAssignment( const char* _id, const IExpression* _expression ) :
+CStatementAssignment::CStatementAssignment( const CSymbol* _id, const IExpression* _expression ) :
 	id( _id ), expression( _expression )
 	{
 		assert( id != 0 );
 		assert( expression != 0 );
 	}
 
-const char* CStatementAssignment::GetId() const
+const CSymbol* CStatementAssignment::GetId() const
 {
 	return id;
 }
@@ -321,7 +324,7 @@ const IExpression* CStatementAssignment::GetExpression() const
 	return expression;
 }
 
-CStatementArrayAssignment::CStatementArrayAssignment( const char* _id, const IExpression* _expressionArray, const IExpression* _expression ) :
+CStatementArrayAssignment::CStatementArrayAssignment( const CSymbol* _id, const IExpression* _expressionArray, const IExpression* _expression ) :
 	id( _id ), expressionArray( _expressionArray ), expression( _expression )
 	{
 		assert( id != 0 );
@@ -329,7 +332,7 @@ CStatementArrayAssignment::CStatementArrayAssignment( const char* _id, const IEx
 		assert( expression != 0 );
 	}
 
-const char* CStatementArrayAssignment::GetId() const
+const CSymbol* CStatementArrayAssignment::GetId() const
 {
 	return id;
 }
@@ -395,7 +398,7 @@ const IExpression* CExpressionLength::GetExpression() const
 	return expression;	
 }
 
-CExpressionCallMethod::CExpressionCallMethod( const IExpression* _expression, const char* _id, const IExpList* _expList ) :
+CExpressionCallMethod::CExpressionCallMethod( const IExpression* _expression, const CSymbol* _id, const IExpList* _expList ) :
 	expression( _expression ), id( _id ), expList( _expList )
 	{
 		assert( expression != 0 );
@@ -407,7 +410,7 @@ const IExpression* CExpressionCallMethod::GetExpression() const
 	return expression;
 }
 
-const char* const CExpressionCallMethod::GetId() const
+const CSymbol* const CExpressionCallMethod::GetId() const
 {
 	return id;
 }
@@ -417,9 +420,9 @@ const IExpList* const CExpressionCallMethod::GetExpList() const
 	return expList;
 }
 
-CExpressionNumber::CExpressionNumber( const int _number ) : number( _number ) {}
+CExpressionNumber::CExpressionNumber( const CSymbol* _number ) : number( _number ) {}
 
-const int CExpressionNumber::GetNumber() const
+const CSymbol* CExpressionNumber::GetNumber() const
 {
 	return number;
 }
@@ -431,12 +434,12 @@ const bool CExpressionBool::GetValue() const
 	return value;
 }
 
-CExpressionVar::CExpressionVar( const char* _id ) : id( _id )
+CExpressionVar::CExpressionVar( const CSymbol* _id ) : id( _id )
 	{
 		assert( id != 0 );
 	}
 
-const char* CExpressionVar::GetId() const
+const CSymbol* CExpressionVar::GetId() const
 {
 	return id;
 }
@@ -451,9 +454,9 @@ const IExpression* CExpressionNewInt::GetExpression() const
 	return expression;
 }
 
-CExpressionNewId::CExpressionNewId( const char* _id ) : id( _id ) {}
+CExpressionNewId::CExpressionNewId( const CSymbol* _id ) : id( _id ) {}
 
-const char* CExpressionNewId::GetId() const
+const CSymbol* CExpressionNewId::GetId() const
 {
 	return id;
 }

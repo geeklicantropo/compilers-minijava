@@ -1,3 +1,4 @@
+#pragma once
 #include <map>
 #include <string.h>
 using namespace std;
@@ -5,10 +6,10 @@ using namespace std;
 
 class CSymbol {
 public:
-	string getString();
+	string getString() const;
 	static const CSymbol* CSymbolGet( string );
 private:
-	CSymbol(string);
+	CSymbol( string );
 	string s;
 	static struct comparer {
 	public:
