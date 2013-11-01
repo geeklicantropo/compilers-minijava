@@ -1,8 +1,13 @@
 %{
 #include <stdio.h>
 #include <string.h>
-#include <miniJava.h>
+#include "miniJava.h"
+%}
+%code requires{
+#include "Symbols.h"
+}
 
+%{
 void yyerror ( const char *s );
 
 int yylex();
@@ -36,9 +41,10 @@ int yywrap()
 	IStatement* Statement;
 	IExpression* Expression;
 	IExpList* ExpList;
+	const CSymbol* Name;
 }
 
-%token <Int> NUMBER
+%token <Name> NUMBER
 %token CLASS
 %token PUBLIC
 %token STATIC
@@ -56,7 +62,7 @@ int yywrap()
 %token <Bool> FALSE
 %token THIS
 %token NEW
-%token <Val> ID
+%token <Name> ID
 %token COMMENT
 %token RETURN
 %token INTEGERLITERAL
