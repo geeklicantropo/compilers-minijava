@@ -1,6 +1,6 @@
 #pragma once
 #include <map>
-#include <string.h>
+#include <string>
 using namespace std;
 
 
@@ -11,9 +11,5 @@ public:
 private:
 	CSymbol( string );
 	string s;
-	static struct comparer {
-	public:
-		bool operator() ( const string&, const string& );
-	};
-	static map<string, CSymbol*, comparer> storage;
+	static map<string, CSymbol*> storage;
 };
