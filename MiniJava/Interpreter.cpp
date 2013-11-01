@@ -34,22 +34,34 @@ int CInterpreter::Visit( const CClassDeclare* n )  {
 int CInterpreter::Visit( const CClassDeclareExtends* n )  
 {
 	std::cout << "class" << " " << n->GetId()->getString().c_str() << "extends" << n->GetExtendsId()->getString() << std::endl << "{" << std::endl << "\t";
-	n->GetVarDeclareStar()->Accept( this );
-	n->GetMethodDeclareStar()->Accept( this );
+	if( n->GetVarDeclareStar() != 0) n->GetVarDeclareStar()->Accept( this );
+	if( n->GetMethodDeclareStar() != 0)  n->GetMethodDeclareStar()->Accept( this );
 	std::cout << std::endl << "}" << std::endl;
 	return 0; 
 }
 
 int CInterpreter::Visit( const CVarDeclareStar* n )  
 {
-	n->GetVarDeclareStar()->Accept( this );
+	if( n->GetVarDeclareStar() != 0 ) n->GetVarDeclareStar()->Accept( this );
 	n->GetVarDeclare()->Accept( this );
 	return 0; 
 }	
 
 int CInterpreter::Visit( const CVarDeclare* n )  
 { 
-	std::cout << n->GetDataType() << " " << n->GetId()->getString() << ";";
+	TDataTypes type = n->GetDataType();
+	switch( type ) {
+		case INT:
+			std::cout << "int ";
+			break;
+		case BOOLEAN:
+			std::cout << "boolean ";
+			break;
+		case INTARRAY:
+			std::cout << "int[] ";
+			break;
+	}
+	std::cout << n->GetId()->getString() << ";" << std::endl;
 	return 0; 
 }
 
@@ -118,9 +130,9 @@ int CInterpreter::Visit( const CStatementIf* n )
 {
 	std::cout << "if( "; 
 	n->GetExpression()->Accept( this );
-	std::cout << " ) ";
+	std::cout << " ) " << std::endl;
 	n->GetStatementIf()->Accept( this );
-	std::cout << "else";
+	std::cout << "else" << std::endl;
 	n->GetStatementElse()->Accept( this );
 	return 0; 
 }
@@ -137,7 +149,7 @@ int CInterpreter::Visit( const CStatementWhile* n )
 int CInterpreter::Visit( const CStatementSysOut* n )  { 
 	std::cout << "System.out.println( ";
 	n->GetExpression()->Accept( this );
-	std::cout << " ); ";
+	std::cout << " ); " << std::endl;
 	return 0; 
 }
 
@@ -145,7 +157,7 @@ int CInterpreter::Visit( const CStatementAssignment* n )
 {
 	std::cout << n->GetId()->getString() << " = ";
 	n->GetExpression()->Accept( this );
-	std::cout << ";";
+	std::cout << ";" << std::endl;
 	return 0; 
 }
 
@@ -156,14 +168,31 @@ int CInterpreter::Visit( const CStatementArrayAssignment* n )
 	n->GetExpressionArray()->Accept( this );
 	std::cout << "] = ";
 	n->GetExpression()->Accept( this );
-	std::cout << ";";
+	std::cout << ";" << std::endl;
 	return 0; 
 }
 
 int CInterpreter::Visit( const CExpressionBinOp* n )
 {
 	n->GetExpressionFirst()->Accept( this );
-	std::cout << n->GetOperation();
+	TBinaryOperation type =  n->GetOperation();
+	switch( type ) {
+		case PLUS:
+			std::cout << " + ";
+			break;
+		case MINUS:
+			std::cout << " - ";
+			break;
+		case TIMES:
+			std::cout << " * ";
+			break;
+		case LESS:
+			std::cout << " < ";
+			break;
+		case AND:
+			std::cout << " & ";
+			break;
+	}
 	n->GetExpressionSecond()->Accept( this );
 	return 0; 
 }

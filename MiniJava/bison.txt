@@ -219,7 +219,7 @@ Statement:
 	| ID '[' Expression ']' '=' Expression ';' {
 		$$ = new CStatementArrayAssignment( $1, $3, $6 );
 	}
-	| error ';' { printf ("statement error in line %d\n", yylloc.first_line); }
+	| error ';' { printf ("statement error in line %d\n", yylloc.first_line); $$ = new CStatement( 0 ); }
 	;
 
 Expression:
