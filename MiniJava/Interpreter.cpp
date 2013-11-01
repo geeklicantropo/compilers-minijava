@@ -11,7 +11,7 @@ int CInterpreter::Visit( const CProgram* n )
 
 int CInterpreter::Visit( const CMainClass* n )  
 { 
-	std::cout << "class " << n->GetId()->getString() << "{" << std::endl << "public static void main( String[] " << n->GetArgsId()->getString() << ")" << std::endl << "{" << std::endl << "\t"; 
+	std::cout << "class " << n->GetId()->getString() << "{" << std::endl << "public static void main( String[] " << n->GetArgsId()->getString() << " )" << std::endl << "{" << std::endl << "\t"; 
 	n->GetStatement()->Accept( this );
 	std::cout << std::endl << "}" << std::endl << "}" << std::endl;
 	return 0; 
