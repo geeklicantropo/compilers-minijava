@@ -1,16 +1,18 @@
 class Factorial{
     public static void main(String[] a){
- System.out.println(10);
+	System.out.println(new Fac().ComputeFac(10));
     }
 }
 
-class Nactorial{
-    public int M() {
-    	int c;
-     	if (b < 0)
-     		c = 1;
-     	else
-     		c = 0;
- 		return c;
+class Fac {
+
+    public int ComputeFac(int num){
+	int num_aux ;
+	if (num < 1)
+	    num_aux = 1 ;
+	else 
+	    num_aux = num * (this.ComputeFac(num-1)) ;
+	return num_aux ;
     }
+
 }

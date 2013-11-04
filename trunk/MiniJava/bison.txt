@@ -25,7 +25,6 @@ int yywrap()
 	char Val[256];
 	int Int;
 	bool Bool;
-	TDataTypes DataTypes;
 	TBinaryOperation BinopType;
 	IMainClass* MainClass;
 	IProgram* Program;
@@ -84,7 +83,7 @@ int yywrap()
 %type <FormalRestStar> FormalRestStar
 %type <StatementStar> StatementStar
 %type <Statement> Statement
-%type <DataTypes> Type
+%type <Name> Type
 %type <Expression> Expression
 %type <ExpList> ExpList
 %type <ExpList> ExpRest
@@ -180,15 +179,17 @@ FormalRestStar:
 
 Type:
 	INT_T '['']' {
-		$$ = INTARRAY;
+		$$ = CSymbol::CSymbolGet( "int[]" );
 	}
 	| BOOL_T {
-		$$ = BOOLEAN;
+		$$ = CSymbol::CSymbolGet( "boolean" );
 	}
 	| INT_T {
-		$$ = INT;
+		$$ = CSymbol::CSymbolGet( "int" );
 	}
-	| ID
+	| ID {
+		$$ = $1;
+	}
 	;
 
 StatementStar:

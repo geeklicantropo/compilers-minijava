@@ -4,30 +4,9 @@
 #include "Interpreter.h"
 #include "Symbols.h"
 
-enum TDataTypes {
-	INT, BOOLEAN, INTARRAY
-};
-
 enum TBinaryOperation {
 	AND, LESS, PLUS,  MINUS, TIMES
 };
-
-struct CValue {
-	TDataTypes Type;
-	int Int;
-	bool Bool;
-	int* IntArrayPointer;
-	CValue( TDataTypes type, int _int, bool _bool, int* intArrayPointer ) : 
-		Type( type ), Int( _int ), Bool( _bool ), IntArrayPointer( intArrayPointer )
-	{
-	}
-};
-
-struct CVariable {
-	char Name[256];
-	CValue Value;
-};
-
 
 class IProgram {
 public:
@@ -197,14 +176,14 @@ private:
 
 class CVarDeclare : public IVarDeclare {
 public:
-	CVarDeclare( const TDataTypes, const CSymbol* );
+	CVarDeclare( const CSymbol* , const CSymbol* );
 	int Accept(IVisitor *v) const;
-	const TDataTypes GetDataType() const;
+	const CSymbol* GetType() const;
 	const CSymbol* GetId() const;
 
 private:
-	const TDataTypes dataType;
 	const CSymbol* id;
+	const CSymbol* typeId;
 };
 
 class CMethodDeclareStar : public IMethodDeclareStar {
@@ -221,10 +200,10 @@ private:
 
 class CMethodDeclare : public IMethodDeclare {
 public:
-	CMethodDeclare( const TDataTypes, const CSymbol*, const IFormalList*, const IVarDeclareStar*, 
+	CMethodDeclare( const CSymbol*, const CSymbol*, const IFormalList*, const IVarDeclareStar*, 
 		const IStatementStar*, const IExpression* );
 	int Accept(IVisitor *v) const;
-	const TDataTypes GetDataType() const;
+	const CSymbol* GetType() const;
 	const CSymbol* GetId() const;
 	const IFormalList*  GetFormalList() const;
 	const IVarDeclareStar* GetVarDeclareStar() const;
@@ -232,7 +211,7 @@ public:
 	const IExpression* GetExpression() const;
 
 private:
-	const TDataTypes dataType;
+	const CSymbol* dataType;
 	const CSymbol* id;
 	const IFormalList* const formalList;
 	const IVarDeclareStar* const varDeclareStar;
@@ -242,28 +221,28 @@ private:
 
 class CFormalList : public IFormalList {
 public:
-	CFormalList( const TDataTypes, const CSymbol*, const IFormalRestStar* );
+	CFormalList( const CSymbol*, const CSymbol*, const IFormalRestStar* );
 	int Accept(IVisitor *v) const;
-	const TDataTypes GetDataType() const;
+	const CSymbol* GetType() const;
 	const CSymbol* GetId() const;
 	const IFormalRestStar* GetFormalRestStar() const;
 
 private:
-	const TDataTypes dataType;
+	const CSymbol* dataType;
 	const CSymbol* id;
 	const IFormalRestStar* const formalRestStar;
 };
 
 class CFormalRestStar : public IFormalRestStar {
 public:
-	CFormalRestStar( const TDataTypes, const CSymbol*, const IFormalRestStar* );
+	CFormalRestStar( const CSymbol*, const CSymbol*, const IFormalRestStar* );
 	int Accept(IVisitor *v) const;
-	const TDataTypes GetDataType() const;
+	const CSymbol* GetType() const;
 	const CSymbol* GetId() const;
 	const IFormalRestStar* GetFormalRestStar() const;
 
 private:
-	const TDataTypes dataType;
+	const CSymbol* dataType;
 	const CSymbol* id;
 	const IFormalRestStar* const formalRestStar;
 };
