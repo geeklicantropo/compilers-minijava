@@ -172,8 +172,8 @@ FormalRestStar:
 	{
 		$$ = NULL;
 	}
-	| ','' ' Type ID FormalRestStar {
-		$$ = new CFormalRestStar( $3, $4, $5 );
+	| ',' Type ID FormalRestStar {
+		$$ = new CFormalRestStar( $2, $3, $4 );
 	}
 	;
 

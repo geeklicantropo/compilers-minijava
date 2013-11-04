@@ -87,7 +87,7 @@ int CInterpreter::Visit( const CFormalList* n )
 
 int CInterpreter::Visit( const CFormalRestStar* n )  
 {
-	std::cout << n->GetType()->getString() << " ";
+	std::cout <<", " << n->GetType()->getString() << " ";
 	std::cout << " " << n->GetId()->getString() << " ";
 	if (n->GetFormalRestStar() != 0) n->GetFormalRestStar()->Accept( this );
 	return 0; 
