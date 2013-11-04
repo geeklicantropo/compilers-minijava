@@ -56,6 +56,7 @@ int CInterpreter::Visit( const CVarDeclare* n )
 
 int CInterpreter::Visit( const CMethodDeclare* n )  
 { 
+	std::cout << "public ";
 	std::cout << n->GetType()->getString() << " ";
 	std::cout << n->GetId()->getString();
 	std::cout << "(";
@@ -65,7 +66,7 @@ int CInterpreter::Visit( const CMethodDeclare* n )
 	if (n->GetStatementStar() != 0) n->GetStatementStar()->Accept( this );
 	std::cout << "return ";
 	n->GetExpression()->Accept( this );
-	std::cout << ";" << std::endl << "}";
+	std::cout << ";" << std::endl << "}" << std::endl;
 	return 0; 
 }
 
@@ -94,9 +95,9 @@ int CInterpreter::Visit( const CFormalRestStar* n )
 
 int CInterpreter::Visit( const CStatement* n )  
 { 
-	std::cout << "{ ";
+	std::cout << "{ " << std::endl;
 	if (n->GetStatementStar() != 0) n->GetStatementStar()->Accept( this );
-	std::cout << std::endl << "}";
+	std::cout << std::endl << "}" << std::endl;
 	return 0; 
 }
 
@@ -110,9 +111,9 @@ int CInterpreter::Visit( const CStatementIf* n )
 {
 	std::cout << "if( "; 
 	n->GetExpression()->Accept( this );
-	std::cout << " ) " << std::endl;
+	std::cout << " ) ";
 	n->GetStatementIf()->Accept( this );
-	std::cout << "else" << std::endl;
+	std::cout << "else ";
 	n->GetStatementElse()->Accept( this );
 	return 0; 
 }
