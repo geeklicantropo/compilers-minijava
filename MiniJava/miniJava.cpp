@@ -124,21 +124,23 @@ const IVarDeclare* CVarDeclareStar::GetVarDeclare() const
 	return varDeclare;
 }
 
-CVarDeclare::CVarDeclare( const TDataTypes _dataType, const CSymbol* _id ) :
-		dataType (_dataType ), id( _id )
+CVarDeclare::CVarDeclare( const CSymbol* _typeId, const CSymbol* _id ) :
+		typeId (_typeId ), id( _id )
 	{
 		assert( id != 0 );
+		assert( typeId != 0 );
 	}
 
-const TDataTypes CVarDeclare::GetDataType() const
+const CSymbol* CVarDeclare::GetType() const
 {
-	return dataType;
+	return typeId;
 }
 
 const CSymbol* CVarDeclare::GetId() const
 {
 	return id;
 }
+
 
 CMethodDeclareStar::CMethodDeclareStar( const IMethodDeclareStar* methodDecStar, const IMethodDeclare* methodDec ) :
 	methodDeclareStar( methodDecStar ), methodDeclare( methodDec )
@@ -156,7 +158,7 @@ const IMethodDeclare* CMethodDeclareStar::GetMethodDeclare() const
 	return methodDeclare;
 }
 
-CMethodDeclare::CMethodDeclare( const TDataTypes _dataType, const CSymbol* _id, const IFormalList* _formalList, const IVarDeclareStar* varDecStar, 
+CMethodDeclare::CMethodDeclare( const CSymbol* _dataType, const CSymbol* _id, const IFormalList* _formalList, const IVarDeclareStar* varDecStar, 
 		const IStatementStar* _statementStar, const IExpression* _expression ) :
 	dataType( _dataType ), id( _id ), formalList( _formalList ), varDeclareStar( varDecStar ), statementStar( _statementStar ),
 	expression( _expression )
@@ -164,8 +166,9 @@ CMethodDeclare::CMethodDeclare( const TDataTypes _dataType, const CSymbol* _id, 
 		//
 		assert( id != 0 );
 		assert( expression != 0 );
+		assert( dataType != 0 );
 	}
-const TDataTypes CMethodDeclare::GetDataType() const
+const CSymbol* CMethodDeclare::GetType() const
 {
 	return dataType;	
 }
@@ -190,13 +193,13 @@ const IExpression* CMethodDeclare::GetExpression() const
 	return expression;
 }
 
-CFormalList::CFormalList( const TDataTypes _dataType, const CSymbol* _id, const IFormalRestStar* _formalRestStar ) :
+CFormalList::CFormalList( const CSymbol* _dataType, const CSymbol* _id, const IFormalRestStar* _formalRestStar ) :
 	dataType( _dataType ), id( _id ), formalRestStar( _formalRestStar )
 	{
 		assert( id != 0 );
 	}
 
-const TDataTypes CFormalList::GetDataType() const
+const CSymbol* CFormalList::GetType() const
 {
 	return dataType;
 }
@@ -211,14 +214,14 @@ const IFormalRestStar* CFormalList::GetFormalRestStar() const
 	return formalRestStar;
 }
 
-CFormalRestStar::CFormalRestStar( const TDataTypes _dataType, const CSymbol* _id, const IFormalRestStar* _formalRestStar ) :
+CFormalRestStar::CFormalRestStar( const CSymbol* _dataType, const CSymbol* _id, const IFormalRestStar* _formalRestStar ) :
 	dataType( _dataType ), id( _id ), formalRestStar( _formalRestStar )
 	{
 		
 		assert( id != 0 );
 	}
 
-const TDataTypes CFormalRestStar::GetDataType() const
+const CSymbol* CFormalRestStar::GetType() const
 {
 	return dataType;
 }
