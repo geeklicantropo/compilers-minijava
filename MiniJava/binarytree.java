@@ -49,7 +49,65 @@ class Tree{
     boolean has_right ;
     Tree my_null ;
 
- public boolean Compare(int num1 , int num2){
+    // Initialize a node with a key value and no children
+    public boolean Init(int v_key){
+	key = v_key ;
+	has_left = false ;
+	has_right = false ;
+	return true ;
+    }
+
+    // Update the right child with rn
+    public boolean SetRight(Tree rn){
+	right = rn ;
+	return true ;
+    }
+    
+    // Update the left child with ln
+    public boolean SetLeft(Tree ln){
+	left = ln ;
+	return true ;
+    }
+
+    public Tree GetRight(){
+	return right ;
+    }
+
+    public Tree GetLeft(){
+	return left;
+    }
+
+    public int GetKey(){
+	return key ;
+    }
+
+    public boolean SetKey(int v_key){
+	key = v_key ;
+	return true ;
+    }
+
+    public boolean GetHas_Right(){
+	return has_right ;
+    }
+
+    public boolean GetHas_Left(){
+	return has_left ;
+    }
+
+    public boolean SetHas_Left(boolean val){
+	 has_left = val ;
+	 return true ;
+    }
+
+    public boolean SetHas_Right(boolean val){
+	 has_right = val ;
+	 return true ;
+    }
+    
+    // This method compares two integers and
+    // returns true if they are equal and false
+    // otherwise
+    public boolean Compare(int num1 , int num2){
 	boolean ntb ;
 	int nti ;
 
