@@ -59,9 +59,9 @@ int CInterpreter::Visit( const CMethodDeclare* n )
 	std::cout << "public ";
 	std::cout << n->GetType()->getString() << " ";
 	std::cout << n->GetId()->getString();
-	std::cout << "(";
+	std::cout << "( " ;
 	if (n->GetFormalList() != 0) n->GetFormalList()->Accept( this );
-	std::cout << ")" << std::endl << "{" << std::endl << "\t";
+	std::cout << " )" << std::endl << "{" << std::endl << "\t";
 	if (n->GetVarDeclareStar() != 0) n->GetVarDeclareStar()->Accept( this );
 	if (n->GetStatementStar() != 0) n->GetStatementStar()->Accept( this );
 	std::cout << "return ";
@@ -80,7 +80,7 @@ int CInterpreter::Visit( const CMethodDeclareStar* n )
 int CInterpreter::Visit( const CFormalList* n )  
 {
 	std::cout << n->GetType()->getString() << " ";
-	std::cout << n->GetId()->getString() << " ";
+	std::cout << n->GetId()->getString();
 	if (n->GetFormalRestStar() != 0) n->GetFormalRestStar()->Accept( this );
 	return 0; 
 }
@@ -88,7 +88,7 @@ int CInterpreter::Visit( const CFormalList* n )
 int CInterpreter::Visit( const CFormalRestStar* n )  
 {
 	std::cout <<", " << n->GetType()->getString() << " ";
-	std::cout << " " << n->GetId()->getString() << " ";
+	std::cout << n->GetId()->getString();
 	if (n->GetFormalRestStar() != 0) n->GetFormalRestStar()->Accept( this );
 	return 0; 
 }
@@ -181,7 +181,7 @@ int CInterpreter::Visit( const CExpressionBinOp* n )
 int CInterpreter::Visit( const CExpressionArray* n )  
 { 
 	n->GetExpression1()->Accept( this );
-	std::cout << "[ ";
+	std::cout << "[";
 	n->GetExpression2()->Accept( this );
 	std::cout << "]";
 	return 0; 
@@ -212,7 +212,10 @@ int CInterpreter::Visit( const CExpressionNumber* n )
 
 int CInterpreter::Visit( const CExpressionBool* n ) 
 {
-	std::cout << n->GetValue();
+	if( n->GetValue() )
+		std::cout << "true";
+	else
+		std::cout << "false";
 	return 0; 
 }
 
@@ -266,8 +269,8 @@ int CInterpreter::Visit( const CExpList* n )
 
 int CInterpreter::Visit( const CExpListNext* n ) 
 {
-	n->GetExpression()->Accept( this );
-	std::cout << ",";
 	n->GetExpList()->Accept( this );
+	std::cout << ", ";
+	n->GetExpression()->Accept( this );
 	return 0; 
 }
