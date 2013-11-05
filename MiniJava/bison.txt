@@ -24,7 +24,6 @@ int yywrap()
 %union{
 	char Val[256];
 	int Int;
-	bool Bool;
 	TBinaryOperation BinopType;
 	IMainClass* MainClass;
 	IProgram* Program;
@@ -240,10 +239,10 @@ Expression:
 		$$ = new CExpressionNumber( $1 );
 	}
 	| TRUE {
-		$$ = new CExpressionBool( $1 );
+		$$ = new CExpressionBool( true );
 	}
 	| FALSE {
-		$$ = new CExpressionBool( $1 );
+		$$ = new CExpressionBool( false );
 	}
 	| ID {
 		$$ = new CExpressionVar( $1 );
