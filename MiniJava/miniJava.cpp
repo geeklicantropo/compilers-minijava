@@ -354,7 +354,7 @@ CExpressionBinOp::CExpressionBinOp( const IExpression* _expressionFirst, const T
 	expressionFirst( _expressionFirst ), operation( _operation ), expressionSecond( _expressionSecond )
 	{
 		assert( expressionFirst != 0 );
-		assert( operation != 0 );
+		assert( operation >= 0 );
 		assert( expressionSecond != 0 );
 	}
 
