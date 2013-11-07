@@ -69,8 +69,8 @@ int yywrap()
 %left '.' '['
 %left <BinopType> BINOP
 %left '!'
-%left '+' '-';
-%left '*' '/';
+%left '+' '-'
+%left '*' '/'
 
 %type <Program> Program
 %type <MainClass> MainClass
@@ -93,7 +93,7 @@ int yywrap()
 Program:
 	MainClass ClassDeclStar {
 		$$ = new CProgram( $1, $2 );
-		$$ -> Accept( new CInterpreter() );
+	//	$$ = progr;
 	}
 	;
 
