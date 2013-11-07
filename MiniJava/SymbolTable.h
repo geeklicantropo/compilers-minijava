@@ -1,28 +1,33 @@
 #include "Symbols.h"
-#include <vector>
+#include <map>
 #include <string>
 
-using std::vector;
+using std::map;
 
 class CSymbolTable {
 private:
-	vector<CClassDescription*> classes;
+	map<CSymbol*, CClassDescription*> classes;
 public:
 	CClassDescription* AddClass( CSymbol* className );
 
-	vector<CClassDescription*> GetClasses();	
+	CClassDescription* DeleteClass( CSymbol* className );
+
+	map<CSymbol*, CClassDescription*> GetClasses();	
 };
 
 class CClassDescription {
 private:
-	vector<CVarDescription*> fields;
-	vector<CMethodDescription*> methods;
+	map<CSymbol*, CVarDescription*> fields;
+	map<CSymbol*, CMethodDescription*> methods;
 public:
 	CVarDescription* AddField( CTypeInfo type, CSymbol* name );
 	CMethodDescription* AddMethod( CTypeInfo returnType, CSymbol* name );
 
-	vector<CVarDescription*> GetFields();
-	vector<CMethodDescription*> GetMethods();
+	CVarDescription* DeleteField( CSymbol* name );
+	CMethodDescription* DeleteMethod( CSymbol* name );
+
+	map<CSymbol*, CVarDescription*> GetFields();
+	map<CSymbol*, CMethodDescription*> GetMethods();
 };
 
 class CVarDescription {
@@ -39,19 +44,22 @@ public:
 class CMethodDescription {
 private:
 	CSymbol* name;
-	vector<CVarDescription*> params;
+	map<CSymbol*, CVarDescription*> params;
 	CTypeInfo returnType;
-	vector<CVarDescription*> locals;
+	map<CSymbol*, CVarDescription*> locals;
 public:
 	CMethodDescription( CSymbol* name_, CTypeInfo returnType_ );
 	
 	CVarDescription* AddPapam( CVarDescription* param );
 	CVarDescription* AddLocal( CVarDescription* local );
 
+	CVarDescription* DeletePapam( CSymbol* paramName );
+	CVarDescription* DeleteLocal( CSymbol* lokalName );
+
 	CSymbol* GetName();
 	CSymbol* GetType();
-	vector<CVarDescription*> GetParams();
-	vector<CVarDescription*> GetLocals();
+	map<CSymbol*, CVarDescription*> GetParams();
+	map<CSymbol*, CVarDescription*> GetLocals();
 };
 
 class CTypeInfo
