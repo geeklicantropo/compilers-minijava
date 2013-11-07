@@ -74,6 +74,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="miniJava.cpp" />
     <ClCompile Include="Symbols.cpp" />
+    <ClCompile Include="SymbolTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="flex.txt">
@@ -97,6 +98,7 @@
     <ClInclude Include="Interpreter.h" />
     <ClInclude Include="miniJava.h" />
     <ClInclude Include="Symbols.h" />
+    <ClInclude Include="SymbolTable.h" />
     <ClInclude Include="Visitor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
