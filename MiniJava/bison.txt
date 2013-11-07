@@ -7,8 +7,10 @@
 #include "Symbols.h"
 }
 
+%parse-param{ const IProgram*& progr }
+
 %{
-void yyerror ( const char *s );
+void yyerror ( const IProgram*& p, const char *s );
 
 int yylex();
 
@@ -92,8 +94,7 @@ int yywrap()
 %%
 Program:
 	MainClass ClassDeclStar {
-		$$ = new CProgram( $1, $2 );
-	//	$$ = progr;
+		progr = $$ = new CProgram( $1, $2 );
 	}
 	;
 
@@ -288,7 +289,7 @@ ExpRest:
  
 %%
 
-void yyerror (const char *s)
+void yyerror (const IProgram*& p, const char *s)
 {
 	//printf("Error in line %d: %s \n", yylloc.first_line, s);
 }
