@@ -9,22 +9,24 @@ private:
 	map<CSymbol*, CClassDescription*> classes;
 public:
 	CClassDescription* AddClass( CSymbol* className );
-
-	CClassDescription* DeleteClass( CSymbol* className );
+	void DeleteClass( CSymbol* className );
 
 	map<CSymbol*, CClassDescription*> GetClasses();	
 };
 
 class CClassDescription {
 private:
+	CSymbol* name;
 	map<CSymbol*, CVarDescription*> fields;
 	map<CSymbol*, CMethodDescription*> methods;
 public:
-	CVarDescription* AddField( CTypeInfo type, CSymbol* name );
-	CMethodDescription* AddMethod( CTypeInfo returnType, CSymbol* name );
+	CClassDescription(CSymbol* _name);
 
-	CVarDescription* DeleteField( CSymbol* name );
-	CMethodDescription* DeleteMethod( CSymbol* name );
+	CVarDescription* AddField( CSymbol* _name, CTypeInfo type );
+	CMethodDescription* AddMethod( CSymbol* _name, CTypeInfo returnType );
+
+	void DeleteField( CSymbol* _name );
+	void DeleteMethod( CSymbol* _name );
 
 	map<CSymbol*, CVarDescription*> GetFields();
 	map<CSymbol*, CMethodDescription*> GetMethods();
