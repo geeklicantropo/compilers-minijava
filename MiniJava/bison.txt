@@ -69,6 +69,8 @@ int yywrap()
 %left '.' '['
 %left <BinopType> BINOP
 %left '!'
+%left '+' '-';
+%left '*' '/';
 
 %type <Program> Program
 %type <MainClass> MainClass
