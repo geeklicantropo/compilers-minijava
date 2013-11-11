@@ -45,3 +45,65 @@ map<CSymbol*, CVarDescription*> CClassDescription::GetFields() {
 map<CSymbol*, CMethodDescription*> CClassDescription::GetMethods() {
 	return methods;
 }
+
+CVarDescription::CVarDescription( CSymbol* _name, CTypeInfo _type ) {
+	name = _name;
+	type = _type;
+}
+
+CSymbol* CVarDescription::GetName() {
+	return name;
+}
+
+CSymbol* CVarDescription::GetType() {
+	return type.GetType();
+}
+
+CMethodDescription::CMethodDescription( CSymbol* _name, CTypeInfo _returnType ) {
+	name = _name;
+	returnType = _returnType;
+}
+
+CVarDescription* CMethodDescription::AddPapam( CVarDescription* param ) {
+	if ( params.find( param->GetName() ) == params.end() )
+		return NULL;
+	return params.at( param->GetName() ) = new CVarDescription( param->GetName(), param->GetType() );
+}
+
+CVarDescription* CMethodDescription::AddLocal( CVarDescription* local ) {
+	if ( locals.find( local->GetName() ) == locals.end() )
+		return NULL;
+	return locals.at( local->GetName() ) = new CVarDescription( local->GetName(), local->GetType() );
+}
+
+void CMethodDescription::DeletePapam( CSymbol* paramName ) {
+	params.erase( paramName );
+}
+
+void CMethodDescription::DeleteLocal( CSymbol* localName ) {
+	locals.erase( localName );
+}
+
+CSymbol* CMethodDescription::GetName() {
+	return name;
+}
+
+CSymbol* CMethodDescription::GetType() {
+	return returnType.GetType();
+}
+
+map<CSymbol*, CVarDescription*> CMethodDescription::GetParams() {
+	return params;
+}
+
+map<CSymbol*, CVarDescription*> CMethodDescription::GetLocals() {
+	return locals;
+}
+
+CTypeInfo::CTypeInfo( CSymbol* _type ) {
+	type = _type;
+}
+
+CSymbol* CTypeInfo::GetType() {
+	return type;
+}
