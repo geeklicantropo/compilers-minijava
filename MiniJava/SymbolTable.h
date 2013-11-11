@@ -8,7 +8,17 @@ class CSymbolTable;
 class CClassDescription;
 class CVarDescription;
 class CMethodDescription;
-class CTypeInfo;
+
+class CTypeInfo
+{
+private:
+	CSymbol* type;
+	//bool isStandart;
+public:
+	CTypeInfo ( CSymbol* _type );
+	
+	CSymbol* GetType();
+};
 
 class CSymbolTable {
 private:
@@ -69,15 +79,4 @@ public:
 	
 	map<CSymbol*, CVarDescription*> GetParams();
 	map<CSymbol*, CVarDescription*> GetLocals();
-};
-
-class CTypeInfo
-{
-private:
-	CSymbol* type;
-	//bool isStandart;
-public:
-	CTypeInfo ( CSymbol* _type );
-	
-	CSymbol* GetType();
 };
