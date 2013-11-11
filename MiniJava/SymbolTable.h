@@ -4,6 +4,12 @@
 
 using std::map;
 
+class CSymbolTable;
+class CClassDescription;
+class CVarDescription;
+class CMethodDescription;
+class CTypeInfo;
+
 class CSymbolTable {
 private:
 	map<CSymbol*, CClassDescription*> classes;
@@ -37,7 +43,7 @@ private:
 	CSymbol* name;
 	CTypeInfo type;
 public:
-	CVarDescription( CSymbol* name_, CTypeInfo type_ );
+	CVarDescription( CSymbol* _name, CTypeInfo _type );
 
 	CSymbol* GetName();
 	CSymbol* GetType();
@@ -50,16 +56,17 @@ private:
 	CTypeInfo returnType;
 	map<CSymbol*, CVarDescription*> locals;
 public:
-	CMethodDescription( CSymbol* name_, CTypeInfo returnType_ );
+	CMethodDescription( CSymbol* _name, CTypeInfo _returnType );
 	
 	CVarDescription* AddPapam( CVarDescription* param );
 	CVarDescription* AddLocal( CVarDescription* local );
 
-	CVarDescription* DeletePapam( CSymbol* paramName );
-	CVarDescription* DeleteLocal( CSymbol* lokalName );
+	void DeletePapam( CSymbol* paramName );
+	void DeleteLocal( CSymbol* localName );
 
 	CSymbol* GetName();
 	CSymbol* GetType();
+	
 	map<CSymbol*, CVarDescription*> GetParams();
 	map<CSymbol*, CVarDescription*> GetLocals();
 };
@@ -70,7 +77,7 @@ private:
 	CSymbol* type;
 	//bool isStandart;
 public:
-	CTypeInfo ( CSymbol* type_ );
+	CTypeInfo ( CSymbol* _type );
 	
 	CSymbol* GetType();
 };
