@@ -1,5 +1,11 @@
 #include "SymbolTable.h"
 
+CTypeInfo::CTypeInfo( CSymbol* _type ) : type( _type ) {}
+
+CSymbol* CTypeInfo::GetType() {
+	return type;
+}
+
 CClassDescription* CSymbolTable::AddClass( CSymbol* className ) {
 	if ( classes.find( className ) == classes.end() )
 		return NULL;
@@ -14,9 +20,7 @@ map<CSymbol*, CClassDescription*> CSymbolTable::GetClasses() {
 	return classes;
 }
 
-CClassDescription::CClassDescription( CSymbol* _name ) {
-	name = _name;
-}
+CClassDescription::CClassDescription( CSymbol* _name ) : name( _name ) {}
 
 CVarDescription* CClassDescription::AddField( CSymbol* _name, CTypeInfo _type ) {
 	if ( fields.find( _name ) == fields.end() )
@@ -46,10 +50,7 @@ map<CSymbol*, CMethodDescription*> CClassDescription::GetMethods() {
 	return methods;
 }
 
-CVarDescription::CVarDescription( CSymbol* _name, CTypeInfo _type ) {
-	name = _name;
-	type = _type;
-}
+CVarDescription::CVarDescription( CSymbol* _name, CTypeInfo _type ) : name( _name ), type( _type ) {}
 
 CSymbol* CVarDescription::GetName() {
 	return name;
@@ -59,10 +60,7 @@ CSymbol* CVarDescription::GetType() {
 	return type.GetType();
 }
 
-CMethodDescription::CMethodDescription( CSymbol* _name, CTypeInfo _returnType ) {
-	name = _name;
-	returnType = _returnType;
-}
+CMethodDescription::CMethodDescription( CSymbol* _name, CTypeInfo _returnType ) : name( _name ), returnType( _returnType ) {}
 
 CVarDescription* CMethodDescription::AddPapam( CVarDescription* param ) {
 	if ( params.find( param->GetName() ) == params.end() )
@@ -98,12 +96,4 @@ map<CSymbol*, CVarDescription*> CMethodDescription::GetParams() {
 
 map<CSymbol*, CVarDescription*> CMethodDescription::GetLocals() {
 	return locals;
-}
-
-CTypeInfo::CTypeInfo( CSymbol* _type ) {
-	type = _type;
-}
-
-CSymbol* CTypeInfo::GetType() {
-	return type;
 }
