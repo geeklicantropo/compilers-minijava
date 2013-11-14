@@ -18,6 +18,9 @@ int CSymbolTableBuilder::Visit( const CProgram* n )
 int CSymbolTableBuilder::Visit( const CMainClass* n )
 { 
 	currentClass = symbolTable->AddClass( n->GetId() );
+	//if (currentClass == 0 ) 
+	
+	currentClass = 0;
 	return 0; 
 }
 
@@ -33,6 +36,7 @@ int CSymbolTableBuilder::Visit( const CClassDeclare* n )
 	currentClass = symbolTable->AddClass( n->GetId() );
 	if ( n->GetVarDeclareStar() != 0 ) n->GetVarDeclareStar()->Accept( this );
 	if ( n->GetMethodDeclareStar() != 0 ) n->GetMethodDeclareStar()->Accept( this );
+	currentClass = 0;
 	return 0; 
 }
 
@@ -41,6 +45,7 @@ int CSymbolTableBuilder::Visit( const CClassDeclareExtends* n )
 	currentClass = symbolTable->AddClass( n->GetId(), n->GetExtendsId() );
 	if ( n->GetVarDeclareStar() != 0 ) n->GetVarDeclareStar()->Accept( this );
 	if ( n->GetMethodDeclareStar() != 0 ) n->GetMethodDeclareStar()->Accept( this );
+	currentClass = 0;
 	return 0;
 }
 
