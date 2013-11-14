@@ -25,27 +25,23 @@ private:
 	map<CSymbol*, CClassDescription*> classes;
 public:
 	CClassDescription* AddClass( CSymbol* className );
-	void DeleteClass( CSymbol* className );
 
-	map<CSymbol*, CClassDescription*> GetClasses();	
+	CClassDescription* LookUpClass( CSymbol* className );
 };
 
 class CClassDescription {
 private:
-	CSymbol* name;
+	const CSymbol* name;
 	map<CSymbol*, CVarDescription*> fields;
 	map<CSymbol*, CMethodDescription*> methods;
 public:
-	CClassDescription(CSymbol* _name);
+	CClassDescription(const CSymbol* _name);
 
 	CVarDescription* AddField( CSymbol* _name, CTypeInfo type );
 	CMethodDescription* AddMethod( CSymbol* _name, CTypeInfo returnType );
 
-	void DeleteField( CSymbol* _name );
-	void DeleteMethod( CSymbol* _name );
-
-	map<CSymbol*, CVarDescription*> GetFields();
-	map<CSymbol*, CMethodDescription*> GetMethods();
+	CVarDescription* LookUpField( CSymbol* field );
+	CMethodDescription* LookUpMethod( CSymbol* method );
 };
 
 class CVarDescription {
@@ -71,12 +67,9 @@ public:
 	CVarDescription* AddPapam( CVarDescription* param );
 	CVarDescription* AddLocal( CVarDescription* local );
 
-	void DeletePapam( CSymbol* paramName );
-	void DeleteLocal( CSymbol* localName );
-
 	CSymbol* GetName();
 	CSymbol* GetType();
 	
-	map<CSymbol*, CVarDescription*> GetParams();
-	map<CSymbol*, CVarDescription*> GetLocals();
+	CVarDescription* LookUpParam( CSymbol* param );
+	CVarDescription* LookUpLocal( CSymbol* local );
 };
