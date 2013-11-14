@@ -136,7 +136,7 @@ public:
 	CClassDeclare( const CSymbol*, const IVarDeclareStar*, const IMethodDeclareStar* );
 	int Accept(IVisitor *v) const;
 	const IVarDeclareStar* GetVarDeclareStar() const;
-	const IMethodDeclareStar* GetmethodDeclareStar() const;
+	const IMethodDeclareStar* GetMethodDeclareStar() const;
 	const CSymbol* GetId() const;
 
 private:

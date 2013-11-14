@@ -75,7 +75,7 @@ const IVarDeclareStar* CClassDeclare::GetVarDeclareStar() const
 	return varDeclareStar;
 }
 
-const IMethodDeclareStar* CClassDeclare::GetmethodDeclareStar() const
+const IMethodDeclareStar* CClassDeclare::GetMethodDeclareStar() const
 {
 	return methodDeclareStar;
 }

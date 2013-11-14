@@ -1,79 +1,90 @@
 #include "SymbolTable.h"
 
-CTypeInfo::CTypeInfo( CSymbol* _type ) : type( _type ) {}
+CTypeInfo::CTypeInfo( const CSymbol* _type ) : type( _type ) {}
 
-CSymbol* CTypeInfo::GetType() {
+const CSymbol* CTypeInfo::GetType() {
 	return type;
 }
 
-CClassDescription* CSymbolTable::AddClass( CSymbol* className ) {
-	if ( classes.find( className ) == classes.end() )
+CClassDescription* CSymbolTable::AddClass( const CSymbol* className ) {
+	if( classes.find( className ) == classes.end() )
 		return NULL;
 	return classes.at( className ) = new CClassDescription( className );
 }
 
-CClassDescription* CSymbolTable::LookUpClass( CSymbol* className ) {
-	if ( classes.find( className ) == classes.end() )
+CClassDescription* CSymbolTable::AddClass( const CSymbol* className, const CSymbol* baseName ) {
+	if( classes.find( className ) == classes.end() )
+		return NULL;
+	return classes.at( className ) = new CClassDescription( className, baseName );
+}
+
+CClassDescription* CSymbolTable::LookUpClass( const CSymbol* className ) {
+	if( classes.find( className ) == classes.end() )
 		return NULL;
 	return classes[className];
 }
 
-CClassDescription::CClassDescription( const CSymbol* _name ) : name( _name ) {}
+CClassDescription::CClassDescription( const CSymbol* _name ) : name( _name )
+{
+	baseClass = 0;
+}
 
-CVarDescription* CClassDescription::AddField( CSymbol* _name, CTypeInfo _type ) {
+CClassDescription::CClassDescription( const CSymbol* _name, const CSymbol* _base ) : name( _name ), baseClass( _base ) {}
+
+CVarDescription* CClassDescription::AddField( const CSymbol* _name, CTypeInfo* _type ) {
 	if ( fields.find( _name ) == fields.end() )
 		return NULL;
 	return fields.at( _name ) = new CVarDescription( _name, _type );
 }
 
-CMethodDescription* CClassDescription::AddMethod( CSymbol* _name, CTypeInfo _type ) {
+CMethodDescription* CClassDescription::AddMethod( const CSymbol* _name, CTypeInfo* _type ) {
 	if ( methods.find( _name ) == methods.end() )
 		return NULL;
 	return methods.at( _name ) = new CMethodDescription( _name, _type );
 }
 
-CVarDescription* CClassDescription::LookUpField( CSymbol* field ) {
+CVarDescription* CClassDescription::LookUpField( const CSymbol* field ) {
 	if ( fields.find( field ) == fields.end() )
 		return NULL;
 	return fields[field];
 }
 
-CMethodDescription* CClassDescription::LookUpMethod( CSymbol* method ) {
+CMethodDescription* CClassDescription::LookUpMethod( const CSymbol* method ) {
 	if ( methods.find( method ) == methods.end() )
 		return NULL;
 	return methods[method];
 }
 
-CVarDescription::CVarDescription( CSymbol* _name, CTypeInfo _type ) : name( _name ), type( _type ) {}
+CVarDescription::CVarDescription( const CSymbol* _name, CTypeInfo* _type ) : name( _name ), type( _type ) {}
 
-CSymbol* CVarDescription::GetName() {
+const CSymbol* CVarDescription::GetName() {
 	return name;
 }
 
-CSymbol* CVarDescription::GetType() {
-	return type.GetType();
+const CSymbol* CVarDescription::GetType() {
+	return type->GetType();
 }
 
-CMethodDescription::CMethodDescription( CSymbol* _name, CTypeInfo _returnType ) : name( _name ), returnType( _returnType ) {}
+CMethodDescription::CMethodDescription( const CSymbol* _name, CTypeInfo* _returnType ) : name( _name ), returnType( _returnType ) {}
 
 CVarDescription* CMethodDescription::AddPapam( CVarDescription* param ) {
 	if ( params.find( param->GetName() ) == params.end() )
 		return NULL;
-	return params.at( param->GetName() ) = new CVarDescription( param->GetName(), param->GetType() );
+	return params.at( param->GetName() ) = new CVarDescription( param->GetName(), new CTypeInfo( param->GetType() ) );
 }
 
 CVarDescription* CMethodDescription::AddLocal( CVarDescription* local ) {
 	if ( locals.find( local->GetName() ) == locals.end() )
 		return NULL;
-	return locals.at( local->GetName() ) = new CVarDescription( local->GetName(), local->GetType() );
+	return locals.at( local->GetName() ) = new CVarDescription( local->GetName(), new CTypeInfo( local->GetType() ) );
 }
 
-CSymbol* CMethodDescription::GetName() {
+const CSymbol* CMethodDescription::GetName() {
 	return name;
 }
 
-CSymbol* CMethodDescription::GetType() {
-	return returnType.GetType();
+const CSymbol* CMethodDescription::GetType() {
+	return returnType->GetType();
 }
 
 CVarDescription* CMethodDescription::LookUpParam( CSymbol* param ) {
