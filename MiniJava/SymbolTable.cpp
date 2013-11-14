@@ -12,15 +12,13 @@ CClassDescription* CSymbolTable::AddClass( CSymbol* className ) {
 	return classes.at( className ) = new CClassDescription( className );
 }
 
-void CSymbolTable::DeleteClass( CSymbol* className ) {
-	classes.erase( className );
+CClassDescription* CSymbolTable::LookUpClass( CSymbol* className ) {
+	if ( classes.find( className ) == classes.end() )
+		return NULL;
+	return classes[className];
 }
 
-map<CSymbol*, CClassDescription*> CSymbolTable::GetClasses() {
-	return classes;
-}
-
-CClassDescription::CClassDescription( CSymbol* _name ) : name( _name ) {}
+CClassDescription::CClassDescription( const CSymbol* _name ) : name( _name ) {}
 
 CVarDescription* CClassDescription::AddField( CSymbol* _name, CTypeInfo _type ) {
 	if ( fields.find( _name ) == fields.end() )
@@ -34,20 +32,16 @@ CMethodDescription* CClassDescription::AddMethod( CSymbol* _name, CTypeInfo _typ
 	return methods.at( _name ) = new CMethodDescription( _name, _type );
 }
 
-void CClassDescription::DeleteField( CSymbol* _name ) {
-	fields.erase( _name );
+CVarDescription* CClassDescription::LookUpField( CSymbol* field ) {
+	if ( fields.find( field ) == fields.end() )
+		return NULL;
+	return fields[field];
 }
 
-void CClassDescription::DeleteMethod( CSymbol* _name ) {
-	methods.erase( _name );
-}
-
-map<CSymbol*, CVarDescription*> CClassDescription::GetFields() {
-	return fields;
-}
-
-map<CSymbol*, CMethodDescription*> CClassDescription::GetMethods() {
-	return methods;
+CMethodDescription* CClassDescription::LookUpMethod( CSymbol* method ) {
+	if ( methods.find( method ) == methods.end() )
+		return NULL;
+	return methods[method];
 }
 
 CVarDescription::CVarDescription( CSymbol* _name, CTypeInfo _type ) : name( _name ), type( _type ) {}
@@ -74,14 +68,6 @@ CVarDescription* CMethodDescription::AddLocal( CVarDescription* local ) {
 	return locals.at( local->GetName() ) = new CVarDescription( local->GetName(), local->GetType() );
 }
 
-void CMethodDescription::DeletePapam( CSymbol* paramName ) {
-	params.erase( paramName );
-}
-
-void CMethodDescription::DeleteLocal( CSymbol* localName ) {
-	locals.erase( localName );
-}
-
 CSymbol* CMethodDescription::GetName() {
 	return name;
 }
@@ -90,10 +76,14 @@ CSymbol* CMethodDescription::GetType() {
 	return returnType.GetType();
 }
 
-map<CSymbol*, CVarDescription*> CMethodDescription::GetParams() {
-	return params;
+CVarDescription* CMethodDescription::LookUpParam( CSymbol* param ) {
+	if ( params.find( param ) == params.end() )
+		return NULL;
+	return params[param];
 }
 
-map<CSymbol*, CVarDescription*> CMethodDescription::GetLocals() {
-	return locals;
+CVarDescription* CMethodDescription::LookUpLocal( CSymbol* local ) {
+	if (locals.find( local ) == locals.end() )
+		return NULL;
+	return locals[local];
 }
