@@ -53,41 +53,38 @@ int CSymbolTableBuilder::Visit( const CVarDeclareStar* n )
 
 int CSymbolTableBuilder::Visit( const CVarDeclare* n )
 {
-	currentClass->AddField( n->GetId(), new CTypeInfo( n->GetType() ) );
+	if( currentMethod == 0 )
+		currentClass->AddField( n->GetId(), new CTypeInfo( n->GetType() ) );
+	else
+		currentMethod->AddLocal( new CVarDescription( n->GetId(), new CTypeInfo( n->GetType() ) ) );
 	return 0; 
 }
 
 int CSymbolTableBuilder::Visit( const CMethodDeclare* n )
 { 
 	currentMethod = currentClass->AddMethod( n->GetId(), new CTypeInfo( n->GetType() ) );
+	if (n->GetFormalList() != 0) n->GetFormalList()->Accept( this );
+	if (n->GetVarDeclareStar() != 0) n->GetVarDeclareStar()->Accept( this );
+	currentMethod = 0;
 	return 0; 
 }
 
 int CSymbolTableBuilder::Visit( const CMethodDeclareStar* n )
-{ 
+{
+	if (n->GetMethodDeclareStar() != 0) n->GetMethodDeclareStar()->Accept( this );
+	n->GetMethodDeclare()->Accept( this );
 	return 0; 
 }
 
-int CSymbolTableBuilder::Visit( const CFormalList* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CFormalRestStar* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CStatement* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CStatementStar* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CStatementIf* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CStatementWhile* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CStatementSysOut* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CStatementAssignment* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CStatementArrayAssignment* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CExpressionBinOp* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CExpressionArray* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CExpressionLength* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CExpressionCallMethod* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CExpressionNumber* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CExpressionBool* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CExpressionVar* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CExpressionThis* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CExpressionNewInt* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CExpressionNewId* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CExpressionNegation* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CExpression* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CExpList* n ){ return 0; }
-int CSymbolTableBuilder::Visit( const CExpListNext* n ){ return 0; }
+int CSymbolTableBuilder::Visit( const CFormalList* n )
+{
+	currentMethod->AddPapam( new CVarDescription( n->GetId(), new CTypeInfo( n->GetType() ) ) );
+	if (n->GetFormalRestStar() != 0) n->GetFormalRestStar()->Accept( this );
+	return 0; 
+}
+int CSymbolTableBuilder::Visit( const CFormalRestStar* n )
+{
+	currentMethod->AddPapam( new CVarDescription( n->GetId(), new CTypeInfo( n->GetType() ) ) );
+	if (n->GetFormalRestStar() != 0) n->GetFormalRestStar()->Accept( this );
+	return 0;
+}
