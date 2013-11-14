@@ -5,8 +5,8 @@
 
 using namespace std;
 
-CProgram::CProgram( const IMainClass* _mainClass, const IClassDeclareStar* _classDeclareStar ) :
-	mainClass( _mainClass), classDeclareStar( _classDeclareStar )
+CProgram::CProgram( const IMainClass* _mainClass, const IClassDeclareStar* _classDeclareStar, int _location ) :
+	mainClass( _mainClass), classDeclareStar( _classDeclareStar ), location(_location)
 	{
 		assert( mainClass != 0 );
 	}
@@ -21,13 +21,19 @@ const IClassDeclareStar* CProgram::GetClassDeclareStar() const
 	return classDeclareStar;
 }
 
-CMainClass::CMainClass( const CSymbol* _id, const CSymbol* _argsId, const IStatement* _stm ) :
-	id( _id ), argsId( _argsId ), stm( _stm )
+int CProgram::GetLocation() const 
+{
+	return location;
+}
+
+CMainClass::CMainClass( const CSymbol* _id, const CSymbol* _argsId, const IStatement* _stm, int _location ) :
+	id( _id ), argsId( _argsId ), stm( _stm ), location( _location )
 	{
 		assert( id != 0 );
 		assert( argsId != 0 );
 		assert( stm != 0 );
 	}
+
 const CSymbol* CMainClass::GetId() const
 {
 	return id;
@@ -43,8 +49,13 @@ const IStatement* CMainClass::GetStatement() const
 	return stm;
 }
 
-CClassDeclareStar::CClassDeclareStar(const IClassDeclareStar* classDecStar, const IClassDeclare* classDec ) :
-	classDeclareStar( classDecStar ), classDeclare( classDec )
+int CMainClass::GetLocation() const 
+{
+	return location;
+}
+
+CClassDeclareStar::CClassDeclareStar(const IClassDeclareStar* classDecStar, const IClassDeclare* classDec, int _location ) :
+	classDeclareStar( classDecStar ), classDeclare( classDec ), location( _location )
 	{
 		assert( classDeclare != 0 );
 	}
@@ -59,8 +70,13 @@ const IClassDeclare* CClassDeclareStar::GetClassDeclare() const
 	return classDeclare;
 }
 
-CClassDeclare::CClassDeclare( const CSymbol* _id, const IVarDeclareStar* _varDeclareStar, const IMethodDeclareStar* _methodDeclareStar) :
-	id( _id ), varDeclareStar( _varDeclareStar), methodDeclareStar( _methodDeclareStar )
+int CClassDeclareStar::GetLocation() const 
+{
+	return location;
+}
+
+CClassDeclare::CClassDeclare( const CSymbol* _id, const IVarDeclareStar* _varDeclareStar, const IMethodDeclareStar* _methodDeclareStar, int _location ) :
+	id( _id ), varDeclareStar( _varDeclareStar), methodDeclareStar( _methodDeclareStar ), location( _location )
 	{
 		assert( id != 0 );
 	}
@@ -80,9 +96,14 @@ const IMethodDeclareStar* CClassDeclare::GetMethodDeclareStar() const
 	return methodDeclareStar;
 }
 
+int CClassDeclare::GetLocation() const 
+{
+	return location;
+}
+
 CClassDeclareExtends::CClassDeclareExtends( const CSymbol* _id, const CSymbol* _extendsId, const IVarDeclareStar* _varDeclareStar, 
-		const IMethodDeclareStar* _methodDeclareStar) :
-	id( _id ), extendsId( _extendsId ), varDeclareStar( _varDeclareStar), methodDeclareStar( _methodDeclareStar )
+		const IMethodDeclareStar* _methodDeclareStar, int _location ) :
+	id( _id ), extendsId( _extendsId ), varDeclareStar( _varDeclareStar), methodDeclareStar( _methodDeclareStar ), location( _location )
 	{
 		assert( id != 0 );
 		assert( extendsId != 0 );
@@ -108,8 +129,14 @@ const IVarDeclareStar* CClassDeclareExtends::GetVarDeclareStar() const
 	return varDeclareStar;
 }
 
-CVarDeclareStar::CVarDeclareStar( const IVarDeclareStar* varDecStar, const IVarDeclare* varDec ) :
-		varDeclareStar( varDecStar ), varDeclare( varDec ) 
+int CClassDeclareExtends::GetLocation() const 
+{
+	return location;
+}
+
+
+CVarDeclareStar::CVarDeclareStar( const IVarDeclareStar* varDecStar, const IVarDeclare* varDec, int _location ) :
+		varDeclareStar( varDecStar ), varDeclare( varDec ), location( _location )
 	{
 		assert( varDeclare != 0);
 	}
@@ -124,8 +151,13 @@ const IVarDeclare* CVarDeclareStar::GetVarDeclare() const
 	return varDeclare;
 }
 
-CVarDeclare::CVarDeclare( const CSymbol* _typeId, const CSymbol* _id ) :
-		typeId (_typeId ), id( _id )
+int CVarDeclareStar::GetLocation() const 
+{
+	return location;
+}
+
+CVarDeclare::CVarDeclare( const CSymbol* _typeId, const CSymbol* _id, int _location ) :
+		typeId (_typeId ), id( _id ), location( _location )
 	{
 		assert( id != 0 );
 		assert( typeId != 0 );
@@ -141,9 +173,13 @@ const CSymbol* CVarDeclare::GetId() const
 	return id;
 }
 
+int CVarDeclare::GetLocation() const 
+{
+	return location;
+}
 
-CMethodDeclareStar::CMethodDeclareStar( const IMethodDeclareStar* methodDecStar, const IMethodDeclare* methodDec ) :
-	methodDeclareStar( methodDecStar ), methodDeclare( methodDec )
+CMethodDeclareStar::CMethodDeclareStar( const IMethodDeclareStar* methodDecStar, const IMethodDeclare* methodDec, int _location ) :
+	methodDeclareStar( methodDecStar ), methodDeclare( methodDec ), location( _location )
 	{
 		assert( methodDeclare != 0 );
 	}
@@ -158,10 +194,15 @@ const IMethodDeclare* CMethodDeclareStar::GetMethodDeclare() const
 	return methodDeclare;
 }
 
+int CMethodDeclareStar::GetLocation() const 
+{
+	return location;
+}
+
 CMethodDeclare::CMethodDeclare( const CSymbol* _dataType, const CSymbol* _id, const IFormalList* _formalList, const IVarDeclareStar* varDecStar, 
-		const IStatementStar* _statementStar, const IExpression* _expression ) :
+		const IStatementStar* _statementStar, const IExpression* _expression, int _location ) :
 	dataType( _dataType ), id( _id ), formalList( _formalList ), varDeclareStar( varDecStar ), statementStar( _statementStar ),
-	expression( _expression )
+	expression( _expression ), location( _location )
 	{
 		//
 		assert( id != 0 );
@@ -193,8 +234,13 @@ const IExpression* CMethodDeclare::GetExpression() const
 	return expression;
 }
 
-CFormalList::CFormalList( const CSymbol* _dataType, const CSymbol* _id, const IFormalRestStar* _formalRestStar ) :
-	dataType( _dataType ), id( _id ), formalRestStar( _formalRestStar )
+int CMethodDeclare::GetLocation() const 
+{
+	return location;
+}
+
+CFormalList::CFormalList( const CSymbol* _dataType, const CSymbol* _id, const IFormalRestStar* _formalRestStar, int _location ) :
+	dataType( _dataType ), id( _id ), formalRestStar( _formalRestStar ), location( _location )
 	{
 		assert( id != 0 );
 	}
@@ -214,8 +260,13 @@ const IFormalRestStar* CFormalList::GetFormalRestStar() const
 	return formalRestStar;
 }
 
-CFormalRestStar::CFormalRestStar( const CSymbol* _dataType, const CSymbol* _id, const IFormalRestStar* _formalRestStar ) :
-	dataType( _dataType ), id( _id ), formalRestStar( _formalRestStar )
+int CFormalList::GetLocation() const 
+{
+	return location;
+}
+
+CFormalRestStar::CFormalRestStar( const CSymbol* _dataType, const CSymbol* _id, const IFormalRestStar* _formalRestStar, int _location ) :
+	dataType( _dataType ), id( _id ), formalRestStar( _formalRestStar ), location( _location )
 	{
 		
 		assert( id != 0 );
@@ -236,8 +287,13 @@ const IFormalRestStar* CFormalRestStar::GetFormalRestStar() const
 	return formalRestStar;
 }
 
-CStatementStar::CStatementStar(const IStatement* _statement, const IStatementStar* _statementStar) :
-	statement( _statement ), statementStar( _statementStar )
+int CFormalRestStar::GetLocation() const 
+{
+	return location;
+}
+
+CStatementStar::CStatementStar(const IStatement* _statement, const IStatementStar* _statementStar, int _location ) :
+	statement( _statement ), statementStar( _statementStar ), location( _location )
 	{
 		assert( statement != 0 );
 	}
@@ -251,8 +307,13 @@ const IStatement* CStatementStar::GetStatement() const
 	return statement;
 }
 
-CStatement::CStatement( const IStatementStar* _statementStar ) :
-	statementStar( _statementStar )
+int CStatementStar::GetLocation() const 
+{
+	return location;
+}
+
+CStatement::CStatement( const IStatementStar* _statementStar, int _location ) :
+	statementStar( _statementStar ), location( _location )
 	{
 	}
 
@@ -261,8 +322,13 @@ const IStatementStar* CStatement::GetStatementStar() const
 	return statementStar;
 }
 
-CStatementIf::CStatementIf( const IExpression* _expression, const IStatement* _statementIf, const IStatement* _statementElse ) :
-	expression( _expression ), statementIf( _statementIf ), statementElse( _statementElse )
+int CStatement::GetLocation() const 
+{
+	return location;
+}
+
+CStatementIf::CStatementIf( const IExpression* _expression, const IStatement* _statementIf, const IStatement* _statementElse, int _location ) :
+	expression( _expression ), statementIf( _statementIf ), statementElse( _statementElse ), location( _location )
 	{
 		assert( expression != 0 );
 		assert( statementIf != 0 );
@@ -284,8 +350,13 @@ const IStatement* CStatementIf::GetStatementElse() const
 	return statementElse;
 }
 
-CStatementWhile::CStatementWhile( const IExpression* _expression, const IStatement* _statement ) :
-	expression( _expression ), statement( _statement )
+int CStatementIf::GetLocation() const 
+{
+	return location;
+}
+
+CStatementWhile::CStatementWhile( const IExpression* _expression, const IStatement* _statement, int _location ) :
+	expression( _expression ), statement( _statement ), location( _location )
 	{
 		assert( expression != 0 );
 		assert( statement != 0 );
@@ -299,8 +370,13 @@ const IStatement* CStatementWhile::GetStatement() const
 	return statement;
 }
 
-CStatementSysOut::CStatementSysOut( const IExpression* _expression ) :
-	expression( _expression )
+int CStatementWhile::GetLocation() const 
+{
+	return location;
+}
+
+CStatementSysOut::CStatementSysOut( const IExpression* _expression, int _location ) :
+	expression( _expression ), location( _location )
 	{
 		assert( expression != 0 );
 	}
@@ -310,8 +386,13 @@ const IExpression* CStatementSysOut::GetExpression() const
 	return expression;
 }
 
-CStatementAssignment::CStatementAssignment( const CSymbol* _id, const IExpression* _expression ) :
-	id( _id ), expression( _expression )
+int CStatementSysOut::GetLocation() const 
+{
+	return location;
+}
+
+CStatementAssignment::CStatementAssignment( const CSymbol* _id, const IExpression* _expression, int _location ) :
+	id( _id ), expression( _expression ), location( _location )
 	{
 		assert( id != 0 );
 		assert( expression != 0 );
@@ -327,8 +408,13 @@ const IExpression* CStatementAssignment::GetExpression() const
 	return expression;
 }
 
-CStatementArrayAssignment::CStatementArrayAssignment( const CSymbol* _id, const IExpression* _expressionArray, const IExpression* _expression ) :
-	id( _id ), expressionArray( _expressionArray ), expression( _expression )
+int CStatementAssignment::GetLocation() const 
+{
+	return location;
+}
+
+CStatementArrayAssignment::CStatementArrayAssignment( const CSymbol* _id, const IExpression* _expressionArray, const IExpression* _expression, int _location ) :
+	id( _id ), expressionArray( _expressionArray ), expression( _expression ), location( _location )
 	{
 		assert( id != 0 );
 		assert( expressionArray != 0 );
@@ -350,8 +436,13 @@ const IExpression* CStatementArrayAssignment::GetExpression() const
 	return expression;
 }
 
-CExpressionBinOp::CExpressionBinOp( const IExpression* _expressionFirst, const TBinaryOperation _operation, const IExpression* _expressionSecond ) :
-	expressionFirst( _expressionFirst ), operation( _operation ), expressionSecond( _expressionSecond )
+int CStatementArrayAssignment::GetLocation() const 
+{
+	return location;
+}
+
+CExpressionBinOp::CExpressionBinOp( const IExpression* _expressionFirst, const TBinaryOperation _operation, const IExpression* _expressionSecond, int _location ) :
+	expressionFirst( _expressionFirst ), operation( _operation ), expressionSecond( _expressionSecond ), location( _location )
 	{
 		assert( expressionFirst != 0 );
 		assert( operation >= 0 );
@@ -373,8 +464,13 @@ const IExpression* CExpressionBinOp::GetExpressionSecond() const
 	return expressionSecond;
 }
 
-CExpressionArray::CExpressionArray( const IExpression* _expression1, const IExpression* _expression2 ) :
-	expression1( _expression1 ), expression2( _expression2 )
+int CExpressionBinOp::GetLocation() const 
+{
+	return location;
+}
+
+CExpressionArray::CExpressionArray( const IExpression* _expression1, const IExpression* _expression2, int _location ) :
+	expression1( _expression1 ), expression2( _expression2 ), location( _location )
 	{
 		assert( expression1 != 0 );
 		assert( expression2 != 0 );
@@ -390,8 +486,13 @@ const IExpression* CExpressionArray::GetExpression2() const
 	return expression2;
 }
 
-CExpressionLength::CExpressionLength( const IExpression* _expression ) :
-	expression( _expression )
+int CExpressionArray::GetLocation() const 
+{
+	return location;
+}
+
+CExpressionLength::CExpressionLength( const IExpression* _expression, int _location ) :
+	expression( _expression ), location( _location )
 	{
 		assert( expression != 0 );
 	}
@@ -401,8 +502,13 @@ const IExpression* CExpressionLength::GetExpression() const
 	return expression;	
 }
 
-CExpressionCallMethod::CExpressionCallMethod( const IExpression* _expression, const CSymbol* _id, const IExpList* _expList ) :
-	expression( _expression ), id( _id ), expList( _expList )
+int CExpressionLength::GetLocation() const 
+{
+	return location;
+}
+
+CExpressionCallMethod::CExpressionCallMethod( const IExpression* _expression, const CSymbol* _id, const IExpList* _expList, int _location ) :
+	expression( _expression ), id( _id ), expList( _expList ), location( _location )
 	{
 		assert( expression != 0 );
 		assert( id != 0 );
@@ -423,21 +529,36 @@ const IExpList* const CExpressionCallMethod::GetExpList() const
 	return expList;
 }
 
-CExpressionNumber::CExpressionNumber( const CSymbol* _number ) : number( _number ) {}
+int CExpressionCallMethod::GetLocation() const 
+{
+	return location;
+}
+
+CExpressionNumber::CExpressionNumber( const CSymbol* _number, int _location ) : number( _number ), location( _location ) {}
 
 const CSymbol* CExpressionNumber::GetNumber() const
 {
 	return number;
 }
 
-CExpressionBool::CExpressionBool( const bool _value ) : value( _value ) {}
+int CExpressionNumber::GetLocation() const 
+{
+	return location;
+}
+
+CExpressionBool::CExpressionBool( const bool _value, int _location ) : value( _value ), location( _location ) {}
 
 const bool CExpressionBool::GetValue() const
 {
 	return value;
 }
 
-CExpressionVar::CExpressionVar( const CSymbol* _id ) : id( _id )
+int CExpressionBool::GetLocation() const 
+{
+	return location;
+}
+
+CExpressionVar::CExpressionVar( const CSymbol* _id, int _location ) : id( _id ), location( _location )
 	{
 		assert( id != 0 );
 	}
@@ -447,47 +568,82 @@ const CSymbol* CExpressionVar::GetId() const
 	return id;
 }
 
-CExpressionThis::CExpressionThis() {}
+int CExpressionVar::GetLocation() const 
+{
+	return location;
+}
 
-CExpressionNewInt::CExpressionNewInt( const IExpression* _expression ) :
-		expression( _expression ) {}
+CExpressionThis::CExpressionThis( int _location ) : location( _location ) {}
+
+int CExpressionThis::GetLocation() const 
+{
+	return location;
+}
+
+CExpressionNewInt::CExpressionNewInt( const IExpression* _expression, int _location ) :
+		expression( _expression ), location( _location ) {}
 
 const IExpression* CExpressionNewInt::GetExpression() const
 {
 	return expression;
 }
 
-CExpressionNewId::CExpressionNewId( const CSymbol* _id ) : id( _id ) {}
+int CExpressionNewInt::GetLocation() const 
+{
+	return location;
+}
+
+CExpressionNewId::CExpressionNewId( const CSymbol* _id, int _location ) : id( _id ), location( _location ) {}
 
 const CSymbol* CExpressionNewId::GetId() const
 {
 	return id;
 }
 
-CExpressionNegation::CExpressionNegation( const IExpression* _expression ) : expression( _expression ) {}
+int CExpressionNewId::GetLocation() const 
+{
+	return location;
+}
+
+CExpressionNegation::CExpressionNegation( const IExpression* _expression, int _location ) : expression( _expression ), location( _location ) {}
 
 const IExpression* CExpressionNegation::GetExpression() const 
 {
 	return expression;
 }
 
-CExpression::CExpression( const IExpression* _expression ) : expression( _expression ) {}
+int CExpressionNegation::GetLocation() const 
+{
+	return location;
+}
+
+CExpression::CExpression( const IExpression* _expression, int _location ) : expression( _expression ), location( _location ) {}
 
 const IExpression* CExpression::GetExpression() const
 {
 	return expression;
 }
 
-CExpList::CExpList( const IExpression* _expression ) :
-		expression( _expression ) {}
+int CExpression::GetLocation() const 
+{
+	return location;
+}
+
+CExpList::CExpList( const IExpression* _expression, int _location ) :
+		expression( _expression ), location( _location ) {}
 
 const IExpression* CExpList::GetExpression() const
 {
 	return expression;
 }
 
-CExpListNext::CExpListNext( const IExpList* _expList, const IExpression* _expression ) :
-		expList( _expList ), expression( _expression ) {}
+int CExpList::GetLocation() const 
+{
+	return location;
+}
+
+CExpListNext::CExpListNext( const IExpList* _expList, const IExpression* _expression, int _location ) :
+		expList( _expList ), expression( _expression ), location( _location ) {}
 
 const IExpression* CExpListNext::GetExpression() const
 {
@@ -496,6 +652,11 @@ const IExpression* CExpListNext::GetExpression() const
 const IExpList* CExpListNext::GetExpList() const
 {
 	return expList;
+}
+
+int CExpListNext::GetLocation() const 
+{
+	return location;
 }
 
 
