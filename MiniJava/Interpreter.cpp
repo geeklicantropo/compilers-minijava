@@ -26,7 +26,7 @@ int CInterpreter::Visit( const CClassDeclareStar* n )  {
 int CInterpreter::Visit( const CClassDeclare* n )  { 
 	std::cout << "class" << " " << n->GetId()->getString() << std::endl << "{" << std::endl << "\t";
 	if ( n->GetVarDeclareStar() != 0 ) n->GetVarDeclareStar()->Accept( this );
-	if ( n->GetmethodDeclareStar() != 0 ) n->GetmethodDeclareStar()->Accept( this );
+	if ( n->GetMethodDeclareStar() != 0 ) n->GetMethodDeclareStar()->Accept( this );
 	std::cout << std::endl << "}" << std::endl;
 	return 0; 
 }

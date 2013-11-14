@@ -1,3 +1,4 @@
+#pragma once
 #include "Symbols.h"
 #include <map>
 #include <string>
@@ -12,63 +13,66 @@ class CMethodDescription;
 class CTypeInfo
 {
 private:
-	CSymbol* type;
+	const CSymbol* type;
 	//bool isStandart;
 public:
-	CTypeInfo ( CSymbol* _type );
+	CTypeInfo ( const CSymbol* _type );
 	
-	CSymbol* GetType();
+	const CSymbol* GetType();
 };
 
 class CSymbolTable {
 private:
-	map<CSymbol*, CClassDescription*> classes;
+	map<const CSymbol*, CClassDescription*> classes;
 public:
-	CClassDescription* AddClass( CSymbol* className );
+	CClassDescription* AddClass( const CSymbol* className );
+	CClassDescription* AddClass( const CSymbol* className, const CSymbol* baseName );
 
-	CClassDescription* LookUpClass( CSymbol* className );
+	CClassDescription* LookUpClass( const CSymbol* className );
 };
 
 class CClassDescription {
 private:
 	const CSymbol* name;
-	map<CSymbol*, CVarDescription*> fields;
-	map<CSymbol*, CMethodDescription*> methods;
+	const CSymbol* baseClass;
+	map<const CSymbol*, CVarDescription*> fields;
+	map<const CSymbol*, CMethodDescription*> methods;
 public:
 	CClassDescription(const CSymbol* _name);
+	CClassDescription(const CSymbol* _name, const CSymbol* _base);
 
-	CVarDescription* AddField( CSymbol* _name, CTypeInfo type );
-	CMethodDescription* AddMethod( CSymbol* _name, CTypeInfo returnType );
+	CVarDescription* AddField( const CSymbol* _name, CTypeInfo* type );
+	CMethodDescription* AddMethod( const CSymbol* _name, CTypeInfo* returnType );
 
-	CVarDescription* LookUpField( CSymbol* field );
-	CMethodDescription* LookUpMethod( CSymbol* method );
+	CVarDescription* LookUpField( const CSymbol* field );
+	CMethodDescription* LookUpMethod( const CSymbol* method );
 };
 
 class CVarDescription {
 private:
-	CSymbol* name;
-	CTypeInfo type;
+	const CSymbol* name;
+	CTypeInfo* type;
 public:
-	CVarDescription( CSymbol* _name, CTypeInfo _type );
+	CVarDescription( const CSymbol* _name, CTypeInfo* _type );
 
-	CSymbol* GetName();
-	CSymbol* GetType();
+	const CSymbol* GetName();
+	const CSymbol* GetType();
 };
 
 class CMethodDescription {
 private:
-	CSymbol* name;
-	map<CSymbol*, CVarDescription*> params;
-	CTypeInfo returnType;
-	map<CSymbol*, CVarDescription*> locals;
+	const CSymbol* name;
+	map<const CSymbol*, CVarDescription*> params;
+	CTypeInfo* returnType;
+	map<const CSymbol*, CVarDescription*> locals;
 public:
-	CMethodDescription( CSymbol* _name, CTypeInfo _returnType );
+	CMethodDescription( const CSymbol* _name, CTypeInfo* _returnType );
 	
 	CVarDescription* AddPapam( CVarDescription* param );
 	CVarDescription* AddLocal( CVarDescription* local );
 
-	CSymbol* GetName();
-	CSymbol* GetType();
+	const CSymbol* GetName();
+	const CSymbol* GetType();
 	
 	CVarDescription* LookUpParam( CSymbol* param );
 	CVarDescription* LookUpLocal( CSymbol* local );
