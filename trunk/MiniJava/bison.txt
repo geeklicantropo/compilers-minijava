@@ -94,13 +94,13 @@ int yywrap()
 %%
 Program:
 	MainClass ClassDeclStar {
-		progr = $$ = new CProgram( $1, $2 );
+		progr = $$ = new CProgram( $1, $2, yylloc.first_line );
 	}
 	;
 
 MainClass:
 	CLASS ID '{' PUBLIC STATIC VOID MAIN '(' STRING '[' ']' ID ')' '{' Statement '}' '}' {
-		$$ = new CMainClass( $2,  $12, $15 );
+		$$ = new CMainClass( $2,  $12, $15, yylloc.first_line );
 	}
 	| CLASS ID '{' error '}' {
 		printf ( "error1 in Main class in line %d\n", yylloc.first_line ); 
@@ -115,15 +115,15 @@ ClassDeclStar:
 		$$ = NULL;
 	}
 	| ClassDeclStar ClassDecl {
-		$$ = new CClassDeclareStar( $1, $2 );
+		$$ = new CClassDeclareStar( $1, $2, yylloc.first_line );
 	}
 
 ClassDecl:
 	CLASS ID '{' VarDeclStar MethodDeclStar '}' {
-		$$ = new CClassDeclare( $2, $4, $5 );
+		$$ = new CClassDeclare( $2, $4, $5, yylloc.first_line );
 	}
 	| CLASS ID EXTENDS ID '{' VarDeclStar MethodDeclStar '}' {
-		$$ = new CClassDeclareExtends( $2, $4, $6, $7 );
+		$$ = new CClassDeclareExtends( $2, $4, $6, $7, yylloc.first_line );
 	}
 	| CLASS ID '{' error '}'			{ printf ( "error1 in class declaration in line %d\n", yylloc.first_line ); }
 	| CLASS ID EXTENDS ID '{' error '}' { printf ( "error2 in class declaration in line %d\n", yylloc.first_line ); }
@@ -135,13 +135,13 @@ VarDeclStar:
 		$$ = NULL;
 	}
 	| VarDeclStar VarDecl {
-		$$ = new CVarDeclareStar( $1, $2 );
+		$$ = new CVarDeclareStar( $1, $2, yylloc.first_line );
 	}
 	;
 
 VarDecl:
 	Type ID ';' {
-		$$ = new CVarDeclare( $1, $2 );
+		$$ = new CVarDeclare( $1, $2, yylloc.first_line );
 	}
 	| Type ID error ';' { printf ( "var declaration in line %d\n", yylloc.first_line ); }
 	;
@@ -151,13 +151,13 @@ MethodDeclStar:
 		$$ = NULL;
 	}
 	| MethodDeclStar MethodDecl {
-		$$ = new CMethodDeclareStar( $1, $2 );
+		$$ = new CMethodDeclareStar( $1, $2, yylloc.first_line );
 	}
 	;
 
 MethodDecl:
 	PUBLIC Type ID '(' FormalList ')' '{' VarDeclStar StatementStar RETURN Expression ';' '}' {
-		$$ = new CMethodDeclare( $2, $3, $5, $8, $9, $11 );
+		$$ = new CMethodDeclare( $2, $3, $5, $8, $9, $11, yylloc.first_line );
 	}
 	;
 
@@ -166,7 +166,7 @@ FormalList:
 		$$ = NULL;
 	}
 	| Type ID FormalRestStar {
-		$$ = new CFormalList( $1, $2, $3 );
+		$$ = new CFormalList( $1, $2, $3, yylloc.first_line );
 	}
 	;
 
@@ -175,7 +175,7 @@ FormalRestStar:
 		$$ = NULL;
 	}
 	| ',' Type ID FormalRestStar {
-		$$ = new CFormalRestStar( $2, $3, $4 );
+		$$ = new CFormalRestStar( $2, $3, $4, yylloc.first_line );
 	}
 	;
 
@@ -199,71 +199,71 @@ StatementStar:
 		$$ = NULL;
 	}
 	| Statement StatementStar {
-		$$ = new CStatementStar( $1, $2 );
+		$$ = new CStatementStar( $1, $2, yylloc.first_line );
 	}
 	;
 
 Statement:
 	'{' StatementStar '}' {
-		$$ = new CStatement( $2 );
+		$$ = new CStatement( $2, yylloc.first_line );
 	}
 	| IF '(' Expression ')' Statement ELSE Statement {
-		$$ = new CStatementIf( $3, $5, $7 );
+		$$ = new CStatementIf( $3, $5, $7, yylloc.first_line );
 	}
 	| WHILE '(' Expression ')' Statement {
-		$$ = new CStatementWhile( $3, $5 );
+		$$ = new CStatementWhile( $3, $5, yylloc.first_line );
 	}
 	| SYSOUT '(' Expression ')' ';' {
-		$$ = new CStatementSysOut( $3 );
+		$$ = new CStatementSysOut( $3, yylloc.first_line );
 	}
 	| ID '=' Expression';' {
-		$$ = new CStatementAssignment( $1, $3 );
+		$$ = new CStatementAssignment( $1, $3, yylloc.first_line );
 	}
 	| ID '[' Expression ']' '=' Expression ';' {
-		$$ = new CStatementArrayAssignment( $1, $3, $6 );
+		$$ = new CStatementArrayAssignment( $1, $3, $6, yylloc.first_line );
 	}
-	| error ';' { printf ("statement error in line %d\n", yylloc.first_line); $$ = new CStatement( 0 ); }
+	| error ';' { printf ("statement error in line %d\n", yylloc.first_line); $$ = new CStatement( 0, yylloc.first_line ); }
 	;
 
 Expression:
 	Expression BINOP Expression {
-		$$ = new CExpressionBinOp( $1, $2, $3 );
+		$$ = new CExpressionBinOp( $1, $2, $3, yylloc.first_line );
 	}
 	| Expression '[' Expression ']' {
-		$$ = new CExpressionArray( $1, $3 );
+		$$ = new CExpressionArray( $1, $3, yylloc.first_line );
 	}
 	| Expression '.' LENGTH {
-		$$ = new CExpressionLength( $1 );
+		$$ = new CExpressionLength( $1, yylloc.first_line );
 	}
 	| Expression '.' ID '(' ExpList ')' {
-		$$ = new CExpressionCallMethod( $1, $3, $5 );
+		$$ = new CExpressionCallMethod( $1, $3, $5, yylloc.first_line );
 	}
 	| NUMBER {
-		$$ = new CExpressionNumber( $1 );
+		$$ = new CExpressionNumber( $1, yylloc.first_line );
 	}
 	| TRUE {
-		$$ = new CExpressionBool( true );
+		$$ = new CExpressionBool( true, yylloc.first_line );
 	}
 	| FALSE {
-		$$ = new CExpressionBool( false );
+		$$ = new CExpressionBool( false, yylloc.first_line );
 	}
 	| ID {
-		$$ = new CExpressionVar( $1 );
+		$$ = new CExpressionVar( $1, yylloc.first_line );
 	}
 	| THIS {
-		$$ = new CExpressionThis();
+		$$ = new CExpressionThis( yylloc.first_line );
 	}
 	| NEW INT_T '[' Expression ']' {
-		$$ = new CExpressionNewInt( $4 );
+		$$ = new CExpressionNewInt( $4, yylloc.first_line );
 	}
 	| NEW ID '(' ')' {
-		$$ = new CExpressionNewId( $2 );
+		$$ = new CExpressionNewId( $2, yylloc.first_line );
 	}
 	| '!' Expression {
-		$$ =  new CExpressionNegation( $2 );
+		$$ =  new CExpressionNegation( $2, yylloc.first_line );
 	}
 	| '(' Expression ')' {
-		$$ = new CExpression( $2 );
+		$$ = new CExpression( $2, yylloc.first_line );
 	}
 	;
 	 
@@ -272,18 +272,18 @@ ExpList:
 		$$ = NULL;
 	}
 	| Expression {
-		$$ = new CExpList( $1 );
+		$$ = new CExpList( $1, yylloc.first_line );
 	}
 	| ExpRest ',' Expression {
-		$$ = new CExpListNext( $1, $3 );
+		$$ = new CExpListNext( $1, $3, yylloc.first_line );
 	}
 
 ExpRest:
 	ExpRest ',' Expression {
-		$$ = new CExpListNext( $1, $3 );
+		$$ = new CExpListNext( $1, $3, yylloc.first_line );
 	}
 	| Expression {
-		$$ = new CExpList( $1 );
+		$$ = new CExpList( $1, yylloc.first_line );
 	}
 	; 
  
