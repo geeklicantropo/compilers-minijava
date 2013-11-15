@@ -37,15 +37,19 @@ private:
 	const CSymbol* baseClass;
 	map<const CSymbol*, CVarDescription*> fields;
 	map<const CSymbol*, CMethodDescription*> methods;
+
+	CSymbolTable* symbolTable;
 public:
-	CClassDescription(const CSymbol* _name);
-	CClassDescription(const CSymbol* _name, const CSymbol* _base);
+	CClassDescription( CSymbolTable* _symbolTable, const CSymbol* _name);
+	CClassDescription( CSymbolTable* _symbolTable, const CSymbol* _name, const CSymbol* _base );
 
 	CVarDescription* AddField( const CSymbol* _name, CTypeInfo* type );
 	CMethodDescription* AddMethod( const CSymbol* _name, CTypeInfo* returnType );
 
 	CVarDescription* LookUpField( const CSymbol* field );
 	CMethodDescription* LookUpMethod( const CSymbol* method );
+
+	CVarDescription* LookUp( const CSymbol* var );
 };
 
 class CVarDescription {
@@ -65,8 +69,10 @@ private:
 	map<const CSymbol*, CVarDescription*> params;
 	CTypeInfo* returnType;
 	map<const CSymbol*, CVarDescription*> locals;
+
+	CClassDescription* currentClass;
 public:
-	CMethodDescription( const CSymbol* _name, CTypeInfo* _returnType );
+	CMethodDescription( CClassDescription* _currentClass, const CSymbol* _name, CTypeInfo* _returnType );
 	
 	CVarDescription* AddPapam( CVarDescription* param );
 	CVarDescription* AddLocal( CVarDescription* local );
@@ -74,6 +80,8 @@ public:
 	const CSymbol* GetName();
 	const CSymbol* GetType();
 	
-	CVarDescription* LookUpParam( CSymbol* param );
-	CVarDescription* LookUpLocal( CSymbol* local );
+	CVarDescription* LookUpParam( const CSymbol* param );
+	CVarDescription* LookUpLocal( const CSymbol* local );
+
+	CVarDescription* LookUp( const CSymbol* variable );
 };
