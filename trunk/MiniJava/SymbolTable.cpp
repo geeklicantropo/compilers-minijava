@@ -7,52 +7,77 @@ const CSymbol* CTypeInfo::GetType() {
 }
 
 CClassDescription* CSymbolTable::AddClass( const CSymbol* className ) {
-	if( classes.find( className ) == classes.end() )
+	map< const CSymbol*, CClassDescription* >::iterator it = classes.find( className );
+	if( it != classes.end() )
 		return NULL;
-	return classes.at( className ) = new CClassDescription( className );
+	return it->second = new CClassDescription( this, className );
 }
 
 CClassDescription* CSymbolTable::AddClass( const CSymbol* className, const CSymbol* baseName ) {
-	if( classes.find( className ) == classes.end() )
+	map< const CSymbol*, CClassDescription* >::iterator it = classes.find( className );
+	if( it != classes.end() )
 		return NULL;
-	return classes.at( className ) = new CClassDescription( className, baseName );
+	return it->second = new CClassDescription( this, className, baseName );
 }
 
 CClassDescription* CSymbolTable::LookUpClass( const CSymbol* className ) {
-	if( classes.find( className ) == classes.end() )
+	map< const CSymbol*, CClassDescription* >::iterator it = classes.find( className );
+	if ( it == classes.end() )
 		return NULL;
-	return classes[className];
+	return it->second;
 }
 
-CClassDescription::CClassDescription( const CSymbol* _name ) : name( _name )
+CClassDescription::CClassDescription( CSymbolTable* _symbolTable, const CSymbol* _name ) 
+	: symbolTable( _symbolTable), name( _name )
 {
 	baseClass = 0;
 }
 
-CClassDescription::CClassDescription( const CSymbol* _name, const CSymbol* _base ) : name( _name ), baseClass( _base ) {}
+CClassDescription::CClassDescription( CSymbolTable* _symbolTable, const CSymbol* _name, const CSymbol* _base ) 
+	: symbolTable( _symbolTable ), name( _name ), baseClass( _base ) {}
 
 CVarDescription* CClassDescription::AddField( const CSymbol* _name, CTypeInfo* _type ) {
-	if ( fields.find( _name ) == fields.end() )
+	map< const CSymbol*, CVarDescription* >::iterator it = fields.find( _name );
+	if ( it != fields.end() )
 		return NULL;
-	return fields.at( _name ) = new CVarDescription( _name, _type );
+	return it->second = new CVarDescription( _name, _type );
 }
 
 CMethodDescription* CClassDescription::AddMethod( const CSymbol* _name, CTypeInfo* _type ) {
-	if ( methods.find( _name ) == methods.end() )
+	map< const CSymbol*, CMethodDescription* >::iterator it = methods.find( _name );
+	if ( it != methods.end() )
 		return NULL;
-	return methods.at( _name ) = new CMethodDescription( _name, _type );
+	return it->second = new CMethodDescription( this, _name, _type );
 }
 
 CVarDescription* CClassDescription::LookUpField( const CSymbol* field ) {
-	if ( fields.find( field ) == fields.end() )
+	map< const CSymbol*, CVarDescription* >::iterator it = fields.find( field );
+	if ( it == fields.end() )
 		return NULL;
-	return fields[field];
+	return it->second;
 }
 
 CMethodDescription* CClassDescription::LookUpMethod( const CSymbol* method ) {
-	if ( methods.find( method ) == methods.end() )
+	map< const CSymbol*, CMethodDescription* >::iterator it = methods.find( method );
+	if ( it == methods.end() )
 		return NULL;
-	return methods[method];
+	return it->second;
+}
+
+CVarDescription* CClassDescription::LookUp( const CSymbol* var ) {
+	CVarDescription* var1 = LookUpField( var );
+
+	if ( var1 == NULL )
+	{
+		if ( baseClass != 0 )
+		{
+			return symbolTable->LookUpClass( baseClass )->LookUp( var );
+		}
+		else
+			return NULL;
+	}
+	else
+		return var1;
 }
 
 CVarDescription::CVarDescription( const CSymbol* _name, CTypeInfo* _type ) : name( _name ), type( _type ) {}
@@ -65,18 +90,21 @@ const CSymbol* CVarDescription::GetType() {
 	return type->GetType();
 }
 
-CMethodDescription::CMethodDescription( const CSymbol* _name, CTypeInfo* _returnType ) : name( _name ), returnType( _returnType ) {}
+CMethodDescription::CMethodDescription( CClassDescription* _currentClass, const CSymbol* _name, CTypeInfo* _returnType ) 
+	: currentClass( _currentClass ), name( _name ), returnType( _returnType ) {}
 
 CVarDescription* CMethodDescription::AddPapam( CVarDescription* param ) {
-	if ( params.find( param->GetName() ) == params.end() )
+	map< const CSymbol*, CVarDescription* >::iterator it = params.find( param->GetName() );
+	if ( it == params.end() )
 		return NULL;
-	return params.at( param->GetName() ) = new CVarDescription( param->GetName(), new CTypeInfo( param->GetType() ) );
+	return it->second = new CVarDescription( param->GetName(), new CTypeInfo( param->GetType() ) );
 }
 
 CVarDescription* CMethodDescription::AddLocal( CVarDescription* local ) {
-	if ( locals.find( local->GetName() ) == locals.end() )
+	map< const CSymbol*, CVarDescription* >::iterator it = locals.find( local->GetName() );
+	if ( it != locals.end() )
 		return NULL;
-	return locals.at( local->GetName() ) = new CVarDescription( local->GetName(), new CTypeInfo( local->GetType() ) );
+	return it->second = new CVarDescription( local->GetName(), new CTypeInfo( local->GetType() ) );
 }
 
 const CSymbol* CMethodDescription::GetName() {
@@ -87,14 +115,36 @@ const CSymbol* CMethodDescription::GetType() {
 	return returnType->GetType();
 }
 
-CVarDescription* CMethodDescription::LookUpParam( CSymbol* param ) {
-	if ( params.find( param ) == params.end() )
+CVarDescription* CMethodDescription::LookUpParam( const CSymbol* param ) {
+	map< const CSymbol*, CVarDescription* >::iterator it = params.find( param );
+	if ( it == params.end() )
 		return NULL;
-	return params[param];
+	return it->second;
 }
 
-CVarDescription* CMethodDescription::LookUpLocal( CSymbol* local ) {
-	if (locals.find( local ) == locals.end() )
+CVarDescription* CMethodDescription::LookUpLocal( const CSymbol* local ) {
+	map< const CSymbol*, CVarDescription* >::iterator it = locals.find( local );
+	if ( it == locals.end() )
 		return NULL;
-	return locals[local];
+	return it->second;
+}
+
+CVarDescription* CMethodDescription::LookUp( const CSymbol* variable ) {
+	CVarDescription* var1 = LookUpLocal( variable );
+	CVarDescription* var2 = LookUpParam( variable );
+	CVarDescription* var3 = currentClass->LookUp( variable );
+	if ( var1 == NULL )
+	{
+		if ( var2 == NULL )
+		{
+			if ( var3 == NULL )
+				return NULL;
+			else
+				return var3;
+		}
+		else
+			return var2;
+	}
+	else
+		return var1;
 }
