@@ -1,5 +1,6 @@
 #include "SymbolTableBuilder.h"
 #include "miniJava.h"
+#include "iostream"
 
 CSymbolTableBuilder::CSymbolTableBuilder( CSymbolTable* st ) :
 	symbolTable( st )
@@ -18,7 +19,8 @@ int CSymbolTableBuilder::Visit( const CProgram* n )
 int CSymbolTableBuilder::Visit( const CMainClass* n )
 { 
 	currentClass = symbolTable->AddClass( n->GetId() );
-	//if (currentClass == 0 ) 
+	if( currentClass == 0 )
+		ErrorMessage( cout, "this classname was used earlier", n->GetLocation() );
 	
 	currentClass = 0;
 	return 0; 
@@ -34,6 +36,9 @@ int CSymbolTableBuilder::Visit( const CClassDeclareStar* n )
 int CSymbolTableBuilder::Visit( const CClassDeclare* n )
 {
 	currentClass = symbolTable->AddClass( n->GetId() );
+	if( currentClass == 0 ) 
+		ErrorMessage( cout, "this classname was used earlier", n->GetLocation() );
+	
 	if ( n->GetVarDeclareStar() != 0 ) n->GetVarDeclareStar()->Accept( this );
 	if ( n->GetMethodDeclareStar() != 0 ) n->GetMethodDeclareStar()->Accept( this );
 	currentClass = 0;
@@ -43,6 +48,10 @@ int CSymbolTableBuilder::Visit( const CClassDeclare* n )
 int CSymbolTableBuilder::Visit( const CClassDeclareExtends* n )
 {
 	currentClass = symbolTable->AddClass( n->GetId(), n->GetExtendsId() );
+	
+	if( currentClass == 0 )
+		ErrorMessage( cout, "this classname was used earlier", n->GetLocation() );
+	
 	if ( n->GetVarDeclareStar() != 0 ) n->GetVarDeclareStar()->Accept( this );
 	if ( n->GetMethodDeclareStar() != 0 ) n->GetMethodDeclareStar()->Accept( this );
 	currentClass = 0;
@@ -58,16 +67,25 @@ int CSymbolTableBuilder::Visit( const CVarDeclareStar* n )
 
 int CSymbolTableBuilder::Visit( const CVarDeclare* n )
 {
+	CVarDescription* var;
 	if( currentMethod == 0 )
-		currentClass->AddField( n->GetId(), new CTypeInfo( n->GetType() ) );
+		var = currentClass->AddField( n->GetId(), new CTypeInfo( n->GetType() ) );
 	else
-		currentMethod->AddLocal( new CVarDescription( n->GetId(), new CTypeInfo( n->GetType() ) ) );
+		var = currentMethod->AddLocal( new CVarDescription( n->GetId(), new CTypeInfo( n->GetType() ) ) );
+	if( var == 0 ) {
+		ErrorMessage( cout, "this variable name was used earlier", n->GetLocation() );	
+	}
 	return 0; 
 }
 
 int CSymbolTableBuilder::Visit( const CMethodDeclare* n )
 { 
+	assert( currentClass != 0 );
 	currentMethod = currentClass->AddMethod( n->GetId(), new CTypeInfo( n->GetType() ) );
+	
+	if( currentMethod == 0 )
+		ErrorMessage( cout, "this method was declared earlier", n->GetLocation() );
+
 	if (n->GetFormalList() != 0) n->GetFormalList()->Accept( this );
 	if (n->GetVarDeclareStar() != 0) n->GetVarDeclareStar()->Accept( this );
 	currentMethod = 0;
@@ -83,13 +101,23 @@ int CSymbolTableBuilder::Visit( const CMethodDeclareStar* n )
 
 int CSymbolTableBuilder::Visit( const CFormalList* n )
 {
-	currentMethod->AddPapam( new CVarDescription( n->GetId(), new CTypeInfo( n->GetType() ) ) );
+	assert( currentMethod != 0 );
+	CVarDescription* var = currentMethod->AddPapam( new CVarDescription( n->GetId(), new CTypeInfo( n->GetType() ) ) );
+
+	if( var == 0 )
+		ErrorMessage( cout, "this variable was used earlier", n->GetLocation() );
+
 	if (n->GetFormalRestStar() != 0) n->GetFormalRestStar()->Accept( this );
 	return 0; 
 }
 int CSymbolTableBuilder::Visit( const CFormalRestStar* n )
 {
-	currentMethod->AddPapam( new CVarDescription( n->GetId(), new CTypeInfo( n->GetType() ) ) );
+	assert( currentMethod != 0 );
+	CVarDescription* var = currentMethod->AddPapam( new CVarDescription( n->GetId(), new CTypeInfo( n->GetType() ) ) );
+	
+	if( var == 0 )
+		ErrorMessage( cout, "this variable was used earlier", n->GetLocation() );
+	
 	if (n->GetFormalRestStar() != 0) n->GetFormalRestStar()->Accept( this );
 	return 0;
 }

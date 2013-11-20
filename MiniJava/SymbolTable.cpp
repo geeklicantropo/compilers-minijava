@@ -10,14 +10,14 @@ CClassDescription* CSymbolTable::AddClass( const CSymbol* className ) {
 	map< const CSymbol*, CClassDescription* >::iterator it = classes.find( className );
 	if( it != classes.end() )
 		return NULL;
-	return it->second = new CClassDescription( this, className );
+	return classes[className] = new CClassDescription( this, className );
 }
 
 CClassDescription* CSymbolTable::AddClass( const CSymbol* className, const CSymbol* baseName ) {
 	map< const CSymbol*, CClassDescription* >::iterator it = classes.find( className );
 	if( it != classes.end() )
 		return NULL;
-	return it->second = new CClassDescription( this, className, baseName );
+	return classes[className] = new CClassDescription( this, className, baseName );
 }
 
 CClassDescription* CSymbolTable::LookUpClass( const CSymbol* className ) {
@@ -40,14 +40,14 @@ CVarDescription* CClassDescription::AddField( const CSymbol* _name, CTypeInfo* _
 	map< const CSymbol*, CVarDescription* >::iterator it = fields.find( _name );
 	if ( it != fields.end() )
 		return NULL;
-	return it->second = new CVarDescription( _name, _type );
+	return fields[_name] = new CVarDescription( _name, _type );
 }
 
 CMethodDescription* CClassDescription::AddMethod( const CSymbol* _name, CTypeInfo* _type ) {
 	map< const CSymbol*, CMethodDescription* >::iterator it = methods.find( _name );
 	if ( it != methods.end() )
 		return NULL;
-	return it->second = new CMethodDescription( this, _name, _type );
+	return methods[_name] = new CMethodDescription( this, _name, _type );
 }
 
 CVarDescription* CClassDescription::LookUpField( const CSymbol* field ) {
@@ -95,16 +95,16 @@ CMethodDescription::CMethodDescription( CClassDescription* _currentClass, const 
 
 CVarDescription* CMethodDescription::AddPapam( CVarDescription* param ) {
 	map< const CSymbol*, CVarDescription* >::iterator it = params.find( param->GetName() );
-	if ( it == params.end() )
+	if ( it != params.end() )
 		return NULL;
-	return it->second = new CVarDescription( param->GetName(), new CTypeInfo( param->GetType() ) );
+	return params[param->GetName()] = new CVarDescription( param->GetName(), new CTypeInfo( param->GetType() ) );
 }
 
 CVarDescription* CMethodDescription::AddLocal( CVarDescription* local ) {
 	map< const CSymbol*, CVarDescription* >::iterator it = locals.find( local->GetName() );
 	if ( it != locals.end() )
 		return NULL;
-	return it->second = new CVarDescription( local->GetName(), new CTypeInfo( local->GetType() ) );
+	return locals[local->GetName()] = new CVarDescription( local->GetName(), new CTypeInfo( local->GetType() ) );
 }
 
 const CSymbol* CMethodDescription::GetName() {
