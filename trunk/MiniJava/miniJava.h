@@ -8,6 +8,8 @@ enum TBinaryOperation {
 	AND, LESS, PLUS,  MINUS, TIMES
 };
 
+void ErrorMessage( ostream& out, const string& msg, int line );
+
 class IProgram {
 public:
 	virtual int Accept(IVisitor *v) const = 0;

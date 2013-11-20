@@ -1,9 +1,16 @@
 #include <cstdio>
 #include "miniJava.h"
 #include "Visitor.h"
-#include "iostream"
+#include "string"
+#include <ostream>
 
 using namespace std;
+
+
+void ErrorMessage( ostream& out, const string& msg, int line ) 
+{
+	out << "Error in line " << line << ": " << msg << endl;
+}
 
 CProgram::CProgram( const IMainClass* _mainClass, const IClassDeclareStar* _classDeclareStar, int _location ) :
 	mainClass( _mainClass), classDeclareStar( _classDeclareStar ), location(_location)
