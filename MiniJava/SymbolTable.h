@@ -1,5 +1,6 @@
 #pragma once
 #include "Symbols.h"
+#include "miniJava.h"
 #include <map>
 #include <string>
 
@@ -9,17 +10,6 @@ class CSymbolTable;
 class CClassDescription;
 class CVarDescription;
 class CMethodDescription;
-
-class CTypeInfo
-{
-private:
-	const CSymbol* type;
-	//bool isStandart;
-public:
-	CTypeInfo ( const CSymbol* _type );
-	
-	const CSymbol* GetType();
-};
 
 class CSymbolTable {
 private:
@@ -43,8 +33,8 @@ public:
 	CClassDescription( CSymbolTable* _symbolTable, const CSymbol* _name);
 	CClassDescription( CSymbolTable* _symbolTable, const CSymbol* _name, const CSymbol* _base );
 
-	CVarDescription* AddField( const CSymbol* _name, CTypeInfo* type );
-	CMethodDescription* AddMethod( const CSymbol* _name, CTypeInfo* returnType );
+	CVarDescription* AddField( const CSymbol* _name, const CTypeInfo* type );
+	CMethodDescription* AddMethod( const CSymbol* _name, const CTypeInfo* returnType );
 
 	CVarDescription* LookUpField( const CSymbol* field );
 	CMethodDescription* LookUpMethod( const CSymbol* method );
@@ -55,30 +45,30 @@ public:
 class CVarDescription {
 private:
 	const CSymbol* name;
-	CTypeInfo* type;
+	const CTypeInfo* type;
 public:
-	CVarDescription( const CSymbol* _name, CTypeInfo* _type );
+	CVarDescription( const CSymbol* _name, const CTypeInfo* _type );
 
-	const CSymbol* GetName();
-	const CSymbol* GetType();
+	const CSymbol* GetName() const;
+	const CTypeInfo* GetType() const;
 };
 
 class CMethodDescription {
 private:
 	const CSymbol* name;
 	map<const CSymbol*, CVarDescription*> params;
-	CTypeInfo* returnType;
+	const CTypeInfo* returnType;
 	map<const CSymbol*, CVarDescription*> locals;
 
 	CClassDescription* currentClass;
 public:
-	CMethodDescription( CClassDescription* _currentClass, const CSymbol* _name, CTypeInfo* _returnType );
+	CMethodDescription( CClassDescription* _currentClass, const CSymbol* _name, const CTypeInfo* _returnType );
 	
 	CVarDescription* AddPapam( CVarDescription* param );
 	CVarDescription* AddLocal( CVarDescription* local );
 
-	const CSymbol* GetName();
-	const CSymbol* GetType();
+	const CSymbol* GetName() const;
+	const CTypeInfo* GetType() const;
 	
 	CVarDescription* LookUpParam( const CSymbol* param );
 	CVarDescription* LookUpLocal( const CSymbol* local );

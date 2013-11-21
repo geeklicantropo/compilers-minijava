@@ -69,9 +69,9 @@ int CSymbolTableBuilder::Visit( const CVarDeclare* n )
 {
 	CVarDescription* var;
 	if( currentMethod == 0 )
-		var = currentClass->AddField( n->GetId(), new CTypeInfo( n->GetType() ) );
+		var = currentClass->AddField( n->GetId(), n->GetType() );
 	else
-		var = currentMethod->AddLocal( new CVarDescription( n->GetId(), new CTypeInfo( n->GetType() ) ) );
+		var = currentMethod->AddLocal( new CVarDescription( n->GetId(), n->GetType() ) );
 	if( var == 0 ) {
 		ErrorMessage( cout, "this variable name was used earlier", n->GetLocation() );	
 	}
@@ -81,7 +81,7 @@ int CSymbolTableBuilder::Visit( const CVarDeclare* n )
 int CSymbolTableBuilder::Visit( const CMethodDeclare* n )
 { 
 	assert( currentClass != 0 );
-	currentMethod = currentClass->AddMethod( n->GetId(), new CTypeInfo( n->GetType() ) );
+	currentMethod = currentClass->AddMethod( n->GetId(), n->GetType() );
 	
 	if( currentMethod == 0 )
 		ErrorMessage( cout, "this method was declared earlier", n->GetLocation() );
@@ -102,7 +102,7 @@ int CSymbolTableBuilder::Visit( const CMethodDeclareStar* n )
 int CSymbolTableBuilder::Visit( const CFormalList* n )
 {
 	assert( currentMethod != 0 );
-	CVarDescription* var = currentMethod->AddPapam( new CVarDescription( n->GetId(), new CTypeInfo( n->GetType() ) ) );
+	CVarDescription* var = currentMethod->AddPapam( new CVarDescription( n->GetId(), n->GetType() ) );
 
 	if( var == 0 )
 		ErrorMessage( cout, "this variable was used earlier", n->GetLocation() );
@@ -113,7 +113,7 @@ int CSymbolTableBuilder::Visit( const CFormalList* n )
 int CSymbolTableBuilder::Visit( const CFormalRestStar* n )
 {
 	assert( currentMethod != 0 );
-	CVarDescription* var = currentMethod->AddPapam( new CVarDescription( n->GetId(), new CTypeInfo( n->GetType() ) ) );
+	CVarDescription* var = currentMethod->AddPapam( new CVarDescription( n->GetId(), n->GetType() ) );
 	
 	if( var == 0 )
 		ErrorMessage( cout, "this variable was used earlier", n->GetLocation() );

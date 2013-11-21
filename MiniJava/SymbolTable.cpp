@@ -1,11 +1,5 @@
 #include "SymbolTable.h"
 
-CTypeInfo::CTypeInfo( const CSymbol* _type ) : type( _type ) {}
-
-const CSymbol* CTypeInfo::GetType() {
-	return type;
-}
-
 CClassDescription* CSymbolTable::AddClass( const CSymbol* className ) {
 	map< const CSymbol*, CClassDescription* >::iterator it = classes.find( className );
 	if( it != classes.end() )
@@ -36,14 +30,14 @@ CClassDescription::CClassDescription( CSymbolTable* _symbolTable, const CSymbol*
 CClassDescription::CClassDescription( CSymbolTable* _symbolTable, const CSymbol* _name, const CSymbol* _base ) 
 	: symbolTable( _symbolTable ), name( _name ), baseClass( _base ) {}
 
-CVarDescription* CClassDescription::AddField( const CSymbol* _name, CTypeInfo* _type ) {
+CVarDescription* CClassDescription::AddField( const CSymbol* _name, const CTypeInfo* _type ) {
 	map< const CSymbol*, CVarDescription* >::iterator it = fields.find( _name );
 	if ( it != fields.end() )
 		return NULL;
 	return fields[_name] = new CVarDescription( _name, _type );
 }
 
-CMethodDescription* CClassDescription::AddMethod( const CSymbol* _name, CTypeInfo* _type ) {
+CMethodDescription* CClassDescription::AddMethod( const CSymbol* _name, const CTypeInfo* _type ) {
 	map< const CSymbol*, CMethodDescription* >::iterator it = methods.find( _name );
 	if ( it != methods.end() )
 		return NULL;
@@ -80,39 +74,43 @@ CVarDescription* CClassDescription::LookUp( const CSymbol* var ) {
 		return var1;
 }
 
-CVarDescription::CVarDescription( const CSymbol* _name, CTypeInfo* _type ) : name( _name ), type( _type ) {}
+CVarDescription::CVarDescription( const CSymbol* _name, const  CTypeInfo* _type ) : name( _name ), type( _type ) {}
 
-const CSymbol* CVarDescription::GetName() {
+const CSymbol* CVarDescription::GetName() const
+{
 	return name;
 }
 
-const CSymbol* CVarDescription::GetType() {
-	return type->GetType();
+const CTypeInfo* CVarDescription::GetType() const
+{
+	return type;
 }
 
-CMethodDescription::CMethodDescription( CClassDescription* _currentClass, const CSymbol* _name, CTypeInfo* _returnType ) 
+CMethodDescription::CMethodDescription( CClassDescription* _currentClass, const CSymbol* _name, const CTypeInfo* _returnType ) 
 	: currentClass( _currentClass ), name( _name ), returnType( _returnType ) {}
 
 CVarDescription* CMethodDescription::AddPapam( CVarDescription* param ) {
 	map< const CSymbol*, CVarDescription* >::iterator it = params.find( param->GetName() );
 	if ( it != params.end() )
 		return NULL;
-	return params[param->GetName()] = new CVarDescription( param->GetName(), new CTypeInfo( param->GetType() ) );
+	return params[param->GetName()] = new CVarDescription( param->GetName(), param->GetType() );
 }
 
 CVarDescription* CMethodDescription::AddLocal( CVarDescription* local ) {
 	map< const CSymbol*, CVarDescription* >::iterator it = locals.find( local->GetName() );
 	if ( it != locals.end() )
 		return NULL;
-	return locals[local->GetName()] = new CVarDescription( local->GetName(), new CTypeInfo( local->GetType() ) );
+	return locals[local->GetName()] = new CVarDescription( local->GetName(), local->GetType() );
 }
 
-const CSymbol* CMethodDescription::GetName() {
+const CSymbol* CMethodDescription::GetName() const
+{
 	return name;
 }
 
-const CSymbol* CMethodDescription::GetType() {
-	return returnType->GetType();
+const CTypeInfo* CMethodDescription::GetType() const
+{
+	return returnType;
 }
 
 CVarDescription* CMethodDescription::LookUpParam( const CSymbol* param ) {
