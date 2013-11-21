@@ -60,10 +60,10 @@ int CInterpreter::Visit( const CMethodDeclare* n )
 	std::cout << n->GetType()->getString() << " ";
 	std::cout << n->GetId()->getString();
 	std::cout << "( " ;
-	if (n->GetFormalList() != 0) n->GetFormalList()->Accept( this );
+	if( n->GetFormalList() != 0 ) n->GetFormalList()->Accept( this );
 	std::cout << " )" << std::endl << "{" << std::endl << "\t";
-	if (n->GetVarDeclareStar() != 0) n->GetVarDeclareStar()->Accept( this );
-	if (n->GetStatementStar() != 0) n->GetStatementStar()->Accept( this );
+	if( n->GetVarDeclareStar() != 0 ) n->GetVarDeclareStar()->Accept( this );
+	if( n->GetStatementStar() != 0 ) n->GetStatementStar()->Accept( this );
 	std::cout << "return ";
 	n->GetExpression()->Accept( this );
 	std::cout << ";" << std::endl << "}" << std::endl;
@@ -72,7 +72,7 @@ int CInterpreter::Visit( const CMethodDeclare* n )
 
 int CInterpreter::Visit( const CMethodDeclareStar* n ) 
 {
-	if (n->GetMethodDeclareStar() != 0) n->GetMethodDeclareStar()->Accept( this );
+	if( n->GetMethodDeclareStar() != 0 ) n->GetMethodDeclareStar()->Accept( this );
 	n->GetMethodDeclare()->Accept( this );
 	return 0; 
 }
@@ -81,7 +81,7 @@ int CInterpreter::Visit( const CFormalList* n )
 {
 	std::cout << n->GetType()->getString() << " ";
 	std::cout << n->GetId()->getString();
-	if (n->GetFormalRestStar() != 0) n->GetFormalRestStar()->Accept( this );
+	if( n->GetFormalRestStar() != 0 ) n->GetFormalRestStar()->Accept( this );
 	return 0; 
 }
 
@@ -89,21 +89,21 @@ int CInterpreter::Visit( const CFormalRestStar* n )
 {
 	std::cout <<", " << n->GetType()->getString() << " ";
 	std::cout << n->GetId()->getString();
-	if (n->GetFormalRestStar() != 0) n->GetFormalRestStar()->Accept( this );
+	if( n->GetFormalRestStar() != 0 ) n->GetFormalRestStar()->Accept( this );
 	return 0; 
 }
 
 int CInterpreter::Visit( const CStatement* n )  
 { 
 	std::cout << "{ " << std::endl;
-	if (n->GetStatementStar() != 0) n->GetStatementStar()->Accept( this );
+	if( n->GetStatementStar() != 0 ) n->GetStatementStar()->Accept( this );
 	std::cout << std::endl << "}" << std::endl;
 	return 0; 
 }
 
 int CInterpreter::Visit( const CStatementStar* n )  { 
 	n->GetStatement()->Accept( this );
-	if (n->GetStatementStar() != 0) n->GetStatementStar()->Accept( this );
+	if( n->GetStatementStar() != 0 ) n->GetStatementStar()->Accept( this );
 	return 0; 
 }
 

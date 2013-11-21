@@ -5,7 +5,11 @@
 using std::cout;
 
 CTypeChecker::CTypeChecker( CSymbolTable* st ): 
-	symbolTable( st ) {}
+	symbolTable( st ) 
+{
+	currentClass = 0;
+	currentMethod = 0;
+}
 
 int CTypeChecker::Visit( const CProgram* n ) 
 {
@@ -16,7 +20,9 @@ int CTypeChecker::Visit( const CProgram* n )
 
 int CTypeChecker::Visit( const CMainClass* n ) 
 {
+	currentClass = symbolTable->LookUpClass( n->GetId() );
 	n->GetStatement()->Accept( this );
+	currentClass = 0;
 	return 0;
 }
 int CTypeChecker::Visit( const CClassDeclareStar* n ) 
@@ -27,14 +33,18 @@ int CTypeChecker::Visit( const CClassDeclareStar* n )
 }
 int CTypeChecker::Visit( const CClassDeclare* n )
 {
+	currentClass = symbolTable->LookUpClass( n->GetId() );
 	if ( n->GetVarDeclareStar() != 0 ) n->GetVarDeclareStar()->Accept( this );
 	if ( n->GetMethodDeclareStar() != 0 ) n->GetMethodDeclareStar()->Accept( this );
+	currentClass = 0;
 	return 0;
 }
 int CTypeChecker::Visit( const CClassDeclareExtends* n ) 
 {
+	currentClass = symbolTable->LookUpClass( n->GetId() );
 	if( n->GetVarDeclareStar() != 0) n->GetVarDeclareStar()->Accept( this );
 	if( n->GetMethodDeclareStar() != 0)  n->GetMethodDeclareStar()->Accept( this );
+	currentClass = 0;
 	return 0;
 }
 int CTypeChecker::Visit( const CVarDeclareStar* n ) 
@@ -49,34 +59,40 @@ int CTypeChecker::Visit( const CVarDeclare* n )
 }
 int CTypeChecker::Visit( const CMethodDeclare* n ) 
 {
-	if (n->GetFormalList() != 0) n->GetFormalList()->Accept( this );
-	if (n->GetVarDeclareStar() != 0) n->GetVarDeclareStar()->Accept( this );
-	if (n->GetStatementStar() != 0) n->GetStatementStar()->Accept( this );
+	currentMethod = currentClass->LookUpMethod( n->GetId() );
+	if( n->GetFormalList() != 0 ) n->GetFormalList()->Accept( this );
+	if( n->GetVarDeclareStar() != 0 ) n->GetVarDeclareStar()->Accept( this );
+	if( n->GetStatementStar() != 0 ) n->GetStatementStar()->Accept( this );
 	n->GetExpression()->Accept( this );
+	currentMethod = 0;
 	return 0;
 }
 int CTypeChecker::Visit( const CMethodDeclareStar* n ) 
 {
-	if (n->GetMethodDeclareStar() != 0) n->GetMethodDeclareStar()->Accept( this );
+	if( n->GetMethodDeclareStar() != 0 ) n->GetMethodDeclareStar()->Accept( this );
 	n->GetMethodDeclare()->Accept( this );
 	return 0;
 }
 int CTypeChecker::Visit( const CFormalList* n ) 
 {
-	if (n->GetFormalRestStar() != 0) n->GetFormalRestStar()->Accept( this );
+	if( n->GetFormalRestStar() != 0 ) n->GetFormalRestStar()->Accept( this );
 	return 0;
 }
 int CTypeChecker::Visit( const CFormalRestStar* n ) 
 {
-	if (n->GetFormalRestStar() != 0) n->GetFormalRestStar()->Accept( this );
+	if ( n->GetFormalRestStar() != 0 ) n->GetFormalRestStar()->Accept( this );
 	return 0;
 }
 int CTypeChecker::Visit( const CStatement* n ) 
 {
-	if (n->GetStatementStar() != 0) n->GetStatementStar()->Accept( this );
+	if ( n->GetStatementStar() != 0 ) n->GetStatementStar()->Accept( this );
 	return 0;
 }
-int CTypeChecker::Visit( const CStatementStar* n ) {return 0;}
+int CTypeChecker::Visit( const CStatementStar* n ) {
+	n->GetStatement()->Accept( this );
+	if( n->GetStatementStar() != 0 ) n->GetStatementStar()->Accept( this );
+	return 0;
+}
 int CTypeChecker::Visit( const CStatementIf* n ) {return 0;}
 int CTypeChecker::Visit( const CStatementWhile* n ) {return 0;}
 int CTypeChecker::Visit( const CStatementSysOut* n ) {return 0;}

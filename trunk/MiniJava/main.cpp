@@ -14,5 +14,6 @@ int main()
 	yyparse( progr );
 	progr->Accept( new CInterpreter() );
 	progr->Accept( new CSymbolTableBuilder( &st ) );
+	progr->Accept( new CTypeChecker( &st ) );
 	return 0;
 }
