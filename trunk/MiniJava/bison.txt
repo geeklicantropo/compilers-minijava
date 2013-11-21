@@ -41,6 +41,7 @@ int yywrap()
 	IStatement* Statement;
 	IExpression* Expression;
 	IExpList* ExpList;
+	const CTypeInfo* TypeInfo;
 	const CSymbol* Name;
 }
 
@@ -86,7 +87,7 @@ int yywrap()
 %type <FormalRestStar> FormalRestStar
 %type <StatementStar> StatementStar
 %type <Statement> Statement
-%type <Name> Type
+%type <TypeInfo> Type
 %type <Expression> Expression
 %type <ExpList> ExpList
 %type <ExpList> ExpRest
@@ -181,16 +182,16 @@ FormalRestStar:
 
 Type:
 	INT_T '['']' {
-		$$ = CSymbol::CSymbolGet( "int[]" );
+		$$ = new CTypeInfo( INT );
 	}
 	| BOOL_T {
-		$$ = CSymbol::CSymbolGet( "boolean" );
+		$$ = new CTypeInfo( BOOL );
 	}
 	| INT_T {
-		$$ = CSymbol::CSymbolGet( "int" );
+		$$ = new CTypeInfo( INTARRAY );
 	}
 	| ID {
-		$$ = $1;
+		$$ = new CTypeInfo( $1 );
 	}
 	;
 

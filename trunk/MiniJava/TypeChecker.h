@@ -7,6 +7,7 @@ private:
 	CClassDescription* currentClass;
 	CMethodDescription* currentMethod;
 	CSymbolTable* symbolTable;
+	const CTypeInfo* currentType;
 public:
 	CTypeChecker( CSymbolTable* );
 	int Visit( const CProgram* n );

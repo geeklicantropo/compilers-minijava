@@ -4,6 +4,21 @@
 #include "Interpreter.h"
 #include "Symbols.h"
 
+enum TType {
+	BOOL, INT, INTARRAY, USERTYPE
+};
+
+class CTypeInfo {
+private:
+	const CSymbol* userType;
+	TType type;
+public:
+	CTypeInfo ( const CSymbol* n );
+	CTypeInfo ( TType t );
+	TType GetType() const;
+	const CSymbol* GetUserType() const;
+};
+
 enum TBinaryOperation {
 	AND, LESS, PLUS,  MINUS, TIMES
 };
@@ -191,15 +206,15 @@ private:
 
 class CVarDeclare : public IVarDeclare {
 public:
-	CVarDeclare( const CSymbol* , const CSymbol*, int _location );
+	CVarDeclare( const CTypeInfo* , const CSymbol*, int _location );
 	int Accept(IVisitor *v) const;
-	const CSymbol* GetType() const;
+	const CTypeInfo* GetType() const;
 	const CSymbol* GetId() const;
 	int GetLocation() const;
 
 private:
 	const CSymbol* id;
-	const CSymbol* typeId;
+	const CTypeInfo* type;
 	int location;
 };
 
@@ -219,10 +234,10 @@ private:
 
 class CMethodDeclare : public IMethodDeclare {
 public:
-	CMethodDeclare( const CSymbol*, const CSymbol*, const IFormalList*, const IVarDeclareStar*, 
+	CMethodDeclare( const CTypeInfo*, const CSymbol*, const IFormalList*, const IVarDeclareStar*, 
 		const IStatementStar*, const IExpression*, int _location );
 	int Accept(IVisitor *v) const;
-	const CSymbol* GetType() const;
+	const CTypeInfo* GetType() const;
 	const CSymbol* GetId() const;
 	const IFormalList*  GetFormalList() const;
 	const IVarDeclareStar* GetVarDeclareStar() const;
@@ -231,7 +246,7 @@ public:
 	int GetLocation() const;
 
 private:
-	const CSymbol* dataType;
+	const CTypeInfo* type;
 	const CSymbol* id;
 	const IFormalList* const formalList;
 	const IVarDeclareStar* const varDeclareStar;
@@ -242,15 +257,15 @@ private:
 
 class CFormalList : public IFormalList {
 public:
-	CFormalList( const CSymbol*, const CSymbol*, const IFormalRestStar*, int _location );
+	CFormalList( const CTypeInfo*, const CSymbol*, const IFormalRestStar*, int _location );
 	int Accept(IVisitor *v) const;
-	const CSymbol* GetType() const;
+	const CTypeInfo* GetType() const;
 	const CSymbol* GetId() const;
 	const IFormalRestStar* GetFormalRestStar() const;
 	int GetLocation() const;
 
 private:
-	const CSymbol* dataType;
+	const CTypeInfo* type;
 	const CSymbol* id;
 	const IFormalRestStar* const formalRestStar;
 	int location;
@@ -258,15 +273,15 @@ private:
 
 class CFormalRestStar : public IFormalRestStar {
 public:
-	CFormalRestStar( const CSymbol*, const CSymbol*, const IFormalRestStar*, int _location );
+	CFormalRestStar( const CTypeInfo*, const CSymbol*, const IFormalRestStar*, int _location );
 	int Accept(IVisitor *v) const;
-	const CSymbol* GetType() const;
+	const CTypeInfo* GetType() const;
 	const CSymbol* GetId() const;
 	const IFormalRestStar* GetFormalRestStar() const;
 	int GetLocation() const;
 
 private:
-	const CSymbol* dataType;
+	const CTypeInfo* type;
 	const CSymbol* id;
 	const IFormalRestStar* const formalRestStar;
 	int location;

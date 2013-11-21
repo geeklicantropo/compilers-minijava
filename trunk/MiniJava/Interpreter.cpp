@@ -48,8 +48,22 @@ int CInterpreter::Visit( const CVarDeclareStar* n )
 }	
 
 int CInterpreter::Visit( const CVarDeclare* n )  
-{ 
-	std::cout << n->GetType()->getString() << " ";
+{
+	switch( n->GetType()->GetType() )
+	{
+	case INT:
+		std::cout << "int ";
+		break;
+	case INTARRAY:
+		std::cout << "int[] ";
+		break;
+	case BOOL:
+		std::cout << "boolean ";
+		break;
+	case USERTYPE:
+		std::cout << n->GetType()->GetUserType() << " ";
+		break;
+	}
 	std::cout << n->GetId()->getString() << ";" << std::endl;
 	return 0; 
 }
@@ -57,7 +71,21 @@ int CInterpreter::Visit( const CVarDeclare* n )
 int CInterpreter::Visit( const CMethodDeclare* n )  
 { 
 	std::cout << "public ";
-	std::cout << n->GetType()->getString() << " ";
+	switch( n->GetType()->GetType() )
+	{
+	case INT:
+		std::cout << "int ";
+		break;
+	case INTARRAY:
+		std::cout << "int[] ";
+		break;
+	case BOOL:
+		std::cout << "boolean ";
+		break;
+	case USERTYPE:
+		std::cout << n->GetType()->GetUserType() << " ";
+		break;
+	}
 	std::cout << n->GetId()->getString();
 	std::cout << "( " ;
 	if( n->GetFormalList() != 0 ) n->GetFormalList()->Accept( this );
@@ -79,7 +107,21 @@ int CInterpreter::Visit( const CMethodDeclareStar* n )
 
 int CInterpreter::Visit( const CFormalList* n )  
 {
-	std::cout << n->GetType()->getString() << " ";
+	switch( n->GetType()->GetType() )
+	{
+	case INT:
+		std::cout << "int ";
+		break;
+	case INTARRAY:
+		std::cout << "int[] ";
+		break;
+	case BOOL:
+		std::cout << "boolean ";
+		break;
+	case USERTYPE:
+		std::cout << n->GetType()->GetUserType() << " ";
+		break;
+	}
 	std::cout << n->GetId()->getString();
 	if( n->GetFormalRestStar() != 0 ) n->GetFormalRestStar()->Accept( this );
 	return 0; 
@@ -87,7 +129,22 @@ int CInterpreter::Visit( const CFormalList* n )
 
 int CInterpreter::Visit( const CFormalRestStar* n )  
 {
-	std::cout <<", " << n->GetType()->getString() << " ";
+	std::cout <<", ";
+	switch( n->GetType()->GetType() )
+	{
+	case INT:
+		std::cout << "int ";
+		break;
+	case INTARRAY:
+		std::cout << "int[] ";
+		break;
+	case BOOL:
+		std::cout << "boolean ";
+		break;
+	case USERTYPE:
+		std::cout << n->GetType()->GetUserType() << " ";
+		break;
+	}
 	std::cout << n->GetId()->getString();
 	if( n->GetFormalRestStar() != 0 ) n->GetFormalRestStar()->Accept( this );
 	return 0; 
@@ -196,7 +253,6 @@ int CInterpreter::Visit( const CExpressionLength* n )
 
 int CInterpreter::Visit( const CExpressionCallMethod* n )  
 {
-	//Expression '.' ID '(' ExpList ')' {
 	n->GetExpression()->Accept( this );
 	std::cout << "." << n->GetId()->getString() << "( ";
 	if( n->GetExpList() != 0 ) n->GetExpList()->Accept( this );

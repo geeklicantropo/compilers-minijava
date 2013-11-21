@@ -12,6 +12,26 @@ void ErrorMessage( ostream& out, const string& msg, int line )
 	out << "Error in line " << line << ": " << msg << endl;
 }
 
+CTypeInfo::CTypeInfo( const CSymbol* n ) : userType( n )
+{
+	type = USERTYPE;
+}
+
+CTypeInfo::CTypeInfo( TType t ) : type( t )
+{
+	userType = 0;
+}
+
+const CSymbol* CTypeInfo::GetUserType() const
+{
+	return userType;
+}
+
+TType CTypeInfo::GetType() const
+{
+	return type;
+}
+
 CProgram::CProgram( const IMainClass* _mainClass, const IClassDeclareStar* _classDeclareStar, int _location ) :
 	mainClass( _mainClass), classDeclareStar( _classDeclareStar ), location(_location)
 	{
@@ -163,16 +183,16 @@ int CVarDeclareStar::GetLocation() const
 	return location;
 }
 
-CVarDeclare::CVarDeclare( const CSymbol* _typeId, const CSymbol* _id, int _location ) :
-		typeId (_typeId ), id( _id ), location( _location )
+CVarDeclare::CVarDeclare( const CTypeInfo* _type, const CSymbol* _id, int _location ) :
+		type (_type ), id( _id ), location( _location )
 	{
 		assert( id != 0 );
-		assert( typeId != 0 );
+		assert( type != 0 );
 	}
 
-const CSymbol* CVarDeclare::GetType() const
+const CTypeInfo* CVarDeclare::GetType() const
 {
-	return typeId;
+	return type;
 }
 
 const CSymbol* CVarDeclare::GetId() const
@@ -206,19 +226,19 @@ int CMethodDeclareStar::GetLocation() const
 	return location;
 }
 
-CMethodDeclare::CMethodDeclare( const CSymbol* _dataType, const CSymbol* _id, const IFormalList* _formalList, const IVarDeclareStar* varDecStar, 
+CMethodDeclare::CMethodDeclare( const CTypeInfo* _type, const CSymbol* _id, const IFormalList* _formalList, const IVarDeclareStar* varDecStar, 
 		const IStatementStar* _statementStar, const IExpression* _expression, int _location ) :
-	dataType( _dataType ), id( _id ), formalList( _formalList ), varDeclareStar( varDecStar ), statementStar( _statementStar ),
+	type( _type ), id( _id ), formalList( _formalList ), varDeclareStar( varDecStar ), statementStar( _statementStar ),
 	expression( _expression ), location( _location )
 	{
 		//
 		assert( id != 0 );
 		assert( expression != 0 );
-		assert( dataType != 0 );
+		assert( type != 0 );
 	}
-const CSymbol* CMethodDeclare::GetType() const
+const CTypeInfo* CMethodDeclare::GetType() const
 {
-	return dataType;	
+	return type;	
 }
 const CSymbol* CMethodDeclare::GetId() const
 {
@@ -246,15 +266,15 @@ int CMethodDeclare::GetLocation() const
 	return location;
 }
 
-CFormalList::CFormalList( const CSymbol* _dataType, const CSymbol* _id, const IFormalRestStar* _formalRestStar, int _location ) :
-	dataType( _dataType ), id( _id ), formalRestStar( _formalRestStar ), location( _location )
+CFormalList::CFormalList( const CTypeInfo* _type, const CSymbol* _id, const IFormalRestStar* _formalRestStar, int _location ) :
+	type( _type ), id( _id ), formalRestStar( _formalRestStar ), location( _location )
 	{
 		assert( id != 0 );
 	}
 
-const CSymbol* CFormalList::GetType() const
+const CTypeInfo* CFormalList::GetType() const
 {
-	return dataType;
+	return type;
 }
 
 const CSymbol* CFormalList::GetId() const
@@ -272,16 +292,16 @@ int CFormalList::GetLocation() const
 	return location;
 }
 
-CFormalRestStar::CFormalRestStar( const CSymbol* _dataType, const CSymbol* _id, const IFormalRestStar* _formalRestStar, int _location ) :
-	dataType( _dataType ), id( _id ), formalRestStar( _formalRestStar ), location( _location )
+CFormalRestStar::CFormalRestStar( const CTypeInfo* _type, const CSymbol* _id, const IFormalRestStar* _formalRestStar, int _location ) :
+	type( _type ), id( _id ), formalRestStar( _formalRestStar ), location( _location )
 	{
 		
 		assert( id != 0 );
 	}
 
-const CSymbol* CFormalRestStar::GetType() const
+const CTypeInfo* CFormalRestStar::GetType() const
 {
-	return dataType;
+	return type;
 }
 
 const CSymbol* CFormalRestStar::GetId() const
