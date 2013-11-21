@@ -1,8 +1,12 @@
 #pragma once
 #include "Visitor.h"
+#include "SymbolTable.h"
 
 class CTypeChecker: public IVisitor {
+private:
+	CSymbolTable* symbolTable;
 public:
+	CTypeChecker( CSymbolTable* );
 	int Visit( const CProgram* n );
 	int Visit( const CMainClass* n );
 	int Visit( const CClassDeclareStar* n );
