@@ -4,6 +4,8 @@
 
 class CTypeChecker: public IVisitor {
 private:
+	CClassDescription* currentClass;
+	CMethodDescription* currentMethod;
 	CSymbolTable* symbolTable;
 public:
 	CTypeChecker( CSymbolTable* );
