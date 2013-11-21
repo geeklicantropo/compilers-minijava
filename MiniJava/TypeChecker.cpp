@@ -120,15 +120,52 @@ int CTypeChecker::Visit( const CStatementWhile* n )
 }
 
 int CTypeChecker::Visit( const CStatementSysOut* n ) {return 0;}
-int CTypeChecker::Visit( const CStatementAssignment* n ) {return 0;}
-int CTypeChecker::Visit( const CStatementArrayAssignment* n ) {return 0;}
+
+int CTypeChecker::Visit( const CStatementAssignment* n )
+{
+	n->GetExpression()->Accept( this );
+	const CTypeInfo* varType = currentMethod->LookUp( n->GetId() )->GetType();
+	bool error = false;
+	if( varType->GetType() != currentType->GetType() ) {
+		error = true;
+	} else if( varType->GetType() == USERTYPE && varType->GetUserType() != currentType->GetUserType() ) {
+		error = true;
+	}
+	if( error )
+		ErrorMessage( cout, "wrong type in assigment", n->GetLocation() );
+	return 0;
+}
+int CTypeChecker::Visit( const CStatementArrayAssignment* n )
+{
+	assert(currentMethod != 0 );
+	const CTypeInfo* varType = currentMethod->LookUp( n->GetId() )->GetType();
+	if( varType->GetType() != INTARRAY ) 
+		ErrorMessage( cout, "variable should be int[] type", n->GetLocation() );
+	n->GetExpressionArray()->Accept( this );
+	if( currentType->GetType() != INT )
+		ErrorMessage( cout, "array index should be int type", n->GetLocation() );
+	n->GetExpression()->Accept( this );
+	if( currentType->GetType() != INT )
+		ErrorMessage( cout, "left value should be int type", n->GetLocation() );
+	return 0;
+}
 
 int CTypeChecker::Visit( const CExpressionBinOp* n ) 
 {
 	return 0;
 }
 
-int CTypeChecker::Visit( const CExpressionArray* n ) {return 0;}
+int CTypeChecker::Visit( const CExpressionArray* n )
+{
+	n->GetExpression1()->Accept( this );
+	if( currentType->GetType() != INTARRAY )
+		ErrorMessage( cout, "int[] type expected", n->GetLocation() );
+	n->GetExpression2()->Accept(  this );
+	if( currentType->GetType() != INT )
+		ErrorMessage( cout, "index should be int type", n->GetLocation() );
+	currentType = new CTypeInfo( INT );
+	return 0;
+}
 int CTypeChecker::Visit( const CExpressionLength* n ) {return 0;}
 int CTypeChecker::Visit( const CExpressionCallMethod* n ) {return 0;}
 int CTypeChecker::Visit( const CExpressionNumber* n ) {return 0;}
