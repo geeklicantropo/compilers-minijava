@@ -246,18 +246,69 @@ int CTypeChecker::Visit( const CExpressionLength* n )
 	currentType = new CTypeInfo( INT );
 	return 0;
 }
-int CTypeChecker::Visit( const CExpressionCallMethod* n ) {return 0;}
-int CTypeChecker::Visit( const CExpressionNumber* n ) {return 0;}
-int CTypeChecker::Visit( const CExpressionBool* n ) {return 0;}
-int CTypeChecker::Visit( const CExpressionVar* n ) {return 0;}
-int CTypeChecker::Visit( const CExpressionThis* n ) {return 0;}
-int CTypeChecker::Visit( const CExpressionNewInt* n ) {return 0;}
-int CTypeChecker::Visit( const CExpressionNewId* n ) {return 0;}
-int CTypeChecker::Visit( const CExpressionNegation* n ) {return 0;}
-int CTypeChecker::Visit( const CExpression* n )
+int CTypeChecker::Visit( const CExpressionCallMethod* n ) 
 {
-	//здесь то и нужно поюзать CSymbolTable
+	n->GetExpression()->Accept( this );
+	if( currentType->GetType() != USERTYPE )
+		ErrorMessage( cout, "usertype expected", n->GetLocation() );
+	if( currentClass->LookUpMethod( n->GetId() ) == NULL )
+		ErrorMessage( cout, "method doesn't exist", n->GetLocation() );
+	if( n->GetExpList() != 0 ) n->GetExpList()->Accept( this ); 
 	return 0;
 }
-int CTypeChecker::Visit( const CExpList* n ) {return 0;}
-int CTypeChecker::Visit( const CExpListNext* n ) {return 0;}
+int CTypeChecker::Visit( const CExpressionNumber* n ) 
+{
+	return 0;
+}
+int CTypeChecker::Visit( const CExpressionBool* n ) 
+{
+	return 0;
+}
+int CTypeChecker::Visit( const CExpressionVar* n ) 
+{
+	return 0;
+}
+int CTypeChecker::Visit( const CExpressionThis* n ) 
+{
+	return 0;
+}
+int CTypeChecker::Visit( const CExpressionNewInt* n ) 
+{
+	n->GetExpression()->Accept( this );
+	assert( currentType != 0 );
+	if( currentType->GetType() != INT )
+		ErrorMessage( cout, "index should be int type", n->GetLocation() );
+	currentType = new CTypeInfo( INT );
+	return 0;
+}
+int CTypeChecker::Visit( const CExpressionNewId* n ) 
+{
+	if( symbolTable->LookUpClass( n->GetId() ) == NULL )
+		ErrorMessage( cout, "type doesn't exist", n->GetLocation() );
+	return 0;
+}
+int CTypeChecker::Visit( const CExpressionNegation* n ) 
+{
+	n->GetExpression()->Accept( this );
+	if( currentType->GetType() != BOOL )
+		ErrorMessage( cout, "bool type expected", n->GetLocation() );
+	currentType = new CTypeInfo( BOOL );
+	return 0;
+}
+int CTypeChecker::Visit( const CExpression* n )
+{
+	n->GetExpression()->Accept( this );
+	return 0;
+}
+int CTypeChecker::Visit( const CExpList* n ) 
+{
+	n->GetExpression()->Accept( this );
+	return 0;
+}
+int CTypeChecker::Visit( const CExpListNext* n )
+{
+	n->GetExpList()->Accept( this );
+	n->GetExpression()->Accept( this );
+	//if( currentType->GetType() 
+	return 0;
+}
