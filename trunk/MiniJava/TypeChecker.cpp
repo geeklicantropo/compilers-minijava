@@ -122,6 +122,7 @@ int CTypeChecker::Visit( const CStatementWhile* n )
 int CTypeChecker::Visit( const CStatementSysOut* n ) 
 {
 	n->GetExpression()->Accept( this );
+	assert( currentType != 0 );
 	if( currentType->GetType() != INT )
 		ErrorMessage( cout, "int type expected", n->GetLocation() );
 	return 0;
@@ -132,6 +133,7 @@ int CTypeChecker::Visit( const CStatementAssignment* n )
 	n->GetExpression()->Accept( this );
 	const CTypeInfo* varType = currentMethod->LookUp( n->GetId() )->GetType();
 	bool error = false;
+	assert( currentType != 0 );
 	if( varType->GetType() != currentType->GetType() ) {
 		error = true;
 	} else if( varType->GetType() == USERTYPE && varType->GetUserType() != currentType->GetUserType() ) {
@@ -148,9 +150,11 @@ int CTypeChecker::Visit( const CStatementArrayAssignment* n )
 	if( varType->GetType() != INTARRAY ) 
 		ErrorMessage( cout, "variable should be int[] type", n->GetLocation() );
 	n->GetExpressionArray()->Accept( this );
+	assert( currentType != 0 );
 	if( currentType->GetType() != INT )
 		ErrorMessage( cout, "array index should be int type", n->GetLocation() );
 	n->GetExpression()->Accept( this );
+	assert( currentType != 0 );
 	if( currentType->GetType() != INT )
 		ErrorMessage( cout, "left value should be int type", n->GetLocation() );
 	return 0;
@@ -162,45 +166,55 @@ int CTypeChecker::Visit( const CExpressionBinOp* n )
 	switch( type ) {
 		case PLUS:
 			n->GetExpressionFirst()->Accept( this );
+			assert( currentType != 0 );
 			if( currentType->GetType() != INT )
 				ErrorMessage( cout, "int type expected", n->GetLocation() );
 			n->GetExpressionSecond()->Accept( this );
+			assert( currentType != 0 );
 			if( currentType->GetType() != INT )
 				ErrorMessage( cout, "int type expected", n->GetLocation() );
 			currentType = new CTypeInfo( INT );
 			break;
 		case MINUS:
 			n->GetExpressionFirst()->Accept( this );
+			assert( currentType != 0 );
 			if( currentType->GetType() != INT )
 				ErrorMessage( cout, "int type expected", n->GetLocation() );
 			n->GetExpressionSecond()->Accept( this );
+			assert( currentType != 0 );
 			if( currentType->GetType() != INT )
 				ErrorMessage( cout, "int type expected", n->GetLocation() );
 			currentType = new CTypeInfo( INT );
 			break;
 		case TIMES:
 			n->GetExpressionFirst()->Accept( this );
+			assert( currentType != 0 );
 			if( currentType->GetType() != INT )
 				ErrorMessage( cout, "int type expected", n->GetLocation() );			
 			n->GetExpressionSecond()->Accept( this );
+			assert( currentType != 0 );
 			if( currentType->GetType() != INT )	
 				ErrorMessage( cout, "int type expected", n->GetLocation() );		
 			currentType = new CTypeInfo( INT );
 			break;
 		case LESS:
 			n->GetExpressionFirst()->Accept( this );
+			assert( currentType != 0 );
 			if( currentType->GetType() != BOOL )
 				ErrorMessage( cout, "int type expected", n->GetLocation() );			
 			n->GetExpressionSecond()->Accept( this );
+			assert( currentType != 0 );
 			if( currentType->GetType() != BOOL )	
 				ErrorMessage( cout, "int type expected", n->GetLocation() );			
 			currentType = new CTypeInfo( BOOL );
 			break;
 		case AND:
 			n->GetExpressionFirst()->Accept( this );
+			assert( currentType != 0 );
 			if( currentType->GetType() != BOOL )
 				ErrorMessage( cout, "int type expected", n->GetLocation() );			
 			n->GetExpressionSecond()->Accept( this );
+			assert( currentType != 0 );
 			if( currentType->GetType() != BOOL )	
 				ErrorMessage( cout, "int type expected", n->GetLocation() );	
 			currentType = new CTypeInfo( BOOL );
@@ -212,9 +226,11 @@ int CTypeChecker::Visit( const CExpressionBinOp* n )
 int CTypeChecker::Visit( const CExpressionArray* n )
 {
 	n->GetExpression1()->Accept( this );
+	assert( currentType != 0 );
 	if( currentType->GetType() != INTARRAY )
 		ErrorMessage( cout, "int[] type expected", n->GetLocation() );
 	n->GetExpression2()->Accept(  this );
+	assert( currentType != 0 );
 	if( currentType->GetType() != INT )
 		ErrorMessage( cout, "index should be int type", n->GetLocation() );
 	currentType = new CTypeInfo( INT );
@@ -224,6 +240,7 @@ int CTypeChecker::Visit( const CExpressionArray* n )
 int CTypeChecker::Visit( const CExpressionLength* n ) 
 {
 	n->GetExpression()->Accept( this );
+	assert( currentType != 0 );
 	if( currentType->GetType() != INTARRAY )
 		ErrorMessage( cout, "int[] type expected", n->GetLocation() );			
 	currentType = new CTypeInfo( INT );
