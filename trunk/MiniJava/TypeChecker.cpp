@@ -236,8 +236,19 @@ int CTypeChecker::Visit( const CExpressionCallMethod* n )
 	const CMethodDescription* exprMethod = exprClass->LookUpMethod( n->GetId() );
 	if( exprMethod == 0 )
 		ErrorMessage( cout, "method doesn't exist", n->GetLocation() );
-	//надо проверить параметры по порядочку
+	
+	vector<CVarDescription*> currParams = exprMethod->GetOrderedParams();
+	int currParamNumber = 0;
+	params.push( currParams );
+	paramNumbers.push( currParamNumber );
 	if( n->GetExpList() != 0 ) n->GetExpList()->Accept( this );
+	currParamNumber = paramNumbers.top();
+	paramNumbers.pop();
+	currParams = params.top();
+	params.pop();
+	if( currParamNumber != currParams.size() )
+		ErrorMessage( cout, "not enough parameters", n->GetLocation() );
+	currentType = exprMethod->GetType();
 	return 0;
 }
 
@@ -304,6 +315,19 @@ int CTypeChecker::Visit( const CExpression* n )
 int CTypeChecker::Visit( const CExpList* n ) 
 {
 	n->GetExpression()->Accept( this );
+	assert( currentType != 0 );
+	int currParamNumber = paramNumbers.top();
+	vector<CVarDescription*> currParams = params.top();
+	if( currParamNumber >= currParams.size() ) {
+		ErrorMessage( cout, "too many parameters", n->GetLocation() );
+		return 0;
+	}
+	const CTypeInfo* paramType = currParams[currParamNumber]->GetType();
+	if( paramType->GetType() != currentType->GetType() || ( paramType->GetType() == USERTYPE && ( paramType->GetUserType() != currentType->GetUserType() ) ) )
+		ErrorMessage( cout, "illegal parameter type", n->GetLocation() );
+	currParamNumber++;
+	paramNumbers.pop();
+	paramNumbers.push( currParamNumber );
 	return 0;
 }
 
@@ -311,5 +335,18 @@ int CTypeChecker::Visit( const CExpListNext* n )
 {
 	n->GetExpList()->Accept( this );
 	n->GetExpression()->Accept( this );
+	assert( currentType != 0 );
+	int currParamNumber = paramNumbers.top();
+	vector<CVarDescription*> currParams = params.top();
+	if( currParamNumber >= currParams.size() ) {
+		ErrorMessage( cout, "too many parameters", n->GetLocation() );
+		return 0;
+	}
+	const CTypeInfo* paramType = currParams[currParamNumber]->GetType();
+	if( paramType->GetType() != currentType->GetType() || ( paramType->GetType() == USERTYPE && ( paramType->GetUserType() != currentType->GetUserType() ) ) )
+		ErrorMessage( cout, "illegal parameter type", n->GetLocation() );
+	currParamNumber++;
+	paramNumbers.pop();
+	paramNumbers.push( currParamNumber );
 	return 0;
 }
