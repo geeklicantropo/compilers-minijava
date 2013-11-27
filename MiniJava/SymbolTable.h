@@ -40,6 +40,8 @@ public:
 	CMethodDescription* LookUpMethod( const CSymbol* method );
 
 	CVarDescription* LookUp( const CSymbol* var );
+
+	const CSymbol* GetName() const;
 };
 
 class CVarDescription {

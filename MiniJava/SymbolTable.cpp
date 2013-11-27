@@ -30,6 +30,11 @@ CClassDescription::CClassDescription( CSymbolTable* _symbolTable, const CSymbol*
 CClassDescription::CClassDescription( CSymbolTable* _symbolTable, const CSymbol* _name, const CSymbol* _base ) 
 	: symbolTable( _symbolTable ), name( _name ), baseClass( _base ) {}
 
+const CSymbol* CClassDescription::GetName() const
+{
+	return name;
+}
+
 CVarDescription* CClassDescription::AddField( const CSymbol* _name, const CTypeInfo* _type ) {
 	map< const CSymbol*, CVarDescription* >::iterator it = fields.find( _name );
 	if ( it != fields.end() )
