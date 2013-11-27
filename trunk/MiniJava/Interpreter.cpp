@@ -228,7 +228,7 @@ int CInterpreter::Visit( const CExpressionBinOp* n )
 			std::cout << " < ";
 			break;
 		case AND:
-			std::cout << " & ";
+			std::cout << " && ";
 			break;
 	}
 	n->GetExpressionSecond()->Accept( this );

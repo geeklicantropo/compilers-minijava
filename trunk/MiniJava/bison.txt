@@ -182,13 +182,13 @@ FormalRestStar:
 
 Type:
 	INT_T '['']' {
-		$$ = new CTypeInfo( INT );
+		$$ = new CTypeInfo( INTARRAY );
 	}
 	| BOOL_T {
 		$$ = new CTypeInfo( BOOL );
 	}
 	| INT_T {
-		$$ = new CTypeInfo( INTARRAY );
+		$$ = new CTypeInfo( INT );
 	}
 	| ID {
 		$$ = new CTypeInfo( $1 );
