@@ -69,11 +69,12 @@ int yywrap()
 %token INTEGERLITERAL
 %token EXTENDS
 
-%left '.' '['
+
 %left <BinopType> BINOP
 %left '!'
 %left '+' '-'
 %left '*' '/'
+%left '.' '['
 
 %type <Program> Program
 %type <MainClass> MainClass
