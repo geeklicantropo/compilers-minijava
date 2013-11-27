@@ -95,6 +95,7 @@ CMethodDescription::CMethodDescription( CClassDescription* _currentClass, const 
 	: currentClass( _currentClass ), name( _name ), returnType( _returnType ) {}
 
 CVarDescription* CMethodDescription::AddPapam( CVarDescription* param ) {
+	orderedParams.push_back( param );
 	map< const CSymbol*, CVarDescription* >::iterator it = params.find( param->GetName() );
 	if ( it != params.end() )
 		return NULL;
@@ -116,6 +117,11 @@ const CSymbol* CMethodDescription::GetName() const
 const CTypeInfo* CMethodDescription::GetType() const
 {
 	return returnType;
+}
+
+vector<CVarDescription*> CMethodDescription::GetOrderedParams() const
+{
+	return orderedParams;
 }
 
 CVarDescription* CMethodDescription::LookUpParam( const CSymbol* param ) {

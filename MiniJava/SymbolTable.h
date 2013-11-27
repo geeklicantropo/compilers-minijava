@@ -3,6 +3,7 @@
 #include "miniJava.h"
 #include <map>
 #include <string>
+#include <vector>
 
 using std::map;
 
@@ -59,6 +60,7 @@ class CMethodDescription {
 private:
 	const CSymbol* name;
 	map<const CSymbol*, CVarDescription*> params;
+	vector<CVarDescription*> orderedParams;
 	const CTypeInfo* returnType;
 	map<const CSymbol*, CVarDescription*> locals;
 
@@ -71,6 +73,7 @@ public:
 
 	const CSymbol* GetName() const;
 	const CTypeInfo* GetType() const;
+	vector<CVarDescription*> GetOrderedParams() const;
 	
 	CVarDescription* LookUpParam( const CSymbol* param );
 	CVarDescription* LookUpLocal( const CSymbol* local );

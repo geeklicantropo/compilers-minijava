@@ -1,6 +1,7 @@
 #pragma once
 #include "Visitor.h"
 #include "SymbolTable.h"
+#include <stack>
 
 class CTypeChecker: public IVisitor {
 private:
@@ -8,6 +9,9 @@ private:
 	CMethodDescription* currentMethod;
 	CSymbolTable* symbolTable;
 	const CTypeInfo* currentType;
+	stack<int> paramNumbers;
+	stack< vector<CVarDescription*> > params;
+
 public:
 	CTypeChecker( CSymbolTable* );
 	int Visit( const CProgram* n );
