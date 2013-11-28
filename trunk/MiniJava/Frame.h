@@ -13,7 +13,7 @@ public:
 class CFrame
 {
 private:
-	vector<CVarDescription*> formals;
+	vector<const CVarDescription*> formals;
 
 public:
     CFrame (const CSymbol* name, int formalsCount);
@@ -29,7 +29,8 @@ private:
 
 public:
 	CLabel();
-	explicit CLabel( ... );
+	explicit CLabel( string& s );
+	explicit CLabel( const CSymbol* s );
 	const string& Name() const;
 };
 
@@ -44,5 +45,5 @@ public:
 	explicit CTemp( const CSymbol* symbol );
 	~CTemp();
 
-	const string &Name() const;
+	const string& Name() const;
 };
