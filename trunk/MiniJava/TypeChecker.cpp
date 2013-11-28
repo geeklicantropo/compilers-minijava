@@ -26,12 +26,14 @@ int CTypeChecker::Visit( const CMainClass* n )
 	currentClass = 0;
 	return 0;
 }
+
 int CTypeChecker::Visit( const CClassDeclareStar* n ) 
 {
 	if ( n->GetClassDeclareStar() != 0 ) n->GetClassDeclareStar()->Accept( this );
 	n->GetClassDeclare()->Accept( this );
 	return 0;
 }
+
 int CTypeChecker::Visit( const CClassDeclare* n )
 {
 	currentClass = symbolTable->LookUpClass( n->GetId() );
@@ -40,6 +42,7 @@ int CTypeChecker::Visit( const CClassDeclare* n )
 	currentClass = 0;
 	return 0;
 }
+
 int CTypeChecker::Visit( const CClassDeclareExtends* n ) 
 {
 	currentClass = symbolTable->LookUpClass( n->GetId() );
@@ -48,16 +51,25 @@ int CTypeChecker::Visit( const CClassDeclareExtends* n )
 	currentClass = 0;
 	return 0;
 }
+
 int CTypeChecker::Visit( const CVarDeclareStar* n ) 
 {
 	if( n->GetVarDeclareStar() != 0 ) n->GetVarDeclareStar()->Accept( this );
 	n->GetVarDeclare()->Accept( this );
 	return 0;
 }
+
 int CTypeChecker::Visit( const CVarDeclare* n ) 
 {
+	if( n->GetType()->GetType() == USERTYPE ) {
+		if( symbolTable->LookUpClass( n->GetType()->GetUserType() ) == 0 )
+			ErrorMessage( cout, "unknown type name", n->GetLocation() );
+		else if( symbolTable->LookUpClass( n->GetType()->GetUserType() )->GetName() == n->GetId() )
+			ErrorMessage( cout, "illegal variable name", n->GetLocation() );
+	}
 	return 0;
 }
+
 int CTypeChecker::Visit( const CMethodDeclare* n ) 
 {
 	assert( currentClass != 0 );
@@ -69,27 +81,32 @@ int CTypeChecker::Visit( const CMethodDeclare* n )
 	currentMethod = 0;
 	return 0;
 }
+
 int CTypeChecker::Visit( const CMethodDeclareStar* n ) 
 {
 	if( n->GetMethodDeclareStar() != 0 ) n->GetMethodDeclareStar()->Accept( this );
 	n->GetMethodDeclare()->Accept( this );
 	return 0;
 }
+
 int CTypeChecker::Visit( const CFormalList* n ) 
 {
 	if( n->GetFormalRestStar() != 0 ) n->GetFormalRestStar()->Accept( this );
 	return 0;
 }
+
 int CTypeChecker::Visit( const CFormalRestStar* n ) 
 {
 	if( n->GetFormalRestStar() != 0 ) n->GetFormalRestStar()->Accept( this );
 	return 0;
 }
+
 int CTypeChecker::Visit( const CStatement* n ) 
 {
 	if( n->GetStatementStar() != 0 ) n->GetStatementStar()->Accept( this );
 	return 0;
 } 
+
 int CTypeChecker::Visit( const CStatementStar* n ) {
 	n->GetStatement()->Accept( this );
 	if( n->GetStatementStar() != 0 ) n->GetStatementStar()->Accept( this );
