@@ -10,7 +10,7 @@ int CFrame::FormalsCount() const
 
 const IAccess* CFrame::Formal(int index) const
 {
-
+	return 0;
 }
 
 const string& CLabel::Name() const

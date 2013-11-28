@@ -1,6 +1,7 @@
+#include "Symbols.h"
+
 class IExpression{};
 class IStatement{};
-
 
 class CExpression1 : IExpression {};
 class CExpression2 : IExpression {};
