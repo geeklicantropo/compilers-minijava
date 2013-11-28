@@ -69,7 +69,6 @@ int yywrap()
 %token INTEGERLITERAL
 %token EXTENDS
 
-
 %left <BinopType> BINOP
 %left '!'
 %left '+' '-'

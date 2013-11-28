@@ -59,6 +59,7 @@
 "this" {return THIS;}
 "new" {return NEW;}
 "return" {return RETURN;}
+"extends" {return EXTENDS;}
 
 (_)?[a-zA-Z][a-zA-Z_0-9]* {
 	yylval.Name = CSymbol::CSymbolGet( string(yytext, yyleng) );
