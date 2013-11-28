@@ -61,7 +61,7 @@ int CInterpreter::Visit( const CVarDeclare* n )
 		std::cout << "boolean ";
 		break;
 	case USERTYPE:
-		std::cout << n->GetType()->GetUserType() << " ";
+		std::cout << n->GetType()->GetUserType()->getString() << " ";
 		break;
 	}
 	std::cout << n->GetId()->getString() << ";" << std::endl;

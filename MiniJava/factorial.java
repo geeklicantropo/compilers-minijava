@@ -8,7 +8,8 @@ class Fac {
 
     public int ComputeFac(int num){
 	int num_aux ;
-	if (num < 1)
+	B b;
+	if (num && 1)
 	    num_aux = 1 ;
 	else 
 	    num_aux = num * (this.ComputeFac(num-1)) ;
