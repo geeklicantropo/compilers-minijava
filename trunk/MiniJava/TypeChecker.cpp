@@ -284,7 +284,10 @@ int CTypeChecker::Visit( const CExpressionBool* n )
 int CTypeChecker::Visit( const CExpressionVar* n ) 
 {
 	assert( currentMethod != 0 );
-	currentType = currentMethod->LookUp( n->GetId() )->GetType();
+	if( currentMethod->LookUp( n->GetId() ) == 0)
+		ErrorMessage( cout, "undeclared variable", n->GetLocation() );
+	else 
+		currentType = currentMethod->LookUp( n->GetId() )->GetType();
 	return 0;
 }
 
