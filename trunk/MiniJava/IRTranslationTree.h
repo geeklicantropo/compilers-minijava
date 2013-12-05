@@ -1,16 +1,61 @@
-#include "Symbols.h"
+namespace IRTree {
+	class IExpression {
+		virtual void Visit();
+	};
 
-class IExpression{};
-class IStatement{};
+	class IStatement{
+	};
+};
 
-class CExpression1 : IExpression {};
-class CExpression2 : IExpression {};
-class CExpression3 : IExpression {};
-class CExpression4 : IExpression {};
-class CExpression5 : IExpression {};
+enum TBinop {
+	PLUS, MINUS, MUL, DIV, AND, OR, LSHIFT, RSHIFT, ARSHIFT, XOR
+};
 
-class CStatement1 : IStatement {};
-class CStatement2 : IStatement {};
-class CStatement3 : IStatement {};
-class CStatement4 : IStatement {};
-class CStatement5 : IStatement {};
+enum TCJump {
+	EQ, NE, LT, GT, LE, GE, ULT, ULE, UGT, UGE
+};
+
+class CConst : IRTree::IExpression {
+};
+
+class CName : IRTree::IExpression {
+};
+
+class CTemp : IRTree::IExpression {
+};
+
+class CBinop : IRTree::IExpression {
+};
+
+class CMem : IRTree::IExpression {
+};
+
+class CCall : IRTree::IExpression {
+};
+
+class CEseq : IRTree::IExpression {
+};
+
+class CMove : IRTree::IStatement {
+};
+
+class CExp : IRTree::IStatement {
+};
+
+class CJump : IRTree::IStatement {
+};
+
+class CCJump : IRTree::IStatement {
+};
+
+class CSeq : IRTree::IStatement {
+};
+
+class CLabel : IRTree::IStatement {
+};
+
+class CExpList {
+};
+
+class CStmList {
+};
