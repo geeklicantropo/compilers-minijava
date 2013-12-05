@@ -16,7 +16,7 @@ private:
 	vector<const CVarDescription*> formals;
 
 public:
-    CFrame (const CSymbol* name, int formalsCount);
+    CFrame( const CSymbol* name, int formalsCount );
     int FormalsCount() const;
 	const IAccess* Formal( int index ) const;
 };

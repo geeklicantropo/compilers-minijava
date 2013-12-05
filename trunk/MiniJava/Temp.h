@@ -14,6 +14,7 @@ public:
 	CLabel();
 	explicit CLabel( string& s );
 	explicit CLabel( const CSymbol* s );
+
 	const string& Name() const;
 };
 
@@ -26,7 +27,6 @@ private:
 public:
 	CTemp();
 	explicit CTemp( const CSymbol* symbol );
-	~CTemp();
 
 	const string& Name() const;
 };
