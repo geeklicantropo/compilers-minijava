@@ -1,5 +1,7 @@
 #include "Temp.h"
 
+using namespace Temp;
+
 int CLabel::nextUniqueId = 0;
 
 CLabel::CLabel()

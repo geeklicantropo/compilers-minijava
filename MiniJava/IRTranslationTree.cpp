@@ -57,3 +57,8 @@ void CConst::Accept( const IRTreeVisitor* v ) const
 {
 
 }
+
+const CExpList* CConst::GetChild() const
+{
+	return 0;
+}

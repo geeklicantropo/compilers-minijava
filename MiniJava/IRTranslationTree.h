@@ -1,18 +1,35 @@
 #include "Temp.h"
 
+class IRTreeVisitor;
+class CConst;
+class CName; 
+class CTemp; 
+class CBinOp;
+class CMem;
+class CCall; 
+class CEseq; 
+class CMove; 
+class CExp;
+class CJump;
+class CCJump;
+class CSeq;
+class CLabel;
+class CExpList;
+class CStmList;
+
 namespace IRTree {
 	class IExpression {
 	public:
 		virtual ~IExpression() {}
-		virtual void Accept( const IRTreeVisitor* v ) const;
-		virtual const CExpList* GetChild() const {}
+		virtual void Accept( const IRTreeVisitor* v ) const = 0;
+		virtual const CExpList* GetChild() const = 0;
 	};
 
 	class IStatement {
 	public:
 		virtual ~IStatement() {}
-		virtual void Accept( const IRTreeVisitor* v ) const;
-		virtual const CStmList* GetChild() const {}
+		virtual void Accept( const IRTreeVisitor* v ) const = 0;
+		virtual const CStmList* GetChild() const = 0;
 	};
 };
 
@@ -21,7 +38,7 @@ class IRTreeVisitor {
 	virtual void Visit( const CConst& p ) = 0;
 	virtual void Visit( const CName& p ) = 0;
 	virtual void Visit( const CTemp& p ) = 0;
-	virtual void Visit( const CBinop& p ) = 0;
+	virtual void Visit( const CBinOp& p ) = 0;
 	virtual void Visit( const CMem& p ) = 0;
 	virtual void Visit( const CCall& p ) = 0;
 	virtual void Visit( const CEseq& p ) = 0;
@@ -47,6 +64,9 @@ class CConst : IRTree::IExpression {
 public:
 	CConst( int v );
 	int GetValue() const;
+
+	void Accept( const IRTreeVisitor* v ) const;
+	const CExpList* GetChild() const;
 private:
 	int val;
 };
@@ -55,16 +75,22 @@ class CName : IRTree::IExpression {
 public:
 	CName( const CLabel* _label );
 	const CLabel* GetLabel() const;
+	
+	void Accept( const IRTreeVisitor* v ) const;
+	const CExpList* GetChild() const;
 private:
 	const CLabel* label;
 };
 
 class CTemp : IRTree::IExpression {
 public:
-	CTemp( const CTemp* t );
-	const CTemp* GetTemp() const;
+	CTemp( const Temp::CTemp* t );
+	const Temp::CTemp* GetTemp() const;
+
+	void Accept( const IRTreeVisitor* v ) const;
+	const CExpList* GetChild() const;
 private:
-	const CTemp* temp;
+	const Temp::CTemp* temp;
 };
 
 class CBinOp : IRTree::IExpression {
@@ -73,6 +99,9 @@ public:
 	TBinOp GetBinOp( ) const;
 	const IRTree::IExpression* GetLeft() const;
 	const IRTree::IExpression* GetRight() const;
+
+	void Accept( const IRTreeVisitor* v ) const;
+	const CExpList* GetChild() const;
 private:
 	const IRTree::IExpression* left;
 	const IRTree::IExpression* right;
@@ -83,6 +112,9 @@ class CMem : IRTree::IExpression {
 public:
 	CMem( const IRTree::IExpression* e );
 	const IRTree::IExpression* GetExp() const;
+
+	void Accept( const IRTreeVisitor* v ) const;
+	const CExpList* GetChild() const;
 private:
 	const IRTree::IExpression* exp;
 };
