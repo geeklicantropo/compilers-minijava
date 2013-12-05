@@ -78,6 +78,7 @@
     <ClCompile Include="Symbols.cpp" />
     <ClCompile Include="SymbolTable.cpp" />
     <ClCompile Include="SymbolTableBuilder.cpp" />
+    <ClCompile Include="Temp.cpp" />
     <ClCompile Include="TypeChecker.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +107,7 @@
     <ClInclude Include="Symbols.h" />
     <ClInclude Include="SymbolTable.h" />
     <ClInclude Include="SymbolTableBuilder.h" />
+    <ClInclude Include="Temp.h" />
     <ClInclude Include="TypeChecker.h" />
     <ClInclude Include="Visitor.h" />
   </ItemGroup>
