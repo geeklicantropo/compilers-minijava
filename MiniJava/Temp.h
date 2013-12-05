@@ -6,27 +6,47 @@ using namespace std;
 
 class CLabel
 {
-private:
-	static int nextUniqueId;
-	string name;
-
 public:
 	CLabel();
 	explicit CLabel( string& s );
 	explicit CLabel( const CSymbol* s );
 
 	const string& Name() const;
+private:
+	static int nextUniqueId;
+	string name;
+};
+
+class CLabelList
+{
+public:
+	CLabelList(const CLabel* _label, CLabelList* _next) : label(_label), next(_next) {}
+	const CLabel* Label() const { return label; }
+	CLabelList* Next() const { return next; }
+private:
+	const CLabel* label;
+	CLabelList* next;
 };
 
 class CTemp 
 {
-private:
-	static int nextUniqueId;
-	string name;
-
 public:
 	CTemp();
 	explicit CTemp( const CSymbol* symbol );
 
 	const string& Name() const;
+private:
+	static int nextUniqueId;
+	string name;
+};
+
+class CTempList
+{
+public:
+	CTempList(const CTemp* _temp, CTempList* _next) : temp(_temp), next(_next) {}
+	const CTemp* Temp() const { return temp; }
+	CTempList* Next() const { return next; }
+private:
+	const CTemp* temp;
+	CTempList* next;
 };
