@@ -1,11 +1,15 @@
+#include "Temp.h"
+
 namespace IRTree {
 	class IExpression {
+	public:
 		virtual ~IExpression() {}
 		virtual void Accept( const IRTreeVisitor* v ) const;
 		virtual const CExpList* GetChild() const {}
 	};
 
-	class IStatement{
+	class IStatement {
+	public:
 		virtual ~IStatement() {}
 		virtual void Accept( const IRTreeVisitor* v ) const;
 		virtual const CStmList* GetChild() const {}
@@ -31,7 +35,7 @@ class IRTreeVisitor {
 	virtual void Visit( const CStmList& p ) = 0;
 };
 
-enum TBinop {
+enum TBinOp {
 	PLUS, MINUS, MUL, DIV, AND, OR, LSHIFT, RSHIFT, ARSHIFT, XOR
 };
 
@@ -48,19 +52,43 @@ private:
 };
 
 class CName : IRTree::IExpression {
-	
+public:
+	CName( const CLabel* _label );
+	const CLabel* GetLabel() const;
+private:
+	const CLabel* label;
 };
 
 class CTemp : IRTree::IExpression {
+public:
+	CTemp( const CTemp* t );
+	const CTemp* GetTemp() const;
+private:
+	const CTemp* temp;
 };
 
-class CBinop : IRTree::IExpression {
+class CBinOp : IRTree::IExpression {
+public:
+	CBinOp( const IRTree::IExpression* _left, const IRTree::IExpression* _right, TBinOp _binop );
+	TBinOp GetBinOp( ) const;
+	const IRTree::IExpression* GetLeft() const;
+	const IRTree::IExpression* GetRight() const;
+private:
+	const IRTree::IExpression* left;
+	const IRTree::IExpression* right;
+	TBinOp binop;
 };
 
 class CMem : IRTree::IExpression {
+public:
+	CMem( const IRTree::IExpression* e );
+	const IRTree::IExpression* GetExp() const;
+private:
+	const IRTree::IExpression* exp;
 };
 
 class CCall : IRTree::IExpression {
+	
 };
 
 class CEseq : IRTree::IExpression {
