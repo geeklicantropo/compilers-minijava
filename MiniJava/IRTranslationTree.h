@@ -21,19 +21,20 @@ namespace IRTree {
 	class IExpression {
 	public:
 		virtual ~IExpression() {}
-		virtual void Accept( const IRTreeVisitor* v ) const = 0;
+		virtual void Accept( IRTreeVisitor* v ) const = 0;
 		virtual const CExpList* GetChild() const = 0;
 	};
 
 	class IStatement {
 	public:
 		virtual ~IStatement() {}
-		virtual void Accept( const IRTreeVisitor* v ) const = 0;
+		virtual void Accept( IRTreeVisitor* v ) const = 0;
 		virtual const CExpList* GetChild() const = 0;
 	};
 };
 
 class IRTreeVisitor {
+public:
 	virtual ~IRTreeVisitor() {}
 	virtual void Visit( const CConst& p ) = 0;
 	virtual void Visit( const CName& p ) = 0;
@@ -65,7 +66,7 @@ public:
 	CConst( int v );
 	int GetValue() const;
 
-	void Accept( const IRTreeVisitor* v ) const;
+	void Accept( IRTreeVisitor* v ) const;
 	const CExpList* GetChild() const;
 private:
 	int val;
@@ -76,7 +77,7 @@ public:
 	CName( const CLabel* _label );
 	const CLabel* GetLabel() const;
 	
-	void Accept( const IRTreeVisitor* v ) const;
+	void Accept( IRTreeVisitor* v ) const;
 	const CExpList* GetChild() const;
 private:
 	const CLabel* label;
@@ -87,7 +88,7 @@ public:
 	CTemp( const Temp::CTemp* t );
 	const Temp::CTemp* GetTemp() const;
 
-	void Accept( const IRTreeVisitor* v ) const;
+	void Accept( IRTreeVisitor* v ) const;
 	const CExpList* GetChild() const;
 private:
 	const Temp::CTemp* temp;
@@ -100,7 +101,7 @@ public:
 	const IRTree::IExpression* GetLeft() const;
 	const IRTree::IExpression* GetRight() const;
 
-	void Accept( const IRTreeVisitor* v ) const;
+	void Accept( IRTreeVisitor* v ) const;
 	const CExpList* GetChild() const;
 private:
 	const IRTree::IExpression* left;
@@ -113,7 +114,7 @@ public:
 	CMem( const IRTree::IExpression* e );
 	const IRTree::IExpression* GetExp() const;
 
-	void Accept( const IRTreeVisitor* v ) const;
+	void Accept( IRTreeVisitor* v ) const;
 	const CExpList* GetChild() const;
 private:
 	const IRTree::IExpression* exp;
@@ -125,7 +126,7 @@ public:
 	const IRTree::IExpression* GetExp() const;
 	const CExpList* GetArgs() const;
 
-	void Accept( const IRTreeVisitor* v ) const;
+	void Accept( IRTreeVisitor* v ) const;
 	const CExpList* GetChild() const;
 private:
 	const IRTree::IExpression* func;
@@ -138,7 +139,7 @@ public:
 	const IRTree::IStatement* GetStm() const;
 	const IRTree::IExpression* GetExp() const;
 
-	void Accept( const IRTreeVisitor* v ) const;
+	void Accept( IRTreeVisitor* v ) const;
 	const CExpList* GetChild() const;
 private:
 	const IRTree::IStatement* stm;
@@ -151,7 +152,7 @@ public:
 	const IRTree::IExpression* GetDst() const;
 	const IRTree::IExpression* GetSrc() const;
 
-	void Accept( const IRTreeVisitor* v ) const;
+	void Accept( IRTreeVisitor* v ) const;
 	const CExpList* GetChild() const;
 private:
 	const IRTree::IExpression* dst;
@@ -163,7 +164,7 @@ public:
 	CExp( const IRTree::IExpression* e );
 	const IRTree::IExpression* GetExp() const;
 
-	void Accept( const IRTreeVisitor* v ) const;
+	void Accept( IRTreeVisitor* v ) const;
 	const CExpList* GetChild() const;
 private:
 	const IRTree::IExpression* exp;
@@ -175,7 +176,7 @@ public:
 	const IRTree::IExpression* GetExp() const;
 	const Temp::CLabelList* GetTargets() const;	
 
-	void Accept( const IRTreeVisitor* v ) const;
+	void Accept( IRTreeVisitor* v ) const;
 	const CExpList* GetChild() const;
 private:
 	const IRTree::IExpression* exp;
@@ -191,7 +192,7 @@ public:
 	const Temp::CLabel* GetTrueLabel() const;
 	const Temp::CLabel* GetFalseLabel() const;
 
-	void Accept( const IRTreeVisitor* v ) const;
+	void Accept( IRTreeVisitor* v ) const;
 	const CExpList* GetChild() const;
 private:
 	TCJump relop;
@@ -207,7 +208,7 @@ public:
 	const IRTree::IStatement* GetLeft() const;
 	const IRTree::IStatement* GetRight() const;
 
-	void Accept( const IRTreeVisitor* v ) const;
+	void Accept( IRTreeVisitor* v ) const;
 	const CExpList* GetChild() const;
 private:
 	const IRTree::IStatement* left;
@@ -219,7 +220,7 @@ public:
 	CLabel( const Temp::CLabel* _label );
 	const Temp::CLabel* GetLabel() const;
 
-	void Accept( const IRTreeVisitor* v ) const;
+	void Accept( IRTreeVisitor* v ) const;
 	const CExpList* GetChild() const;
 private:
 	const Temp::CLabel* label;
