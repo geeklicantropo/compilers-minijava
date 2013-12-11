@@ -29,7 +29,7 @@ namespace IRTree {
 	public:
 		virtual ~IStatement() {}
 		virtual void Accept( const IRTreeVisitor* v ) const = 0;
-		virtual const CStmList* GetChild() const = 0;
+		virtual const CExpList* GetChild() const = 0;
 	};
 };
 
@@ -120,28 +120,109 @@ private:
 };
 
 class CCall : IRTree::IExpression {
-	
+public:
+	CCall( const IRTree::IExpression* f, const CExpList* a );
+	const IRTree::IExpression* GetExp() const;
+	const CExpList* GetArgs() const;
+
+	void Accept( const IRTreeVisitor* v ) const;
+	const CExpList* GetChild() const;
+private:
+	const IRTree::IExpression* func;
+	const CExpList* args;
 };
 
 class CEseq : IRTree::IExpression {
+public:
+	CEseq( const IRTree::IStatement* s, const IRTree::IExpression* e );
+	const IRTree::IStatement* GetStm() const;
+	const IRTree::IExpression* GetExp() const;
+
+	void Accept( const IRTreeVisitor* v ) const;
+	const CExpList* GetChild() const;
+private:
+	const IRTree::IStatement* stm;
+	const IRTree::IExpression* exp;
 };
 
 class CMove : IRTree::IStatement {
+public:
+	CMove( const IRTree::IExpression* d, const IRTree::IExpression* s );
+	const IRTree::IExpression* GetDst() const;
+	const IRTree::IExpression* GetSrc() const;
+
+	void Accept( const IRTreeVisitor* v ) const;
+	const CExpList* GetChild() const;
+private:
+	const IRTree::IExpression* dst;
+	const IRTree::IExpression* src;
 };
 
 class CExp : IRTree::IStatement {
+public:
+	CExp( const IRTree::IExpression* e );
+	const IRTree::IExpression* GetExp() const;
+
+	void Accept( const IRTreeVisitor* v ) const;
+	const CExpList* GetChild() const;
+private:
+	const IRTree::IExpression* exp;
 };
 
 class CJump : IRTree::IStatement {
+public:
+	CJump( const IRTree::IExpression* e, const Temp::CLabelList* t );
+	const IRTree::IExpression* GetExp() const;
+	const Temp::CLabelList* GetTargets() const;	
+
+	void Accept( const IRTreeVisitor* v ) const;
+	const CExpList* GetChild() const;
+private:
+	const IRTree::IExpression* exp;
+	const Temp::CLabelList* targets;
 };
 
 class CCJump : IRTree::IStatement {
+public:
+	CCJump( TCJump r, const IRTree::IExpression* _left, const IRTree::IExpression* _right, const Temp::CLabel* _iftrue, const Temp::CLabel* _iffalse );
+	TCJump GetRelop() const;
+	const IRTree::IExpression* GetLeft() const;
+	const IRTree::IExpression* GetRight() const;
+	const Temp::CLabel* GetTrueLabel() const;
+	const Temp::CLabel* GetFalseLabel() const;
+
+	void Accept( const IRTreeVisitor* v ) const;
+	const CExpList* GetChild() const;
+private:
+	TCJump relop;
+	const IRTree::IExpression* left;
+	const IRTree::IExpression* right;
+	const Temp::CLabel* iftrue;
+	const Temp::CLabel* iffalse;
 };
 
 class CSeq : IRTree::IStatement {
+public:
+	CSeq( const IRTree::IStatement* _left, const IRTree::IStatement* _right );
+	const IRTree::IStatement* GetLeft() const;
+	const IRTree::IStatement* GetRight() const;
+
+	void Accept( const IRTreeVisitor* v ) const;
+	const CExpList* GetChild() const;
+private:
+	const IRTree::IStatement* left;
+	const IRTree::IStatement* right;
 };
 
 class CLabel : IRTree::IStatement {
+public:
+	CLabel( const Temp::CLabel* _label );
+	const Temp::CLabel* GetLabel() const;
+
+	void Accept( const IRTreeVisitor* v ) const;
+	const CExpList* GetChild() const;
+private:
+	const Temp::CLabel* label;
 };
 
 class CExpList {
