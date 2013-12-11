@@ -53,9 +53,9 @@ int CConst::GetValue() const
 	return val;
 }
 
-void CConst::Accept( const IRTreeVisitor* v ) const
+void CConst::Accept( IRTreeVisitor* v ) const
 {
-
+	v->Visit( *this );
 }
 
 const CExpList* CConst::GetChild() const
