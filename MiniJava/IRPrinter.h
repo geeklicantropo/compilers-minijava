@@ -1,23 +1,24 @@
 #pragma once
 #include "IRTranslationTree.h"
 
-class IRTreePrinter: public IRTreeVisitor
+
+class IRTreePrinter: public IRTree::IRTreeVisitor
 {
 public:
 	IRTreePrinter() {}
-	void Visit( const CConst& p );
-	void Visit( const CName& p );
-	void Visit( const CTemp& p );
-	void Visit( const CBinOp& p );
-	void Visit( const CMem& p );
-	void Visit( const CCall& p );
-	void Visit( const CEseq& p );
-	void Visit( const CMove& p );
-	void Visit( const CExp& p );
-	void Visit( const CJump& p );
-	void Visit( const CCJump& p );
-	void Visit( const CSeq& p );
-	void Visit( const CLabel& p );
-	void Visit( const CExpList& p );
-	void Visit( const CStmList& p );
+	void Visit( const IRTree::CConst& p );
+	void Visit( const IRTree::CName& p );
+	void Visit( const IRTree::CTemp& p );
+	void Visit( const IRTree::CBinOp& p );
+	void Visit( const IRTree::CMem& p );
+	void Visit( const IRTree::CCall& p );
+	void Visit( const IRTree::CEseq& p );
+	void Visit( const IRTree::CMove& p );
+	void Visit( const IRTree::CExp& p );
+	void Visit( const IRTree::CJump& p );
+	void Visit( const IRTree::CCJump& p );
+	void Visit( const IRTree::CSeq& p );
+	void Visit( const IRTree::CLabel& p );
+	void Visit( const IRTree::CExpList& p );
+	void Visit( const IRTree::CStmList& p );
 };
