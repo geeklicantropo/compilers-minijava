@@ -23,7 +23,12 @@ void CExpList::SetExp( const IExpression* e )
 void CExpList::SetNext( const CExpList* n )
 {
 	next = n;
-} 
+}
+
+void CExpList::Accept( IRTreeVisitor* v ) const
+{
+	return v->Visit( *this );
+}
 
 CStmList::CStmList( const IStatement* s, const CStmList* n ) : 
 	stm( s ), next( n ) {}
@@ -46,6 +51,11 @@ void CStmList::SetStm( const IStatement* s )
 void CStmList::SetNext( const CStmList* n ) 
 {
 	next = n;
+}
+
+void CStmList::Accept( IRTreeVisitor* v ) const
+{
+	return v->Visit( *this );
 }
 
 CConst::CConst( int v )
