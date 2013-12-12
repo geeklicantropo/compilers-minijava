@@ -5,6 +5,26 @@ IAccess::~IAccess()
 
 }
 
+class CInReg : public IAccess 
+{
+public:
+	CInReg( Temp::CTemp* t );
+	const IRTree::IExpression* GetVar() const;
+private:
+	Temp::CTemp* temp;
+};
+
+class CInFrame : public IAccess 
+{
+public:
+	CInFrame( const Temp::CTemp* _fp, int _offset );
+	const IRTree::IExpression* GetVar() const;
+private:
+	const Temp::CTemp* const fp;
+	const int offset;
+};
+
+
 CInReg::CInReg( Temp::CTemp* t )
 {
 	temp = t;
@@ -81,11 +101,6 @@ Temp::CTemp* CFrame::GetFP() const
 int CFrame::GetWordSize() const
 {
 	return sizeof(int);
-}
-
-Temp::CTemp* CFrame::GetThisValue() const
-{
-	return th;
 }
 
 IAccess* CFrame::AllocLocal()
