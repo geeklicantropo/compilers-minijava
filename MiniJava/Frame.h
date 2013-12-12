@@ -11,25 +11,6 @@ public:
 	virtual const IRTree::IExpression* GetVar() const = 0;
 };
 
-class CInReg : public IAccess 
-{
-public:
-	CInReg( Temp::CTemp* t );
-	const IRTree::IExpression* GetVar() const;
-private:
-	Temp::CTemp* temp;
-};
-
-class CInFrame : public IAccess 
-{
-public:
-	CInFrame( const Temp::CTemp* _fp, int _offset );
-	const IRTree::IExpression* GetVar() const;
-private:
-	const Temp::CTemp* const fp;
-	const int offset;
-};
-
 class CAccessList
 {
 public:
@@ -53,7 +34,6 @@ public:
 	CAccessList* GetFormals() const;
 	Temp::CTemp* GetThis() const;
 	Temp::CTemp* GetFP() const;
-	Temp::CTemp* GetThisValue() const;
 
 	int GetWordSize() const;
 
