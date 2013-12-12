@@ -1,6 +1,8 @@
 #include "IRPrinter.h"
 #include <iostream>
 
+using namespace IRTree;
+
 void IRTreePrinter::Visit( const CConst& p )
 {
 	cout << "CONST(" << p.GetValue() << ")";

@@ -118,11 +118,11 @@ const CExpList* CTemp::GetChild() const
 	return 0;
 }
 
-CBinOp::CBinOp( const IRTree::IExpression* _left, const IRTree::IExpression* _right, TBinOp _binop )
+CBinOp::CBinOp( TBinOp _binop, const IRTree::IExpression* _left, const IRTree::IExpression* _right )
 {
+	binop = _binop;
 	left = _left;
 	right = _right;
-	binop = _binop;
 }
 
 TBinOp CBinOp::GetBinOp( ) const
