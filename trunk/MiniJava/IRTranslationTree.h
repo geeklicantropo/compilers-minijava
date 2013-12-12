@@ -53,31 +53,6 @@ public:
 	virtual void Visit( const CStmList& p ) = 0;
 };
 
-class CExpList {
-public:
-	CExpList( const IRTree::IExpression* e, const CExpList* n );
-	const IRTree::IExpression* GetExp() const;
-	const CExpList* GetNext() const;
-	void SetExp( const IRTree::IExpression* e );
-	void SetNext( const CExpList* n );
-private:
-	const IRTree::IExpression* exp;
-	const CExpList* next;
-};
-
-class CStmList {
-public:
-	CStmList( const IRTree::IStatement* e, const CStmList* n );
-	const IRTree::IStatement* GetStm() const;
-	const CStmList* GetNext() const;
-	void SetStm( const IRTree::IStatement* e );
-	void SetNext( const CStmList* n );
-private:
-	const IRTree::IStatement* stm;
-	const CStmList* next;
-};
-
-
 enum TBinOp {
 	PLUS, MINUS, MUL, DIV, AND, OR, LSHIFT, RSHIFT, ARSHIFT, XOR
 };
@@ -252,3 +227,30 @@ private:
 	const Temp::CLabel* label;
 };
 
+class CExpList {
+public:
+	CExpList( const IRTree::IExpression* e, const CExpList* n );
+	const IRTree::IExpression* GetExp() const;
+	const CExpList* GetNext() const;
+	void SetExp( const IRTree::IExpression* e );
+	void SetNext( const CExpList* n );
+
+	void Accept( IRTreeVisitor* v ) const;
+private:
+	const IRTree::IExpression* exp;
+	const CExpList* next;
+};
+
+class CStmList {
+public:
+	CStmList( const IRTree::IStatement* e, const CStmList* n );
+	const IRTree::IStatement* GetStm() const;
+	const CStmList* GetNext() const;
+	void SetStm( const IRTree::IStatement* e );
+	void SetNext( const CStmList* n );
+
+	void Accept( IRTreeVisitor* v ) const;
+private:
+	const IRTree::IStatement* stm;
+	const CStmList* next;
+};
