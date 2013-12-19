@@ -9,7 +9,7 @@ public:
 	CExpConverter( const IRTree::IExpression* e ) : expr(e) {}
 
 	const IRTree::IExpression* ToExp() const;
-	const IRTree::IStatement* ToStm() const; 
+	const IRTree::IStatement* ToStm() const;
 	const IRTree::IStatement* ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const;
 
 private:
@@ -38,7 +38,7 @@ public:
 	CStmConverter( const IRTree::IStatement* s ) : stm(s) {}
 
 	const IRTree::IExpression* ToExp() const;
-	const IRTree::IStatement* ToStm() const; 
+	const IRTree::IStatement* ToStm() const;
 	const IRTree::IStatement* ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const;
 
 private:
@@ -67,7 +67,7 @@ class CConditionalConverter : public ISubtreeWrapper
 public:
 	CConditionalConverter() {}
 	const IRTree::IExpression* ToExp() const;
-	const IRTree::IStatement* ToStm() const; 
+	const IRTree::IStatement* ToStm() const;
 	virtual const IRTree::IStatement* ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const = 0;
 };
 
@@ -109,12 +109,46 @@ CRelativeCmpConverter::CRelativeCmpConverter(TBinaryOperation _op, const IRTree:
 
 const IRTree::IStatement* CRelativeCmpConverter::ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const
 {
-	switch( op ) {
+	switch( op )
+	{
 	case LESS:
 		return new IRTree::CCJump( IRTree::TCJump::LT, expr1, expr2, t, f );
 	default:
 		assert(false);
 		break;
 	}
-	return 0;
+    return 0;
 }
+
+int CTranslator::Visit( const CProgram* n ) {return 0;}
+int CTranslator::Visit( const CMainClass* n ){return 0;}
+int CTranslator::Visit( const CClassDeclareStar* n ){return 0;}
+int CTranslator::Visit( const CClassDeclare* n ){return 0;}
+int CTranslator::Visit( const CClassDeclareExtends* n ){return 0;}
+int CTranslator::Visit( const CVarDeclareStar* n ){return 0;}
+int CTranslator::Visit( const CVarDeclare* n ){return 0;}
+int CTranslator::Visit( const CMethodDeclare* n ){return 0;}
+int CTranslator::Visit( const CMethodDeclareStar* n ){return 0;}
+int CTranslator::Visit( const CFormalList* n ){return 0;}
+int CTranslator::Visit( const CFormalRestStar* n ){return 0;}
+int CTranslator::Visit( const CStatement* n ){return 0;}
+int CTranslator::Visit( const CStatementStar* n ){return 0;}
+int CTranslator::Visit( const CStatementIf* n ){return 0;}
+int CTranslator::Visit( const CStatementWhile* n ){return 0;}
+int CTranslator::Visit( const CStatementSysOut* n ){return 0;}
+int CTranslator::Visit( const CStatementAssignment* n ){return 0;}
+int CTranslator::Visit( const CStatementArrayAssignment* n ){return 0;}
+int CTranslator::Visit( const CExpressionBinOp* n ){return 0;}
+int CTranslator::Visit( const CExpressionArray* n ){return 0;}
+int CTranslator::Visit( const CExpressionLength* n ){return 0;}
+int CTranslator::Visit( const CExpressionCallMethod* n ){return 0;}
+int CTranslator::Visit( const CExpressionNumber* n ){return 0;}
+int CTranslator::Visit( const CExpressionBool* n ){return 0;}
+int CTranslator::Visit( const CExpressionVar* n ){return 0;}
+int CTranslator::Visit( const CExpressionThis* n ){return 0;}
+int CTranslator::Visit( const CExpressionNewInt* n ){return 0;}
+int CTranslator::Visit( const CExpressionNewId* n ){return 0;}
+int CTranslator::Visit( const CExpressionNegation* n ){return 0;}
+int CTranslator::Visit( const CExpression* n ){return 0;}
+int CTranslator::Visit( const CExpList* n ){return 0;}
+int CTranslator::Visit( const CExpListNext* n ){return 0;}
