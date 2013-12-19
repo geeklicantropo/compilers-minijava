@@ -1,4 +1,5 @@
 #include "Translator.h"
+#include "Frame.h"
 
 using namespace Translator;
 
@@ -120,6 +121,11 @@ const IRTree::IStatement* CRelativeCmpConverter::ToConditional( const Temp::CLab
     return 0;
 }
 
+const CSymbol* CTranslator::makeLabelName( CClassDescription* classDescription, CMethodDescription* method ) const
+{
+	return CSymbol::CSymbolGet( classDescription->GetName()->getString() + "@" + method->GetName()->getString() );
+}
+
 int CTranslator::Visit( const CProgram* n ) 
 {
 	n->GetMainClass()->Accept( this );
@@ -142,15 +148,19 @@ int CTranslator::Visit( const CClassDeclareStar* n )
 
 int CTranslator::Visit( const CClassDeclare* n )
 {
+	currentClass = symbolTable->LookUpClass( n->GetId() );
 	if ( n->GetVarDeclareStar() != 0 ) n->GetVarDeclareStar()->Accept( this );
 	if ( n->GetMethodDeclareStar() != 0 ) n->GetMethodDeclareStar()->Accept( this );
+	currentClass = 0;
 	return 0;
 }
 
 int CTranslator::Visit( const CClassDeclareExtends* n )
 {
+	currentClass = symbolTable->LookUpClass( n->GetId() );
 	if( n->GetVarDeclareStar() != 0) n->GetVarDeclareStar()->Accept( this );
 	if( n->GetMethodDeclareStar() != 0)  n->GetMethodDeclareStar()->Accept( this );
+	currentClass = 0;
 	return 0;
 }
 
@@ -178,7 +188,16 @@ int CTranslator::Visit( const CFormalRestStar* n )
 
 int CTranslator::Visit( const CMethodDeclare* n )
 {
-	//
+	assert( currentClass != 0 );
+	currentMethod = currentClass->LookUpMethod( n->GetId() );
+	CFrame* currFrame = new CFrame( new Temp::CLabel( makeLabelName( currentClass, currentMethod ) ), 
+		currentMethod->GetParamsNumber() );
+	if( n->GetStatementStar() != 0 ) n->GetStatementStar()->Accept( this );
+	const IRTree::IStatement* stm = lastValue->ToStm();
+	n->GetExpression()->Accept( this );
+	const IRTree::IExpression* exp = lastValue->ToExp();
+	lastCodeFragment = new CCodeFragment( currFrame,  new IRTree::CEseq( stm, exp ) , lastCodeFragment );
+	currentMethod = 0;
 	return 0;
 }
 

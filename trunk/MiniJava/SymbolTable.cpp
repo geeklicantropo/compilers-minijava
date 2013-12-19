@@ -157,3 +157,8 @@ CVarDescription* CMethodDescription::LookUp( const CSymbol* variable ) {
 	else
 		return var1;
 }
+
+int CMethodDescription::GetParamsNumber() const
+{
+	return orderedParams.size();
+}
