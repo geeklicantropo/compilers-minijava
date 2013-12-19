@@ -45,7 +45,7 @@ namespace Translator
 
 	class ISubtreeWrapper {
 	public:
-		virtual ~ISubtreeWrapper() = 0;
+		virtual ~ISubtreeWrapper() {}
 
 		virtual const IRTree::IExpression* ToExp() const = 0; 
 		virtual const IRTree::IStatement* ToStm() const = 0; 
