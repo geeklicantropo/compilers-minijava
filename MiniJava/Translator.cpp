@@ -2,6 +2,7 @@
 
 using namespace Translator;
 
+
 class CExpConverter : public ISubtreeWrapper
 {
 public:
@@ -61,40 +62,10 @@ const IRTree::IStatement* CStmConverter::ToConditional( const Temp::CLabel* t, c
 	return 0;
 }
 
-class CExpConverter : public ISubtreeWrapper
-{
-public:
-	CExpConverter( const IRTree::IExpression* e ) : expr(e) {}
-
-	const IRTree::IExpression* ToExp() const;
-	const IRTree::IStatement* ToStm() const; 
-	const IRTree::IStatement* ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const;
-
-private:
-	const IRTree::IExpression* expr;
-};
-
-const IRTree::IExpression* CExpConverter::ToExp() const
-{
-	return expr;
-}
-
-const IRTree::IStatement* CExpConverter::ToStm() const
-{
-	return new IRTree::CExp(expr);
-}
-
-const IRTree::IStatement* CExpConverter::ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const
-{
-	assert(false);
-	return 0;
-}
-
 class CConditionalConverter : public ISubtreeWrapper
 {
 public:
-	CConditionalConverter();
-
+	CConditionalConverter() {}
 	const IRTree::IExpression* ToExp() const;
 	const IRTree::IStatement* ToStm() const; 
 	virtual const IRTree::IStatement* ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const = 0;
@@ -144,5 +115,6 @@ const IRTree::IStatement* CRelativeCmpConverter::ToConditional( const Temp::CLab
 	default:
 		assert(false);
 		break;
+	}
+	return 0;
 }
-

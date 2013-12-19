@@ -25,7 +25,7 @@ namespace IRTree {
 		virtual void Accept( IRTreeVisitor* v ) const = 0;
 		virtual const CExpList* GetChild() const = 0;
 	};
-
+	
 	class IStatement {
 	public:
 		virtual ~IStatement() {}
