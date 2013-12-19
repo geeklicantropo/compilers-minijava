@@ -1,3 +1,4 @@
+#pragma once
 #include "Temp.h"
 
 namespace IRTree {
