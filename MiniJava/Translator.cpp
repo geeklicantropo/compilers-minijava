@@ -170,7 +170,7 @@ int CTranslator::Visit( const CVarDeclareStar* n )
 }
 
 int CTranslator::Visit( const CVarDeclare* n )
-{
+{ 
 	return 0;
 }
 
@@ -199,11 +199,14 @@ int CTranslator::Visit( const CMethodDeclareStar* n )
 
 int CTranslator::Visit( const CStatement* n )
 {
+	if ( n->GetStatementStar() != 0 ) n->GetStatementStar()->Accept( this ); 
 	return 0;
 }
 
 int CTranslator::Visit( const CStatementStar* n )
 {
+	if ( n->GetStatement() != 0 ) n->GetStatement() -> Accept( this );
+	if ( n->GetStatementStar() != 0 ) n->GetStatementStar() -> Accept( this );
 	return 0;
 }
 
@@ -289,15 +292,19 @@ int CTranslator::Visit( const CExpressionNegation* n )
 
 int CTranslator::Visit( const CExpression* n )
 {
+	if ( n -> GetExpression() != 0 ) n ->GetExpression() -> Accept( this );
 	return 0;
 }
 
 int CTranslator::Visit( const CExpList* n )
 {
+	if ( n -> GetExpression() != 0 ) n ->GetExpression() -> Accept( this );
 	return 0;
 }
 
 int CTranslator::Visit( const CExpListNext* n )
-{
+{	
+	if ( n -> GetExpression() != 0 ) n ->GetExpression() -> Accept( this ); 
+	if ( n -> GetExpList() != 0 ) n ->GetExpList() -> Accept( this );
 	return 0;
 }
