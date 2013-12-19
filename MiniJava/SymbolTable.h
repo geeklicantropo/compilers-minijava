@@ -74,6 +74,7 @@ public:
 	const CSymbol* GetName() const;
 	const CTypeInfo* GetType() const;
 	vector<CVarDescription*> GetOrderedParams() const;
+	int GetParamsNumber() const;
 	
 	CVarDescription* LookUpParam( const CSymbol* param );
 	CVarDescription* LookUpLocal( const CSymbol* local );

@@ -2,12 +2,25 @@
 #include "IRTranslationTree.h"
 #include "Visitor.h"
 #include "miniJava.h"
+#include "CodeFragment.h"
 #include <assert.h>
 
 namespace Translator
 {
+	class ISubtreeWrapper;
+
 	class CTranslator : public IVisitor 
 	{
+	private:
+		CClassDescription* currentClass;
+		CMethodDescription* currentMethod;
+		CSymbolTable* symbolTable;
+		CCodeFragment* lastCodeFragment;
+		ISubtreeWrapper* lastValue;
+
+		const CSymbol* makeLabelName( CClassDescription* classDescription, CMethodDescription* method ) const;
+
+
 	public:
 		int Visit( const CProgram* n );
 		int Visit( const CMainClass* n );
