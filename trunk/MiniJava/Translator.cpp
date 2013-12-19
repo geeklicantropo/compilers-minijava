@@ -120,14 +120,6 @@ const IRTree::IStatement* CRelativeCmpConverter::ToConditional( const Temp::CLab
     return 0;
 }
 
-
-int CTranslator::Visit( const CProgram* n ) 
-{
-	n->GetMainClass()->Accept( this );
-	if ( n->GetClassDeclareStar() != 0 ) n->GetClassDeclareStar()->Accept( this );
-	return 0;
-}
-
 int CTranslator::Visit( const CProgram* n ) 
 {
 	n->GetMainClass()->Accept( this );
