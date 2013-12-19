@@ -120,47 +120,56 @@ const IRTree::IStatement* CRelativeCmpConverter::ToConditional( const Temp::CLab
     return 0;
 }
 
+
 int CTranslator::Visit( const CProgram* n ) 
 {
+	n->GetMainClass()->Accept( this );
+	if ( n->GetClassDeclareStar() != 0 ) n->GetClassDeclareStar()->Accept( this );
+	return 0;
+}
+
+int CTranslator::Visit( const CProgram* n ) 
+{
+	n->GetMainClass()->Accept( this );
+	if ( n->GetClassDeclareStar() != 0 ) n->GetClassDeclareStar()->Accept( this );
 	return 0;
 }
 
 int CTranslator::Visit( const CMainClass* n )
 {
+	n->GetStatement()->Accept( this );
 	return 0;
 }
 
 int CTranslator::Visit( const CClassDeclareStar* n )
 {
+	if ( n->GetClassDeclareStar() != 0 ) n->GetClassDeclareStar()->Accept( this );
+	n->GetClassDeclare()->Accept( this );
 	return 0;
 }
 
 int CTranslator::Visit( const CClassDeclare* n )
 {
+	if ( n->GetVarDeclareStar() != 0 ) n->GetVarDeclareStar()->Accept( this );
+	if ( n->GetMethodDeclareStar() != 0 ) n->GetMethodDeclareStar()->Accept( this );
 	return 0;
 }
 
 int CTranslator::Visit( const CClassDeclareExtends* n )
 {
+	if( n->GetVarDeclareStar() != 0) n->GetVarDeclareStar()->Accept( this );
+	if( n->GetMethodDeclareStar() != 0)  n->GetMethodDeclareStar()->Accept( this );
 	return 0;
 }
 
 int CTranslator::Visit( const CVarDeclareStar* n )
 {
+	if( n->GetVarDeclareStar() != 0 ) n->GetVarDeclareStar()->Accept( this );
+	n->GetVarDeclare()->Accept( this );
 	return 0;
 }
 
 int CTranslator::Visit( const CVarDeclare* n )
-{
-	return 0;
-}
-
-int CTranslator::Visit( const CMethodDeclare* n )
-{
-	return 0;
-}
-
-int CTranslator::Visit( const CMethodDeclareStar* n )
 {
 	return 0;
 }
@@ -172,6 +181,19 @@ int CTranslator::Visit( const CFormalList* n )
 
 int CTranslator::Visit( const CFormalRestStar* n )
 {
+	return 0;
+}
+
+int CTranslator::Visit( const CMethodDeclare* n )
+{
+	//
+	return 0;
+}
+
+int CTranslator::Visit( const CMethodDeclareStar* n )
+{
+	if( n->GetMethodDeclareStar() != 0 ) n->GetMethodDeclareStar()->Accept( this );
+	n->GetMethodDeclare()->Accept( this );
 	return 0;
 }
 
