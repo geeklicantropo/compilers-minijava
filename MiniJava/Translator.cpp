@@ -290,7 +290,7 @@ int CTranslator::Visit( const CStatementIf* n )
 {
 	n->GetExpression()->Accept( this );
 	assert( lastValue != 0 );
-	const IRTree::IExpression* ifExpr = lastValue->ToExp();
+	Translator::ISubtreeWrapper* ifExpr = lastValue;
 	n->GetStatementIf()->Accept( this );
 	assert( lastValue != 0 );
 	const IRTree::IStatement* ifStm = lastValue->ToStm();
@@ -302,12 +302,28 @@ int CTranslator::Visit( const CStatementIf* n )
 	Temp::CLabel* r = new Temp::CLabel();
 	IRTree::IStatement* tSeq = new IRTree::CSeq( new IRTree::CLabel( t ), ifStm );
 	IRTree::IStatement* fSeq = new IRTree::CSeq( new IRTree::CLabel( f ), elseStm );
+	IRTree::IStatement* ifSubtree = new IRTree::CSeq( ifExpr->ToConditional( t, f ), new IRTree::CSeq( new IRTree::CSeq( ifStm, new IRTree::CJump( r ) ), 
+																									   new IRTree::CSeq( elseStm, new IRTree::CJump( r ) ) ) );
+	lastValue = new CStmConverter( ifSubtree );
 	return 0;
 }
 
 int CTranslator::Visit( const CStatementWhile* n )
 {
-	//
+	n->GetExpression()->Accept( this );
+	assert( lastValue != 0 );
+	Translator::ISubtreeWrapper* whileExpr = lastValue;
+	n->GetStatement()->Accept( this );
+	assert( lastValue != 0 );
+	const IRTree::IStatement* whileStm = lastValue->ToStm();
+	Temp::CLabel* t = new Temp::CLabel();
+	Temp::CLabel* f = new Temp::CLabel();
+	Temp::CLabel* r = new Temp::CLabel();
+	IRTree::IStatement* tSeq = new IRTree::CSeq( new IRTree::CLabel( t ), whileStm );
+	IRTree::IStatement* whileSubtree = new IRTree::CSeq( new IRTree::CSeq( new IRTree::CLabel( t ), whileExpr->ToConditional( f, r ) ), 
+													new IRTree::CSeq( tSeq , new IRTree::CSeq( new IRTree::CJump( t ), new IRTree::CLabel( r ) ) ) );
+
+	lastValue = new CStmConverter( whileSubtree );
 	return 0;
 }
 
