@@ -288,7 +288,20 @@ int CTranslator::Visit( const CStatementStar* n )
 
 int CTranslator::Visit( const CStatementIf* n )
 {
-	//
+	n->GetExpression()->Accept( this );
+	assert( lastValue != 0 );
+	const IRTree::IExpression* ifExpr = lastValue->ToExp();
+	n->GetStatementIf()->Accept( this );
+	assert( lastValue != 0 );
+	const IRTree::IStatement* ifStm = lastValue->ToStm();
+	n->GetStatementIf()->Accept( this );
+	assert( lastValue != 0 );
+	const IRTree::IStatement* elseStm = lastValue->ToStm();
+	Temp::CLabel* t = new Temp::CLabel();
+	Temp::CLabel* f = new Temp::CLabel();
+	Temp::CLabel* r = new Temp::CLabel();
+	IRTree::IStatement* tSeq = new IRTree::CSeq( new IRTree::CLabel( t ), ifStm );
+	IRTree::IStatement* fSeq = new IRTree::CSeq( new IRTree::CLabel( f ), elseStm );
 	return 0;
 }
 
@@ -330,7 +343,7 @@ int CTranslator::Visit( const CExpressionBinOp* n )
 	switch( op )
 	{
 	case AND:
-		//еще нет конвертера
+		lastValue = new CLogicalConverter( AND, left, right );
 		break;
 	case LESS:
 		lastValue = new CRelativeCmpConverter( LESS, left, right );
