@@ -14,6 +14,7 @@ namespace Translator
 	private:
 		CClassDescription* currentClass;
 		CMethodDescription* currentMethod;
+		CFrame* currFrame;
 		CSymbolTable* symbolTable;
 		CCodeFragment* lastCodeFragment;
 		ISubtreeWrapper* lastValue;

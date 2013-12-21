@@ -37,7 +37,7 @@
 }
 
 [0-9]+ {
-	yylval.Name = CSymbol::CSymbolGet( string(yytext, yyleng) );
+	yylval.Int = atoi(yytext);//CSymbol::CSymbolGet( string(yytext, yyleng) );
 	return NUMBER;
 }
 
