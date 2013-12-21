@@ -121,6 +121,16 @@ const IRTree::IStatement* CRelativeCmpConverter::ToConditional( const Temp::CLab
     return 0;
 }
 
+CTranslator::CTranslator( CSymbolTable* st ) :
+	symbolTable( st )
+{
+	currentClass = 0;
+	currentMethod = 0;
+	currentFrame = 0;
+	lastCodeFragment = 0;
+	lastValue = 0;
+}
+
 const CSymbol* CTranslator::makeLabelName( CClassDescription* classDescription, CMethodDescription* method ) const
 {
 	return CSymbol::CSymbolGet( classDescription->GetName()->getString() + "@" + method->GetName()->getString() );
@@ -135,7 +145,12 @@ int CTranslator::Visit( const CProgram* n )
 
 int CTranslator::Visit( const CMainClass* n )
 {
+	currentClass = symbolTable->LookUpClass( n->GetId() );
+	currentMethod = currentClass->LookUpMethod( CSymbol::CSymbolGet( "main" ) );
+	currentFrame = new CFrame( new Temp::CLabel( makeLabelName( currentClass, currentMethod ) ), 0 );
 	n->GetStatement()->Accept( this );
+	lastCodeFragment = new CCodeFragment( currentFrame, lastValue->ToExp(), lastCodeFragment );
+	currentClass = 0;
 	return 0;
 }
 
@@ -149,7 +164,6 @@ int CTranslator::Visit( const CClassDeclareStar* n )
 int CTranslator::Visit( const CClassDeclare* n )
 {
 	currentClass = symbolTable->LookUpClass( n->GetId() );
-	if ( n->GetVarDeclareStar() != 0 ) n->GetVarDeclareStar()->Accept( this );
 	if ( n->GetMethodDeclareStar() != 0 ) n->GetMethodDeclareStar()->Accept( this );
 	currentClass = 0;
 	return 0;
@@ -158,7 +172,6 @@ int CTranslator::Visit( const CClassDeclare* n )
 int CTranslator::Visit( const CClassDeclareExtends* n )
 {
 	currentClass = symbolTable->LookUpClass( n->GetId() );
-	if( n->GetVarDeclareStar() != 0) n->GetVarDeclareStar()->Accept( this );
 	if( n->GetMethodDeclareStar() != 0) n->GetMethodDeclareStar()->Accept( this );
 	currentClass = 0;
 	return 0;
@@ -190,15 +203,15 @@ int CTranslator::Visit( const CMethodDeclare* n )
 {
 	assert( currentClass != 0 );
 	currentMethod = currentClass->LookUpMethod( n->GetId() );
-	currFrame = new CFrame( new Temp::CLabel( makeLabelName( currentClass, currentMethod ) ), 
+	currentFrame = new CFrame( new Temp::CLabel( makeLabelName( currentClass, currentMethod ) ), 
 		currentMethod->GetParamsNumber() );
 	if( n->GetStatementStar() != 0 ) n->GetStatementStar()->Accept( this );
 	const IRTree::IStatement* stm = lastValue->ToStm();
 	n->GetExpression()->Accept( this );
 	const IRTree::IExpression* exp = lastValue->ToExp();
-	lastCodeFragment = new CCodeFragment( currFrame,  new IRTree::CEseq( stm, exp ) , lastCodeFragment );
+	lastCodeFragment = new CCodeFragment( currentFrame,  new IRTree::CEseq( stm, exp ) , lastCodeFragment );
 	currentMethod = 0;
-	currFrame = 0;
+	currentFrame = 0;
 	return 0;
 }
 
@@ -220,12 +233,14 @@ int CTranslator::Visit( const CStatementStar* n )
 	const IRTree::IStatement* stm = 0;
 	const IRTree::IStatement* leftStm = 0;
 	const IRTree::IStatement* rightStm = 0;	
-	if ( n->GetStatement() != 0 ) {
+	if( n->GetStatement() != 0 ) {
 		n->GetStatement()->Accept( this );
+		assert( lastValue != 0 );
 		leftStm = lastValue->ToStm();
 	}
-	if ( n->GetStatementStar() != 0 ) {
+	if( n->GetStatementStar() != 0 ) {
 		n->GetStatementStar()->Accept( this );
+		assert( lastValue != 0 );
 		rightStm = lastValue->ToStm();
 		if( leftStm == 0 ) {
 			stm = rightStm;
@@ -252,6 +267,7 @@ int CTranslator::Visit( const CStatementWhile* n )
 int CTranslator::Visit( const CStatementSysOut* n )
 {
 	n->GetExpression()->Accept( this );
+	assert( lastValue != 0 );
 	Temp::CLabel* sysoutLabel = new Temp::CLabel( CSymbol::CSymbolGet( "System.out.println" ) );
 	IRTree::IStatement* callSysout = new IRTree::CExp( new IRTree::CCall( new IRTree::CName( sysoutLabel ), new IRTree::CExpList( lastValue->ToExp(), 0 ) ) );
 	lastValue = new CStmConverter( callSysout );
@@ -271,8 +287,10 @@ int CTranslator::Visit( const CStatementArrayAssignment* n )
 int CTranslator::Visit( const CExpressionBinOp* n )
 {
 	n->GetExpressionFirst()->Accept( this );
+	assert( lastValue != 0 );
 	const IRTree::IExpression* left = lastValue->ToExp();
 	n->GetExpressionSecond()->Accept( this );
+	assert( lastValue != 0 );
 	const IRTree::IExpression* right = lastValue->ToExp();
 	TBinaryOperation op = n->GetOperation();
 	switch( op )
@@ -336,7 +354,7 @@ int CTranslator::Visit( const CExpressionVar* n )
 
 int CTranslator::Visit( const CExpressionThis* n )
 {
-	lastValue = new CExpConverter( new IRTree::CTemp( currFrame->GetThis() ) );
+	lastValue = new CExpConverter( new IRTree::CTemp( currentFrame->GetThis() ) );
 	return 0;
 }
 
@@ -357,19 +375,19 @@ int CTranslator::Visit( const CExpressionNegation* n )
 
 int CTranslator::Visit( const CExpression* n )
 {
-	if ( n -> GetExpression() != 0 ) n ->GetExpression() -> Accept( this );
+	if( n->GetExpression() != 0 ) n->GetExpression()->Accept( this );
 	return 0;
 }
 
 int CTranslator::Visit( const CExpList* n )
 {
-	if ( n -> GetExpression() != 0 ) n ->GetExpression() -> Accept( this );
+	if( n->GetExpression() != 0 ) n->GetExpression()->Accept( this );
 	return 0;
 }
 
 int CTranslator::Visit( const CExpListNext* n )
 {	
-	if ( n -> GetExpression() != 0 ) n ->GetExpression() -> Accept( this ); 
-	if ( n -> GetExpList() != 0 ) n ->GetExpList() -> Accept( this );
+	if( n->GetExpression() != 0 ) n->GetExpression()->Accept( this ); 
+	if( n->GetExpList() != 0 ) n->GetExpList()->Accept( this );
 	return 0;
 }

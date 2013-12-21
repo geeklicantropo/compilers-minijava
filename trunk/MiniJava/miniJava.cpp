@@ -755,10 +755,13 @@ int CStatementIf::Accept(IVisitor *v) const
 
 int CStatementWhile::Accept( IVisitor *v ) const 
 { 
-	return v->Visit( this ); }
+	return v->Visit( this );
+}
 
 int CStatementSysOut::Accept( IVisitor *v ) const 
-{ return v->Visit( this ); }
+{ 
+	return v->Visit( this ); 
+}
 
 int CStatementAssignment::Accept( IVisitor *v ) const 
 { 
