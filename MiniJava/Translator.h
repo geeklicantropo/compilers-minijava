@@ -9,20 +9,11 @@ namespace Translator
 {
 	class ISubtreeWrapper;
 
-	class CTranslator : public IVisitor 
-	{
-	private:
-		CClassDescription* currentClass;
-		CMethodDescription* currentMethod;
-		CFrame* currFrame;
-		CSymbolTable* symbolTable;
-		CCodeFragment* lastCodeFragment;
-		ISubtreeWrapper* lastValue;
-
-		const CSymbol* makeLabelName( CClassDescription* classDescription, CMethodDescription* method ) const;
-
-
+	class CTranslator : public IVisitor {
 	public:
+
+		CTranslator( CSymbolTable* );
+
 		int Visit( const CProgram* n );
 		int Visit( const CMainClass* n );
 		int Visit( const CClassDeclareStar* n );
@@ -55,6 +46,15 @@ namespace Translator
 		int Visit( const CExpression* n );
 		int Visit( const CExpList* n );
 		int Visit( const CExpListNext* n );
+	private:
+		CClassDescription* currentClass;
+		CMethodDescription* currentMethod;
+		CFrame* currentFrame;
+		CSymbolTable* symbolTable;
+		CCodeFragment* lastCodeFragment;
+		ISubtreeWrapper* lastValue;
+
+		const CSymbol* makeLabelName( CClassDescription* classDescription, CMethodDescription* method ) const;	
 	};
 
 	class ISubtreeWrapper {

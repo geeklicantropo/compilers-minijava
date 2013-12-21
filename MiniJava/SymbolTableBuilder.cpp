@@ -21,7 +21,7 @@ int CSymbolTableBuilder::Visit( const CMainClass* n )
 	currentClass = symbolTable->AddClass( n->GetId() );
 	if( currentClass == 0 )
 		ErrorMessage( cout, "this classname was used earlier", n->GetLocation() );
-	
+	currentClass->AddMethod( CSymbol::CSymbolGet( "main" ), new CTypeInfo( CSymbol::CSymbolGet( "void" ) ) );
 	currentClass = 0;
 	return 0; 
 }
