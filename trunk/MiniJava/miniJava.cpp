@@ -561,9 +561,9 @@ int CExpressionCallMethod::GetLocation() const
 	return location;
 }
 
-CExpressionNumber::CExpressionNumber( const CSymbol* _number, int _location ) : number( _number ), location( _location ) {}
+CExpressionNumber::CExpressionNumber( int _number, int _location ) : number( _number ), location( _location ) {}
 
-const CSymbol* CExpressionNumber::GetNumber() const
+int CExpressionNumber::GetNumber() const
 {
 	return number;
 }

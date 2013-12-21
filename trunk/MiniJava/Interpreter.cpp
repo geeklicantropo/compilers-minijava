@@ -83,7 +83,7 @@ int CInterpreter::Visit( const CMethodDeclare* n )
 		std::cout << "boolean ";
 		break;
 	case USERTYPE:
-		std::cout << n->GetType()->GetUserType() << " ";
+		std::cout << n->GetType()->GetUserType()->getString() << " ";
 		break;
 	}
 	std::cout << n->GetId()->getString();
@@ -119,7 +119,7 @@ int CInterpreter::Visit( const CFormalList* n )
 		std::cout << "boolean ";
 		break;
 	case USERTYPE:
-		std::cout << n->GetType()->GetUserType() << " ";
+		std::cout << n->GetType()->GetUserType()->getString() << " ";
 		break;
 	}
 	std::cout << n->GetId()->getString();
@@ -142,7 +142,7 @@ int CInterpreter::Visit( const CFormalRestStar* n )
 		std::cout << "boolean ";
 		break;
 	case USERTYPE:
-		std::cout << n->GetType()->GetUserType() << " ";
+		std::cout << n->GetType()->GetUserType()->getString() << " ";
 		break;
 	}
 	std::cout << n->GetId()->getString();
@@ -262,7 +262,7 @@ int CInterpreter::Visit( const CExpressionCallMethod* n )
 
 int CInterpreter::Visit( const CExpressionNumber* n )  
 { 
-	std::cout << n->GetNumber()->getString();
+	std::cout << n->GetNumber();
 	return 0; 
 }
 

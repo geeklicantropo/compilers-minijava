@@ -445,13 +445,13 @@ private:
 
 class CExpressionNumber : public IExpression {
 public:
-	CExpressionNumber( const CSymbol*, int _location );
+	CExpressionNumber( int, int _location );
 	int Accept(IVisitor *v) const;
-	const CSymbol* GetNumber() const;
+	int GetNumber() const;
 	int GetLocation() const;
 
 private:
-	const CSymbol* number;
+	int number;
 	int location;
 };
 

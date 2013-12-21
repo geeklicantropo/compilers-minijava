@@ -45,7 +45,7 @@ int yywrap()
 	const CSymbol* Name;
 }
 
-%token <Name> NUMBER
+%token <Int> NUMBER
 %token CLASS
 %token PUBLIC
 %token STATIC
