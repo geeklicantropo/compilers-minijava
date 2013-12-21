@@ -90,6 +90,40 @@ const IRTree::IStatement* CConditionalConverter::ToStm() const
 	return 0;
 }
 
+class CLogicConverter
+{
+public:
+	CLogicConverter( TBinaryOperation _op, const IRTree::IExpression* e1, const IRTree::IExpression* e2 );
+	const IRTree::IStatement* ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const;
+private:
+	TBinaryOperation op;
+	const IRTree::IExpression* expr1;
+	const IRTree::IExpression* expr2;
+};
+
+CLogicConverter::CLogicConverter( TBinaryOperation _op, const IRTree::IExpression* e1, const IRTree::IExpression* e2 )
+{
+	op = _op;
+	expr1 = e1;
+	expr2 = e2;
+}
+
+const IRTree::IStatement* CLogicConverter::ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const
+{
+	Temp::CLabel* l = new Temp::CLabel();
+	switch( op )
+	{
+	case AND:
+		return new IRTree::CSeq( new IRTree::CCJump( IRTree::TCJump::NE, expr1, new IRTree::CConst( 0 ), l, f ),
+			new IRTree::CSeq( new IRTree::CLabel( l ), 
+			new IRTree::CCJump( IRTree::TCJump::NE, expr2, new IRTree::CConst( 0 ), t, f ) ) );
+	default: 
+		assert(false);
+		break;
+	}
+    return 0;
+}
+
 class CRelativeCmpConverter : public CConditionalConverter
 {
 public:
