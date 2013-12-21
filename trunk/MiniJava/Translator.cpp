@@ -90,10 +90,10 @@ const IRTree::IStatement* CConditionalConverter::ToStm() const
 	return 0;
 }
 
-class CLogicConverter
+class CLogicalConverter : public CConditionalConverter
 {
 public:
-	CLogicConverter( TBinaryOperation _op, const IRTree::IExpression* e1, const IRTree::IExpression* e2 );
+	CLogicalConverter( TBinaryOperation _op, const IRTree::IExpression* e1, const IRTree::IExpression* e2 );
 	const IRTree::IStatement* ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const;
 private:
 	TBinaryOperation op;
@@ -101,14 +101,14 @@ private:
 	const IRTree::IExpression* expr2;
 };
 
-CLogicConverter::CLogicConverter( TBinaryOperation _op, const IRTree::IExpression* e1, const IRTree::IExpression* e2 )
+CLogicalConverter::CLogicalConverter( TBinaryOperation _op, const IRTree::IExpression* e1, const IRTree::IExpression* e2 )
 {
 	op = _op;
 	expr1 = e1;
 	expr2 = e2;
 }
 
-const IRTree::IStatement* CLogicConverter::ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const
+const IRTree::IStatement* CLogicalConverter::ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const
 {
 	Temp::CLabel* l = new Temp::CLabel();
 	switch( op )
