@@ -53,8 +53,6 @@ namespace Translator
 		CSymbolTable* symbolTable;
 		CCodeFragment* lastCodeFragment;
 		ISubtreeWrapper* lastValue;
-		map<const CSymbol*, size_t> currentMethodArguments;
-		map<const CSymbol*, size_t> currentMethodLocalVariables;
 
 		const CSymbol* makeLabelName( CClassDescription* classDescription, CMethodDescription* method ) const;	
 	};

@@ -100,7 +100,7 @@ public:
 class IExpression {
 public:
 	virtual int Accept(IVisitor *v) const = 0;
-	~IExpression();
+	~IExpression() {};
 };
 
 class IExpList {

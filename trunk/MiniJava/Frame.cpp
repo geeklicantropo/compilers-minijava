@@ -111,3 +111,8 @@ IAccess* CFrame::AllocLocal()
 	return temp;
 }
 
+IRTree::IExpression* CFrame::ExternalCall( std::string func, IRTree::CExpList* args )
+{
+	return 0;
+}
+
