@@ -1,5 +1,6 @@
 #include "Translator.h"
 #include "Frame.h"
+#include "miniJava.h"
 
 using namespace Translator;
 
@@ -24,19 +25,18 @@ const IRTree::IExpression* CExpConverter::ToExp() const
 
 const IRTree::IStatement* CExpConverter::ToStm() const
 {
-	return new IRTree::CExp(expr);
+	return new IRTree::CExp( expr );
 }
 
 const IRTree::IStatement* CExpConverter::ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const
 {
-	assert(false);
-	return 0;
+	return new IRTree::CCJump( IRTree::TCJump::NE, expr, new IRTree::CConst( 0 ), t, f );
 }
 
 class CStmConverter : public ISubtreeWrapper
 {
 public:
-	CStmConverter( const IRTree::IStatement* s ) : stm(s) {}
+	CStmConverter( const IRTree::IStatement* s ) : stm( s ) {}
 
 	const IRTree::IExpression* ToExp() const;
 	const IRTree::IStatement* ToStm() const;
@@ -48,7 +48,7 @@ private:
 
 const IRTree::IExpression* CStmConverter::ToExp() const
 {
-	assert(false);
+	assert( false );
 	return 0;
 }
 
@@ -59,7 +59,7 @@ const IRTree::IStatement* CStmConverter::ToStm() const
 
 const IRTree::IStatement* CStmConverter::ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const
 {
-	assert(false);
+	assert( false );
 	return 0;
 }
 
@@ -86,56 +86,46 @@ const IRTree::IExpression* CConditionalConverter::ToExp() const
 
 const IRTree::IStatement* CConditionalConverter::ToStm() const
 {
-	assert(false);
+	assert( false );
 	return 0;
 }
 
-class CLogicalConverter : public CConditionalConverter
+class CAndConverter : public CConditionalConverter
 {
 public:
-	CLogicalConverter( TBinaryOperation _op, const IRTree::IExpression* e1, const IRTree::IExpression* e2 );
+	CAndConverter( const IRTree::IExpression* e1, const IRTree::IExpression* e2 );
 	const IRTree::IStatement* ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const;
 private:
-	TBinaryOperation op;
 	const IRTree::IExpression* expr1;
 	const IRTree::IExpression* expr2;
 };
 
-CLogicalConverter::CLogicalConverter( TBinaryOperation _op, const IRTree::IExpression* e1, const IRTree::IExpression* e2 )
+CAndConverter::CAndConverter( const IRTree::IExpression* e1, const IRTree::IExpression* e2 )
 {
-	op = _op;
 	expr1 = e1;
 	expr2 = e2;
 }
 
-const IRTree::IStatement* CLogicalConverter::ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const
+const IRTree::IStatement* CAndConverter::ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const
 {
 	Temp::CLabel* l = new Temp::CLabel();
-	switch( op )
-	{
-	case AND:
-		return new IRTree::CSeq( new IRTree::CCJump( IRTree::TCJump::NE, expr1, new IRTree::CConst( 0 ), l, f ),
-			new IRTree::CSeq( new IRTree::CLabel( l ), 
-			new IRTree::CCJump( IRTree::TCJump::NE, expr2, new IRTree::CConst( 0 ), t, f ) ) );
-	default: 
-		assert(false);
-		break;
-	}
-    return 0;
+	return new IRTree::CSeq( new IRTree::CCJump( IRTree::TCJump::NE, expr1, new IRTree::CConst( 0 ), l, f ),
+		new IRTree::CSeq( new IRTree::CLabel( l ), 
+		new IRTree::CCJump( IRTree::TCJump::NE, expr2, new IRTree::CConst( 0 ), t, f ) ) );
 }
 
 class CRelativeCmpConverter : public CConditionalConverter
 {
 public:
-	CRelativeCmpConverter( TBinaryOperation _op, const IRTree::IExpression* e1, const IRTree::IExpression* e2 );
+	CRelativeCmpConverter( IRTree::TCJump _op, const IRTree::IExpression* e1, const IRTree::IExpression* e2 );
 	const IRTree::IStatement* ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const;
 private:
-	TBinaryOperation op;
+	IRTree::TCJump op;
 	const IRTree::IExpression* expr1;
 	const IRTree::IExpression* expr2;
 };
 
-CRelativeCmpConverter::CRelativeCmpConverter(TBinaryOperation _op, const IRTree::IExpression* e1, const IRTree::IExpression* e2 )
+CRelativeCmpConverter::CRelativeCmpConverter( IRTree::TCJump _op, const IRTree::IExpression* e1, const IRTree::IExpression* e2 )
 {
 	op = _op;
 	expr1 = e1;
@@ -144,15 +134,7 @@ CRelativeCmpConverter::CRelativeCmpConverter(TBinaryOperation _op, const IRTree:
 
 const IRTree::IStatement* CRelativeCmpConverter::ToConditional( const Temp::CLabel* t, const Temp::CLabel* f ) const
 {
-	switch( op )
-	{
-	case LESS:
-		return new IRTree::CCJump( IRTree::TCJump::LT, expr1, expr2, t, f );
-	default:
-		assert(false);
-		break;
-	}
-    return 0;
+	return new IRTree::CCJump( op, expr1, expr2, t, f );
 }
 
 CTranslator::CTranslator( CSymbolTable* st ) :
@@ -206,7 +188,7 @@ int CTranslator::Visit( const CClassDeclare* n )
 int CTranslator::Visit( const CClassDeclareExtends* n )
 {
 	currentClass = symbolTable->LookUpClass( n->GetId() );
-	if( n->GetMethodDeclareStar() != 0) n->GetMethodDeclareStar()->Accept( this );
+	if( n->GetMethodDeclareStar() != 0 ) n->GetMethodDeclareStar()->Accept( this );
 	currentClass = 0;
 	return 0;
 }
@@ -219,7 +201,7 @@ int CTranslator::Visit( const CVarDeclareStar* n )
 }
 
 int CTranslator::Visit( const CVarDeclare* n )
-{ 
+{ 	
 	return 0;
 }
 
@@ -339,11 +321,27 @@ int CTranslator::Visit( const CStatementSysOut* n )
 
 int CTranslator::Visit( const CStatementAssignment* n )
 {
+	auto variableNode = new CExpressionVar( n->GetId(), n->GetLocation() );
+	variableNode->Accept( this );
+	delete( variableNode );
+	const IRTree::IExpression* variable = lastValue->ToExp();
+	n->GetExpression()->Accept( this );
+	lastValue = new CStmConverter( new IRTree::CMove( variable, lastValue->ToExp() ) );
 	return 0;
 }
 
 int CTranslator::Visit( const CStatementArrayAssignment* n )
 {
+	n->GetExpressionArray()->Accept( this );
+	const IRTree::IExpression* index = lastValue->ToExp();
+	n->GetExpression()->Accept( this );
+	const IRTree::IExpression* value = lastValue->ToExp();
+
+	const IRTree::IExpression* offset = new IRTree::CBinOp( IRTree::MUL, index, new IRTree::CConst( currentFrame->GetWordSize() ) );
+	const IRTree::IExpression* baseAddress = new IRTree::CName( new Temp::CLabel( n->GetId() ) );
+	const IRTree::IExpression* assignmentAddress = new IRTree::CMem( new IRTree::CBinOp( IRTree::PLUS, baseAddress, offset ) );
+
+	lastValue = new CStmConverter( new IRTree::CMove( assignmentAddress, value ) );
 	return 0;
 }
 
@@ -359,10 +357,10 @@ int CTranslator::Visit( const CExpressionBinOp* n )
 	switch( op )
 	{
 	case AND:
-		lastValue = new CLogicalConverter( AND, left, right );
+		lastValue = new CAndConverter( left, right );
 		break;
 	case LESS:
-		lastValue = new CRelativeCmpConverter( LESS, left, right );
+		lastValue = new CRelativeCmpConverter( IRTree::TCJump::LT, left, right );
 		break;
 	case PLUS:
 		lastValue = new CExpConverter( new IRTree::CBinOp( IRTree::TBinOp::PLUS, left, right ) );
@@ -381,19 +379,24 @@ int CTranslator::Visit( const CExpressionBinOp* n )
 
 int CTranslator::Visit( const CExpressionArray* n )
 {
-	//
+	n->GetExpression1()->Accept( this );
+	const IRTree::IExpression* index = lastValue->ToExp();
+	const IRTree::IExpression* offset = new IRTree::CBinOp( IRTree::MUL, index, new IRTree::CConst( currentFrame->GetWordSize() ) );
+	n->GetExpression2()->Accept( this );
+	lastValue = new CExpConverter( new IRTree::CMem( new IRTree::CBinOp( IRTree::PLUS, lastValue->ToExp(), offset ) ) );
 	return 0;
 }
 
 int CTranslator::Visit( const CExpressionLength* n )
 {
-	//
+	n->GetExpression()->Accept( this );
+	lastValue = new CExpConverter( new IRTree::CMem( new IRTree::CBinOp( IRTree::MINUS, lastValue->ToExp(), new IRTree::CConst( currentFrame->GetWordSize() ) ) ) );
 	return 0;
 }
 
 int CTranslator::Visit( const CExpressionCallMethod* n )
 {
-	//
+	
 	return 0;
 }
 
@@ -411,7 +414,6 @@ int CTranslator::Visit( const CExpressionBool* n )
 
 int CTranslator::Visit( const CExpressionVar* n )
 {
-	//
 	return 0;
 }
 
@@ -423,16 +425,28 @@ int CTranslator::Visit( const CExpressionThis* n )
 
 int CTranslator::Visit( const CExpressionNewInt* n )
 {
+	n->GetExpression()->Accept( this );
+	lastValue = new CExpConverter( new IRTree::CBinOp( IRTree::PLUS, new IRTree::CConst( currentFrame->GetWordSize() ), currentFrame->ExternalCall( "allocateMemory",
+		new IRTree::CExpList( new IRTree::CBinOp( IRTree::MUL, new IRTree::CConst( currentFrame->GetWordSize() ),
+		new IRTree::CBinOp( IRTree::PLUS, lastValue->ToExp(), new IRTree::CConst( 1 ) ) ), 0 ) ) ) );
 	return 0;
 }
 
 int CTranslator::Visit( const CExpressionNewId* n )
 {
+	lastValue = new CExpConverter( currentFrame->ExternalCall( "allocateMemory",
+		new IRTree::CExpList( new IRTree::CConst( currentFrame->GetWordSize() *
+		( symbolTable->LookUpClass( n->GetId() )->SizeOf() ) ), 0 ) ) );
+	
 	return 0;
 }
 
 int CTranslator::Visit( const CExpressionNegation* n )
 {
+	n->GetExpression()->Accept( this );
+	const IRTree::IExpression* operand = lastValue->ToExp();
+	lastValue = new CRelativeCmpConverter( IRTree::TCJump::EQ, operand, new IRTree::CConst( 0 ) );
+	
 	return 0;
 }
 

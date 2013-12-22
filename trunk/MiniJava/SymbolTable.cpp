@@ -35,6 +35,11 @@ const CSymbol* CClassDescription::GetName() const
 	return name;
 }
 
+size_t CClassDescription::SizeOf() const
+{
+	return ( baseClass == 0 ? 0 : symbolTable->LookUpClass( baseClass )->SizeOf() ) + fields.size();
+}
+
 CVarDescription* CClassDescription::AddField( const CSymbol* _name, const CTypeInfo* _type ) {
 	map< const CSymbol*, CVarDescription* >::iterator it = fields.find( _name );
 	if ( it != fields.end() )
