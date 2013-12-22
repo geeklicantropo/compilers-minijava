@@ -1,6 +1,7 @@
 #include "Translator.h"
 #include "Frame.h"
 #include "miniJava.h"
+#include "TypeChecker.h"
 
 using namespace Translator;
 
@@ -396,7 +397,14 @@ int CTranslator::Visit( const CExpressionLength* n )
 
 int CTranslator::Visit( const CExpressionCallMethod* n )
 {
+	auto methodType = CTypeChecker::getMethodType( symbolTable, symbolTable->LookUpClass( currentClass->GetName() ),
+		symbolTable->LookUpClass( currentClass->GetName() )->LookUpMethod( currentMethod->GetName() ), n->GetExpression() );
+	n->GetExpList()->Accept( this );
+	const IRTree::IExpression* object = lastValue->ToExp();
 	
+	lastValue = new CExpConverter( new IRTree::CCall( new IRTree::CName( new Temp::CLabel( makeLabelName( symbolTable->LookUpClass( methodType->GetUserType() ),
+		symbolTable->LookUpClass( methodType->GetUserType() )->LookUpMethod( n->GetId() ) ) ) ), new IRTree::CExpList( object, 0 ) ) );
+
 	return 0;
 }
 
