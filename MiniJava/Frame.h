@@ -38,7 +38,7 @@ public:
 	int GetWordSize() const;
 
 	IAccess* AllocLocal();
-	IRTree::IExpression* ExternalCall( std::string func, CExpList* args );
+	IRTree::IExpression* ExternalCall( std::string func, IRTree::CExpList* args );
 private:
 	Temp::CTemp* pointer;
 	Temp::CLabel* name;

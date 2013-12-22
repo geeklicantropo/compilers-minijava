@@ -43,6 +43,8 @@ public:
 	CVarDescription* LookUp( const CSymbol* var );
 
 	const CSymbol* GetName() const;
+
+	size_t SizeOf() const;
 };
 
 class CVarDescription {
