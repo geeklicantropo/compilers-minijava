@@ -13,6 +13,10 @@ private:
 	stack< vector<CVarDescription*> > params;
 
 public:
+	static const CTypeInfo* getMethodType( CSymbolTable* _symbolTable,
+		CClassDescription* _currentClass, CMethodDescription* _currentMethod,
+		const IExpression* expression );
+
 	CTypeChecker( CSymbolTable* );
 	int Visit( const CProgram* n );
 	int Visit( const CMainClass* n );

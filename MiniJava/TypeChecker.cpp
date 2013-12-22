@@ -4,6 +4,17 @@
 
 using std::cout;
 
+const CTypeInfo* CTypeChecker::getMethodType( CSymbolTable* _symbolTable,
+		CClassDescription* _currentClass, CMethodDescription* _currentMethod,
+		const IExpression* _expression )
+{
+	CTypeChecker tempVisitor( _symbolTable );
+	tempVisitor.currentClass = _currentClass;
+	tempVisitor.currentMethod = _currentMethod;
+	_expression->Accept( &tempVisitor );
+	return tempVisitor.currentType;
+}
+
 CTypeChecker::CTypeChecker( CSymbolTable* st ): 
 	symbolTable( st ) 
 {
