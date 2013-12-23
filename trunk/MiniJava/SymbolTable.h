@@ -27,6 +27,7 @@ private:
 	const CSymbol* name;
 	const CSymbol* baseClass;
 	map<const CSymbol*, CVarDescription*> fields;
+	map<const CSymbol*, size_t> orderedFields;
 	map<const CSymbol*, CMethodDescription*> methods;
 
 	CSymbolTable* symbolTable;
@@ -45,6 +46,7 @@ public:
 	const CSymbol* GetName() const;
 
 	size_t SizeOf() const;
+	size_t GetFieldOffset( const CSymbol* name ) const;
 };
 
 class CVarDescription {
