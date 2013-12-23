@@ -203,11 +203,15 @@ int CTranslator::Visit( const CVarDeclareStar* n )
 
 int CTranslator::Visit( const CVarDeclare* n )
 { 	
+	assert( currentClass != 0 );
+	currentMethodLocalVariables[n->GetId()] = currentMethodLocalVariables.size();
+	//lastValue = new CStmConverter( new IRTree::CSeq( 
 	return 0;
 }
 
 int CTranslator::Visit( const CFormalList* n )
 {
+	
 	return 0;
 }
 
@@ -399,12 +403,15 @@ int CTranslator::Visit( const CExpressionCallMethod* n )
 {
 	auto methodType = CTypeChecker::getMethodType( symbolTable, symbolTable->LookUpClass( currentClass->GetName() ),
 		symbolTable->LookUpClass( currentClass->GetName() )->LookUpMethod( currentMethod->GetName() ), n->GetExpression() );
-	n->GetExpList()->Accept( this );
+	n->GetExpression()->Accept( this );
 	const IRTree::IExpression* object = lastValue->ToExp();
+
+	if ( n->GetExpList() != 0 )
+		n->GetExpList()->Accept( this );
 	
 	lastValue = new CExpConverter( new IRTree::CCall( new IRTree::CName( new Temp::CLabel( makeLabelName( symbolTable->LookUpClass( methodType->GetUserType() ),
-		symbolTable->LookUpClass( methodType->GetUserType() )->LookUpMethod( n->GetId() ) ) ) ), new IRTree::CExpList( object, 0 ) ) );
-
+		symbolTable->LookUpClass( methodType->GetUserType() )->LookUpMethod( n->GetId() ) ) ) ), new IRTree::CExpList( object, currentExpList ) ) );
+	currentExpList = nullptr;
 	return 0;
 }
 
