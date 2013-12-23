@@ -40,10 +40,16 @@ size_t CClassDescription::SizeOf() const
 	return ( baseClass == 0 ? 0 : symbolTable->LookUpClass( baseClass )->SizeOf() ) + fields.size();
 }
 
+size_t CClassDescription::GetFieldOffset( const CSymbol* name ) const
+{
+	return ( baseClass == nullptr ? 0 : symbolTable->LookUpClass( baseClass )->SizeOf() ) + orderedFields.find( name )->second;
+}
+
 CVarDescription* CClassDescription::AddField( const CSymbol* _name, const CTypeInfo* _type ) {
 	map< const CSymbol*, CVarDescription* >::iterator it = fields.find( _name );
 	if ( it != fields.end() )
 		return NULL;
+	orderedFields[_name] = orderedFields.size();
 	return fields[_name] = new CVarDescription( _name, _type );
 }
 

@@ -10,6 +10,7 @@ class CInReg : public IAccess
 public:
 	CInReg( Temp::CTemp* t );
 	const IRTree::IExpression* GetVar() const;
+	const IRTree::IExpression* GetExp( const Temp::CTemp* FramePointer ) const;
 private:
 	Temp::CTemp* temp;
 };
@@ -28,6 +29,11 @@ private:
 CInReg::CInReg( Temp::CTemp* t )
 {
 	temp = t;
+}
+
+const IRTree::IExpression* CInReg::GetExp( const Temp::CTemp* FramePointer ) const
+{
+	return 0;
 }
 
 const IRTree::IExpression* CInReg::GetVar() const 
@@ -96,6 +102,25 @@ Temp::CTemp* CFrame::GetThis() const
 Temp::CTemp* CFrame::GetFP() const
 {
 	return pointer;
+}
+
+const IAccess* CFrame::GetFormal( int index )
+{
+	const CAccessList* currentList = formals;
+	for ( int i = 0; i < index; ++i )
+	{
+		currentList = currentList->GetNext();
+	}
+	return currentList->GetAccess();
+}
+const IAccess* CFrame::GetLocal( int index )
+{
+	const CAccessList* currentList = locals;
+	for ( int i = 0; i < index; ++i )
+	{
+		currentList = currentList->GetNext();
+	}
+	return currentList->GetAccess();
 }
 	
 int CFrame::GetWordSize() const

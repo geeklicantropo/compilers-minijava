@@ -205,18 +205,36 @@ int CTranslator::Visit( const CVarDeclare* n )
 { 	
 	assert( currentClass != 0 );
 	currentMethodLocalVariables[n->GetId()] = currentMethodLocalVariables.size();
-	//lastValue = new CStmConverter( new IRTree::CSeq( 
+	lastValue = new CStmConverter( new IRTree::CSeq( lastValue->ToStm(), new IRTree::CMove( currentFrame->GetFormal( currentMethodLocalVariables[ n->GetId() ] )
+		->GetExp( currentFrame->GetFP() ), new IRTree::CConst( 0 ) ) ) );
 	return 0;
 }
 
 int CTranslator::Visit( const CFormalList* n )
 {
-	
+	currentMethodArguments[n->GetId()] = currentMethodArguments.size() + 1;
+	lastValue = new CStmConverter( new IRTree::CSeq( lastValue->ToStm(),
+		new IRTree::CMove( currentFrame->GetFormal( currentMethodArguments[n->GetId()] )
+		->GetExp( currentFrame->GetFP() ), new IRTree::CConst( 0 ) ) ) );
+
+	if ( n->GetFormalRestStar() != 0 )
+	{
+		n->GetFormalRestStar()->Accept( this );
+	}
 	return 0;
 }
 
 int CTranslator::Visit( const CFormalRestStar* n )
 {
+	currentMethodArguments[n->GetId()] = currentMethodArguments.size() + 1;
+	lastValue = new CStmConverter( new IRTree::CSeq( lastValue->ToStm(),
+		new IRTree::CMove( currentFrame->GetFormal( currentMethodArguments[n->GetId()] )
+		->GetExp( currentFrame->GetFP() ), new IRTree::CConst( 0 ) ) ) );
+
+	if ( n->GetFormalRestStar() != 0 )
+	{
+		n->GetFormalRestStar()->Accept( this );
+	}
 	return 0;
 }
 
@@ -429,6 +447,26 @@ int CTranslator::Visit( const CExpressionBool* n )
 
 int CTranslator::Visit( const CExpressionVar* n )
 {
+	if ( currentMethodLocalVariables.count( n->GetId() ) )
+	{
+		lastValue = new CExpConverter( currentFrame->GetLocal( currentMethodLocalVariables[n->GetId()] )
+			->GetExp( currentFrame->GetFP() ) );
+	}
+	else
+	{
+		if ( currentMethodArguments.count( n->GetId() ) )
+		{
+			lastValue = new CExpConverter( currentFrame->GetFormal( currentMethodArguments[n->GetId()] )
+				->GetExp( currentFrame->GetFP() ) );
+		}
+		else
+		{
+			const IRTree::IExpression* thisExpression = currentFrame->GetFormal( 0 )->GetExp( currentFrame->GetFP() );
+			lastValue = new CExpConverter( new IRTree::CMem( new IRTree::CBinOp( IRTree::PLUS, thisExpression, 
+				new IRTree::CConst( currentFrame->GetWordSize() * ( symbolTable->LookUpClass( currentClass->GetName() )
+				->GetFieldOffset( n->GetId() ) ) ) ) ) );
+		}
+	}
 	return 0;
 }
 
