@@ -33,6 +33,7 @@ CInReg::CInReg( Temp::CTemp* t )
 
 const IRTree::IExpression* CInReg::GetExp( const Temp::CTemp* FramePointer ) const
 {
+
 	return 0;
 }
 
