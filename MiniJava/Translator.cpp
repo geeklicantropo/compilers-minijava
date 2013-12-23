@@ -166,7 +166,7 @@ int CTranslator::Visit( const CMainClass* n )
 	currentMethod = currentClass->LookUpMethod( CSymbol::CSymbolGet( "main" ) );
 	currentFrame = new CFrame( new Temp::CLabel( makeLabelName( currentClass, currentMethod ) ), 0 );
 	n->GetStatement()->Accept( this );
-	lastCodeFragment = new CCodeFragment( currentFrame, lastValue->ToExp(), lastCodeFragment );
+	lastCodeFragment = new CCodeFragment( currentFrame, new IRTree::CEseq( lastValue->ToStm(), new IRTree::CConst(0) ), lastCodeFragment );
 	currentClass = 0;
 	return 0;
 }
@@ -299,16 +299,15 @@ int CTranslator::Visit( const CStatementIf* n )
 	n->GetStatementIf()->Accept( this );
 	assert( lastValue != 0 );
 	const IRTree::IStatement* ifStm = lastValue->ToStm();
-	n->GetStatementIf()->Accept( this );
+	n->GetStatementElse()->Accept( this );
 	assert( lastValue != 0 );
 	const IRTree::IStatement* elseStm = lastValue->ToStm();
 	Temp::CLabel* t = new Temp::CLabel();
 	Temp::CLabel* f = new Temp::CLabel();
 	Temp::CLabel* r = new Temp::CLabel();
-	IRTree::IStatement* tSeq = new IRTree::CSeq( new IRTree::CLabel( t ), ifStm );
-	IRTree::IStatement* fSeq = new IRTree::CSeq( new IRTree::CLabel( f ), elseStm );
-	IRTree::IStatement* ifSubtree = new IRTree::CSeq( ifExpr->ToConditional( t, f ), new IRTree::CSeq( new IRTree::CSeq( ifStm, new IRTree::CJump( r ) ), 
-																									   new IRTree::CSeq( elseStm, new IRTree::CJump( r ) ) ) );
+	IRTree::IStatement* tSeq = new IRTree::CSeq( new IRTree::CLabel( t ), new IRTree::CSeq( ifStm, new IRTree::CJump( r ) ) );
+	IRTree::IStatement* fSeq = new IRTree::CSeq( new IRTree::CLabel( f ), new IRTree::CSeq( elseStm, new IRTree::CJump( r ) ) );
+	IRTree::IStatement* ifSubtree = new IRTree::CSeq( ifExpr->ToConditional( t, f ), new IRTree::CSeq( new IRTree::CSeq( tSeq, fSeq ), new IRTree::CLabel( r ) ) );
 	lastValue = new CStmConverter( ifSubtree );
 	return 0;
 }
@@ -360,7 +359,7 @@ int CTranslator::Visit( const CStatementArrayAssignment* n )
 	n->GetExpression()->Accept( this );
 	const IRTree::IExpression* value = lastValue->ToExp();
 
-	const IRTree::IExpression* offset = new IRTree::CBinOp( IRTree::MUL, index, new IRTree::CConst( currentFrame->GetWordSize() ) );
+	const IRTree::IExpression* offset = new IRTree::CBinOp( IRTree::MUL, index + 1, new IRTree::CConst( currentFrame->GetWordSize() ) );
 	const IRTree::IExpression* baseAddress = new IRTree::CName( new Temp::CLabel( n->GetId() ) );
 	const IRTree::IExpression* assignmentAddress = new IRTree::CMem( new IRTree::CBinOp( IRTree::PLUS, baseAddress, offset ) );
 
