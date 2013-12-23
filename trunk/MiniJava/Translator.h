@@ -54,6 +54,11 @@ namespace Translator
 		CCodeFragment* lastCodeFragment;
 		ISubtreeWrapper* lastValue;
 
+		std::map<const CSymbol*, size_t> currentMethodArguments;
+		std::map<const CSymbol*, size_t> currentMethodLocalVariables;
+
+		IRTree::CExpList* currentExpList;
+
 		const CSymbol* makeLabelName( CClassDescription* classDescription, CMethodDescription* method ) const;	
 	};
 
