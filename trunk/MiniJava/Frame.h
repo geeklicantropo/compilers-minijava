@@ -9,7 +9,6 @@ public:
 	virtual ~IAccess();
 
 	virtual const IRTree::IExpression* GetVar() const = 0;
-	virtual const IRTree::IExpression* GetExp( const Temp::CTemp* _fp ) const = 0;
 };
 
 class CAccessList
@@ -35,7 +34,7 @@ public:
 	Temp::CTemp* GetFP() const;
 
 	const IAccess* GetFormal( int index );
-	const IAccess* GetLocal( int index );
+	const IAccess* AllocLocal();
 
 	int GetWordSize() const;
 
