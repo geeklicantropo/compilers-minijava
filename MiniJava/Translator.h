@@ -13,7 +13,7 @@ namespace Translator
 	class CTranslator : public IVisitor {
 	public:
 
-		CTranslator( CSymbolTable* );
+		CTranslator( CSymbolTable*, const CCodeFragment** );
 
 		int Visit( const CProgram* n );
 		int Visit( const CMainClass* n );
@@ -52,7 +52,7 @@ namespace Translator
 		CMethodDescription* currentMethod;
 		CFrame* currentFrame;
 		CSymbolTable* symbolTable;
-		CCodeFragment* lastCodeFragment;
+		const CCodeFragment** lastCodeFragment;
 		ISubtreeWrapper* lastValue;
 
 		stack< IRTree::CExpList* > expLists;
