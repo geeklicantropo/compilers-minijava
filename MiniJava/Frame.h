@@ -9,7 +9,7 @@ public:
 	virtual ~IAccess();
 
 	virtual const IRTree::IExpression* GetVar() const = 0;
-	virtual const IRTree::IExpression* GetExp( const Temp::CTemp* FramePointer ) const = 0;
+	virtual const IRTree::IExpression* GetExp( const Temp::CTemp* _fp ) const = 0;
 };
 
 class CAccessList
@@ -17,8 +17,6 @@ class CAccessList
 public:
 	CAccessList ( const IAccess* a, const CAccessList* n ); 
 	~CAccessList();
-	void SetAccess( const IAccess* a );
-	void SetNext( const CAccessList* n );
 	const IAccess* GetAccess() const;
 	const CAccessList* GetNext() const;
 private:
@@ -35,12 +33,12 @@ public:
 	CAccessList* GetFormals() const;
 	Temp::CTemp* GetThis() const;
 	Temp::CTemp* GetFP() const;
+
 	const IAccess* GetFormal( int index );
 	const IAccess* GetLocal( int index );
 
 	int GetWordSize() const;
 
-	IAccess* AllocLocal();
 	IRTree::IExpression* ExternalCall( std::string func, IRTree::CExpList* args );
 private:
 	Temp::CTemp* pointer;

@@ -10,7 +10,7 @@ class CInReg : public IAccess
 public:
 	CInReg( Temp::CTemp* t );
 	const IRTree::IExpression* GetVar() const;
-	const IRTree::IExpression* GetExp( const Temp::CTemp* FramePointer ) const;
+	const IRTree::IExpression* GetExp( const Temp::CTemp* _fp ) const;
 private:
 	Temp::CTemp* temp;
 };
@@ -20,6 +20,7 @@ class CInFrame : public IAccess
 public:
 	CInFrame( const Temp::CTemp* _fp, int _offset );
 	const IRTree::IExpression* GetVar() const;
+	const IRTree::IExpression* GetExp( const Temp::CTemp* _fp ) const;
 private:
 	const Temp::CTemp* const fp;
 	const int offset;
@@ -31,10 +32,9 @@ CInReg::CInReg( Temp::CTemp* t )
 	temp = t;
 }
 
-const IRTree::IExpression* CInReg::GetExp( const Temp::CTemp* FramePointer ) const
+const IRTree::IExpression* CInReg::GetExp( const Temp::CTemp* _fp ) const
 {
-
-	return 0;
+	return new IRTree::CTemp( temp );
 }
 
 const IRTree::IExpression* CInReg::GetVar() const 
@@ -47,6 +47,12 @@ CInFrame::CInFrame( const Temp::CTemp* _fp, int _offset ) : fp(_fp), offset(_off
 	
 }
 
+const IRTree::IExpression* CInFrame::GetExp( const Temp::CTemp* _fp ) const
+{
+	return new IRTree::CMem( new IRTree::CBinOp( IRTree::TBinOp::PLUS, new IRTree::CTemp( _fp ), new IRTree::CConst( offset ) ) );
+}
+
+
 const IRTree::IExpression* CInFrame::GetVar() const
 {
 	return new IRTree::CMem( new IRTree::CBinOp( IRTree::TBinOp::PLUS, new IRTree::CTemp( fp ), new IRTree::CConst( offset ) ) );
@@ -57,18 +63,7 @@ CAccessList::CAccessList( const IAccess* a, const CAccessList* n )
 	access = a; 
 	next = n;
 }
-	
-void CAccessList::SetAccess( const IAccess* a ) 
-{
-	next = new CAccessList( access, next );
-	access = a;
-}
-	
-void CAccessList::SetNext( const CAccessList* n ) 
-{
-	next = n;
-}
-	
+
 const IAccess* CAccessList::GetAccess() const
 {
 	return access;
@@ -82,10 +77,16 @@ const CAccessList* CAccessList::GetNext() const
 CFrame::CFrame( Temp::CLabel* _name, int formalsCount )
 {
 	name = _name;
+	pointer = new Temp::CTemp();
+	th = new Temp::CTemp();
 	formals = 0;
-	pointer = 0;
+
+	for( int i = 0; i < formalsCount; i++ ) {
+		IAccess* newAccess = new CInFrame( pointer, (i + 1) * GetWordSize() );
+		CAccessList* newFormals = new CAccessList( newAccess, formals );
+		formals = newFormals;
+	}		
 	locals = 0;
-	th = 0;
 }
 	
 Temp::CLabel* CFrame::GetName() const 
@@ -118,27 +119,18 @@ const IAccess* CFrame::GetFormal( int index )
 	}
 	return currentList->GetAccess();
 }
-const IAccess* CFrame::GetLocal( int index )
-{
-	const CAccessList* currentList = locals;
-	for ( int i = 0; i < index; ++i )
-	{
-		currentList = currentList->GetNext();
-	}
-	return currentList->GetAccess();
-}
-	
-int CFrame::GetWordSize() const
-{
-	return sizeof(int);
-}
 
-IAccess* CFrame::AllocLocal()
+const IAccess* CFrame::GetLocal( int index )
 {
 	IAccess* temp = new CInReg(new Temp::CTemp());
 	CAccessList* tempList = new CAccessList(temp, locals);
 	locals = tempList;
 	return temp;
+}
+	
+int CFrame::GetWordSize() const
+{
+	return sizeof(int);
 }
 
 IRTree::IExpression* CFrame::ExternalCall( std::string func, IRTree::CExpList* args )
