@@ -242,6 +242,9 @@ int CTranslator::Visit( const CMethodDeclare* n )
 {
 	assert( currentClass != 0 );
 	currentMethod = currentClass->LookUpMethod( n->GetId() );
+	currentMethodLocalVariables.clear();
+	currentMethodArguments.clear();
+
 	currentFrame = new CFrame( new Temp::CLabel( makeLabelName( currentClass, currentMethod ) ), 
 		currentMethod->GetParamsNumber() );
 	
