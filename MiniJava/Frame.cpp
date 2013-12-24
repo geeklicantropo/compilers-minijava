@@ -68,6 +68,8 @@ CFrame::CFrame( Temp::CLabel* _name, int formalsCount )
 	th = new Temp::CTemp();
 	formals = 0;
 
+	IAccess* newAccess = new CInFrame( pointer, GetWordSize() );
+	formals = new CAccessList( newAccess, formals );
 	for( int i = 0; i < formalsCount; i++ ) {
 		IAccess* newAccess = new CInFrame( pointer, (i + 1) * GetWordSize() );
 		CAccessList* newFormals = new CAccessList( newAccess, formals );

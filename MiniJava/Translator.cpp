@@ -213,7 +213,7 @@ int CTranslator::Visit( const CFormalList* n )
 {
 	currentMethodArguments[n->GetId()] = currentMethodArguments.size() + 1;
 	lastValue = new CStmConverter( new IRTree::CSeq( lastValue->ToStm(),
-		new IRTree::CMove( currentFrame->GetFormal( currentMethodArguments[n->GetId()] - 1 )
+		new IRTree::CMove( currentFrame->GetFormal( currentMethodArguments[n->GetId()] )
 		->GetVar(), new IRTree::CConst( 0 ) ) ) );
 
 	if ( n->GetFormalRestStar() != 0 )
@@ -227,7 +227,7 @@ int CTranslator::Visit( const CFormalRestStar* n )
 {
 	currentMethodArguments[n->GetId()] = currentMethodArguments.size() + 1;
 	lastValue = new CStmConverter( new IRTree::CSeq( lastValue->ToStm(),
-		new IRTree::CMove( currentFrame->GetFormal( currentMethodArguments[n->GetId()] - 1 )
+		new IRTree::CMove( currentFrame->GetFormal( currentMethodArguments[n->GetId()])
 		->GetVar(), new IRTree::CConst( 0 ) ) ) );
 
 	if ( n->GetFormalRestStar() != 0 )
@@ -373,7 +373,10 @@ int CTranslator::Visit( const CStatementArrayAssignment* n )
 	assert( lastValue != 0 );
 	const IRTree::IExpression* value = lastValue->ToExp();
 
-	const IRTree::IExpression* offset = new IRTree::CBinOp( IRTree::MUL, index + 1, new IRTree::CConst( currentFrame->GetWordSize() ) );
+	//new Tree::BINOP(Tree::BINOP::PLUS,Previous->unEx(), new Tree::CONST(1))
+
+	const IRTree::IExpression* offset = new IRTree::CBinOp( IRTree::MUL, new IRTree::CBinOp( IRTree::PLUS, index, 
+		new IRTree::CConst(1) ), new IRTree::CConst( currentFrame->GetWordSize() ) );
 	const IRTree::IExpression* baseAddress = new IRTree::CName( new Temp::CLabel( n->GetId() ) );
 	const IRTree::IExpression* assignmentAddress = new IRTree::CMem( new IRTree::CBinOp( IRTree::PLUS, baseAddress, offset ) );
 
@@ -477,7 +480,7 @@ int CTranslator::Visit( const CExpressionVar* n )
 	{
 		if ( currentMethodArguments.count( n->GetId() ) )
 		{
-			lastValue = new CExpConverter( currentFrame->GetFormal( currentMethodArguments[n->GetId()] - 1 )
+			lastValue = new CExpConverter( currentFrame->GetFormal( currentMethodArguments[n->GetId()] )
 				->GetVar() );
 		}
 		else
