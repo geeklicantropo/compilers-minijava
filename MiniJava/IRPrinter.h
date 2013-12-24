@@ -5,7 +5,7 @@
 class IRTreePrinter: public IRTree::IRTreeVisitor
 {
 public:
-	IRTreePrinter() {}
+	IRTreePrinter();
 	void Visit( const IRTree::CConst& p );
 	void Visit( const IRTree::CName& p );
 	void Visit( const IRTree::CTemp& p );

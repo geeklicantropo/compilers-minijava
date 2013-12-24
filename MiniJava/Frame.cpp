@@ -122,6 +122,6 @@ int CFrame::GetWordSize() const
 
 IRTree::IExpression* CFrame::ExternalCall( std::string func, IRTree::CExpList* args )
 {
-	return 0;
+	return new IRTree::CCall( new IRTree::CName( new Temp::CLabel(func)), args );
 }
 
