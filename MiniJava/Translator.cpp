@@ -285,12 +285,17 @@ int CTranslator::Visit( const CStatementStar* n )
 		n->GetStatementStar()->Accept( this );
 		assert( lastValue != 0 );
 		rightStm = lastValue->ToStm();
-		if( leftStm == 0 ) {
-			stm = rightStm;
-		} else {
-			stm = new IRTree::CSeq( leftStm, rightStm );
-		}
 	}
+	if( leftStm == 0 && rightStm == 0) {
+		stm = 0;
+	} else if( leftStm == 0 ) {
+		stm = rightStm;	
+	} else if( rightStm == 0 ) {
+		stm = leftStm;
+	} else {
+		stm = new IRTree::CSeq( leftStm, rightStm );
+	}
+	assert( stm != 0 );
 	lastValue = new CStmConverter( stm );
 	return 0;
 }
