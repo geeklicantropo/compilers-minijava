@@ -82,7 +82,10 @@ const CAccessList* CAccessList::GetNext() const
 CFrame::CFrame( Temp::CLabel* _name, int formalsCount )
 {
 	name = _name;
-
+	formals = 0;
+	pointer = 0;
+	locals = 0;
+	th = 0;
 }
 	
 Temp::CLabel* CFrame::GetName() const 
@@ -110,6 +113,7 @@ const IAccess* CFrame::GetFormal( int index )
 	const CAccessList* currentList = formals;
 	for ( int i = 0; i < index; ++i )
 	{
+		assert( currentList != 0 );
 		currentList = currentList->GetNext();
 	}
 	return currentList->GetAccess();

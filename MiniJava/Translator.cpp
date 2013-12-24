@@ -173,7 +173,7 @@ int CTranslator::Visit( const CMainClass* n )
 
 int CTranslator::Visit( const CClassDeclareStar* n )
 {
-	if ( n->GetClassDeclareStar() != 0 ) n->GetClassDeclareStar()->Accept( this );
+	if( n->GetClassDeclareStar() != 0 ) n->GetClassDeclareStar()->Accept( this );
 	n->GetClassDeclare()->Accept( this );
 	return 0;
 }
@@ -181,7 +181,7 @@ int CTranslator::Visit( const CClassDeclareStar* n )
 int CTranslator::Visit( const CClassDeclare* n )
 {
 	currentClass = symbolTable->LookUpClass( n->GetId() );
-	if ( n->GetMethodDeclareStar() != 0 ) n->GetMethodDeclareStar()->Accept( this );
+	if( n->GetMethodDeclareStar() != 0 ) n->GetMethodDeclareStar()->Accept( this );
 	currentClass = 0;
 	return 0;
 }
@@ -244,6 +244,10 @@ int CTranslator::Visit( const CMethodDeclare* n )
 	currentMethod = currentClass->LookUpMethod( n->GetId() );
 	currentFrame = new CFrame( new Temp::CLabel( makeLabelName( currentClass, currentMethod ) ), 
 		currentMethod->GetParamsNumber() );
+	
+	if( n->GetFormalList() != 0 ) n->GetFormalList()->Accept( this );
+	if( n->GetVarDeclareStar() != 0 ) n->GetVarDeclareStar()->Accept( this );
+
 	if( n->GetStatementStar() != 0 ) n->GetStatementStar()->Accept( this );
 	const IRTree::IStatement* stm = lastValue->ToStm();
 	n->GetExpression()->Accept( this );
@@ -348,6 +352,7 @@ int CTranslator::Visit( const CStatementAssignment* n )
 	delete( variableNode );
 	const IRTree::IExpression* variable = lastValue->ToExp();
 	n->GetExpression()->Accept( this );
+	assert( lastValue != 0 );
 	lastValue = new CStmConverter( new IRTree::CMove( variable, lastValue->ToExp() ) );
 	return 0;
 }
@@ -355,8 +360,10 @@ int CTranslator::Visit( const CStatementAssignment* n )
 int CTranslator::Visit( const CStatementArrayAssignment* n )
 {
 	n->GetExpressionArray()->Accept( this );
+	assert( lastValue != 0 );
 	const IRTree::IExpression* index = lastValue->ToExp();
 	n->GetExpression()->Accept( this );
+	assert( lastValue != 0 );
 	const IRTree::IExpression* value = lastValue->ToExp();
 
 	const IRTree::IExpression* offset = new IRTree::CBinOp( IRTree::MUL, index + 1, new IRTree::CConst( currentFrame->GetWordSize() ) );
@@ -402,9 +409,11 @@ int CTranslator::Visit( const CExpressionBinOp* n )
 int CTranslator::Visit( const CExpressionArray* n )
 {
 	n->GetExpression1()->Accept( this );
+	assert( lastValue != 0 );
 	const IRTree::IExpression* index = lastValue->ToExp();
 	const IRTree::IExpression* offset = new IRTree::CBinOp( IRTree::MUL, index, new IRTree::CConst( currentFrame->GetWordSize() ) );
 	n->GetExpression2()->Accept( this );
+	assert( lastValue != 0 );
 	lastValue = new CExpConverter( new IRTree::CMem( new IRTree::CBinOp( IRTree::PLUS, lastValue->ToExp(), offset ) ) );
 	return 0;
 }
@@ -412,6 +421,7 @@ int CTranslator::Visit( const CExpressionArray* n )
 int CTranslator::Visit( const CExpressionLength* n )
 {
 	n->GetExpression()->Accept( this );
+	assert( lastValue != 0 );
 	lastValue = new CExpConverter( new IRTree::CMem( new IRTree::CBinOp( IRTree::MINUS, lastValue->ToExp(), new IRTree::CConst( currentFrame->GetWordSize() ) ) ) );
 	return 0;
 }
@@ -421,14 +431,19 @@ int CTranslator::Visit( const CExpressionCallMethod* n )
 	auto methodType = CTypeChecker::getMethodType( symbolTable, symbolTable->LookUpClass( currentClass->GetName() ),
 		symbolTable->LookUpClass( currentClass->GetName() )->LookUpMethod( currentMethod->GetName() ), n->GetExpression() );
 	n->GetExpression()->Accept( this );
+	assert( lastValue != 0 );
 	const IRTree::IExpression* object = lastValue->ToExp();
 
-	if ( n->GetExpList() != 0 )
+	expLists.push( 0 );
+
+	if( n->GetExpList() != 0 )
 		n->GetExpList()->Accept( this );
 	
+	IRTree::CExpList* currExpList = expLists.top();
+	expLists.pop();
+
 	lastValue = new CExpConverter( new IRTree::CCall( new IRTree::CName( new Temp::CLabel( makeLabelName( symbolTable->LookUpClass( methodType->GetUserType() ),
-		symbolTable->LookUpClass( methodType->GetUserType() )->LookUpMethod( n->GetId() ) ) ) ), new IRTree::CExpList( object, currentExpList ) ) );
-	currentExpList = nullptr;
+		symbolTable->LookUpClass( methodType->GetUserType() )->LookUpMethod( n->GetId() ) ) ) ), new IRTree::CExpList( object, currExpList ) ) );
 	return 0;
 }
 
@@ -478,6 +493,7 @@ int CTranslator::Visit( const CExpressionThis* n )
 int CTranslator::Visit( const CExpressionNewInt* n )
 {
 	n->GetExpression()->Accept( this );
+	assert( lastValue != 0 );
 	lastValue = new CExpConverter( new IRTree::CBinOp( IRTree::PLUS, new IRTree::CConst( currentFrame->GetWordSize() ), currentFrame->ExternalCall( "allocateMemory",
 		new IRTree::CExpList( new IRTree::CBinOp( IRTree::MUL, new IRTree::CConst( currentFrame->GetWordSize() ),
 		new IRTree::CBinOp( IRTree::PLUS, lastValue->ToExp(), new IRTree::CConst( 1 ) ) ), 0 ) ) ) );
@@ -496,6 +512,7 @@ int CTranslator::Visit( const CExpressionNewId* n )
 int CTranslator::Visit( const CExpressionNegation* n )
 {
 	n->GetExpression()->Accept( this );
+	assert( lastValue != 0 );
 	const IRTree::IExpression* operand = lastValue->ToExp();
 	lastValue = new CRelativeCmpConverter( IRTree::TCJump::EQ, operand, new IRTree::CConst( 0 ) );
 	
@@ -511,12 +528,22 @@ int CTranslator::Visit( const CExpression* n )
 int CTranslator::Visit( const CExpList* n )
 {
 	if( n->GetExpression() != 0 ) n->GetExpression()->Accept( this );
+	assert( lastValue != 0 );
+	IRTree::CExpList* currExpList = expLists.top();
+	expLists.top();
+	currExpList = new IRTree::CExpList( lastValue->ToExp() , currExpList );
+	expLists.push( currExpList );
 	return 0;
 }
 
 int CTranslator::Visit( const CExpListNext* n )
 {	
-	if( n->GetExpression() != 0 ) n->GetExpression()->Accept( this ); 
 	if( n->GetExpList() != 0 ) n->GetExpList()->Accept( this );
+	if( n->GetExpression() != 0 ) n->GetExpression()->Accept( this );
+	assert( lastValue != 0 );
+	IRTree::CExpList* currExpList = expLists.top();
+	expLists.top();
+	currExpList = new IRTree::CExpList( lastValue->ToExp() , currExpList );
+	expLists.push( currExpList );
 	return 0;
 }
