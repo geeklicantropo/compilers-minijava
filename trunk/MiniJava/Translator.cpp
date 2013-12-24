@@ -537,7 +537,7 @@ int CTranslator::Visit( const CExpList* n )
 	if( n->GetExpression() != 0 ) n->GetExpression()->Accept( this );
 	assert( lastValue != 0 );
 	IRTree::CExpList* currExpList = expLists.top();
-	expLists.top();
+	expLists.pop();
 	currExpList = new IRTree::CExpList( lastValue->ToExp() , currExpList );
 	expLists.push( currExpList );
 	return 0;
@@ -549,7 +549,7 @@ int CTranslator::Visit( const CExpListNext* n )
 	if( n->GetExpression() != 0 ) n->GetExpression()->Accept( this );
 	assert( lastValue != 0 );
 	IRTree::CExpList* currExpList = expLists.top();
-	expLists.top();
+	expLists.pop();
 	currExpList = new IRTree::CExpList( lastValue->ToExp() , currExpList );
 	expLists.push( currExpList );
 	return 0;

@@ -3,6 +3,11 @@
 
 using namespace IRTree;
 
+IRTreePrinter::IRTreePrinter()
+{
+	cout << endl;
+}
+
 void IRTreePrinter::Visit( const CConst& p )
 {
 	cout << "CONST(" << p.GetValue() << ")";
