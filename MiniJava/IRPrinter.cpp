@@ -114,8 +114,10 @@ void IRTreePrinter::Visit( const CJump& p )
 {
 	cout << "JUMP(";
 	const Temp::CLabelList* pwh( p.GetTargets() );
+	cout << pwh->Label()->Name();
+	pwh = pwh->Next();
 	while( pwh ) {
-		cout << pwh->Label()->Name() << ", ";
+		cout <<  ", " << pwh->Label()->Name();
 		pwh = pwh->Next();
 	}
 	cout<< ")";
@@ -182,6 +184,7 @@ void IRTreePrinter::Visit( const CExpList& p )
 {
 	p.GetExp()->Accept( this );
 	if( p.GetNext() != 0 ) {
+		cout << ", ";
 		p.GetNext()->Accept( this );
 	}
 }
@@ -190,6 +193,7 @@ void IRTreePrinter::Visit( const CStmList& p )
 {
 	p.GetStm()->Accept( this );
 	if( p.GetNext() != 0 ) {
+		cout << ", ";
 		p.GetNext()->Accept( this );
 	}
 }
