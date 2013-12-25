@@ -75,6 +75,7 @@
     <ClCompile Include="Interpreter.cpp" />
     <ClCompile Include="IRPrinter.cpp" />
     <ClCompile Include="IRTranslationTree.cpp" />
+    <ClCompile Include="IRTreeGraphVizPrinter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="miniJava.cpp" />
     <ClCompile Include="Symbols.cpp" />
@@ -108,6 +109,7 @@
     <ClInclude Include="Interpreter.h" />
     <ClInclude Include="IRPrinter.h" />
     <ClInclude Include="IRTranslationTree.h" />
+    <ClInclude Include="IRTreeGraphVizPrinter.h" />
     <ClInclude Include="miniJava.h" />
     <ClInclude Include="Symbols.h" />
     <ClInclude Include="SymbolTable.h" />
