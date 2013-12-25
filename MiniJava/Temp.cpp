@@ -32,6 +32,11 @@ CTemp::CTemp()
 	name += id;
 }
 
+CTemp::CTemp( const CSymbol* symbol )
+{
+	name = symbol->getString();
+}
+
 const string& CTemp::Name() const 
 { 
 	return name; 
