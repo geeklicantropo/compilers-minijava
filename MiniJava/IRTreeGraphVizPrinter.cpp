@@ -232,6 +232,7 @@ void IRTreeGraphVizPrinter::Visit( const CExpList& p )
 		p.GetNext()->Accept( this );
 		out << endl;
 	}
+	st.pop();
 }
 
 void IRTreeGraphVizPrinter::Visit( const CStmList& p )
@@ -246,4 +247,5 @@ void IRTreeGraphVizPrinter::Visit( const CStmList& p )
 		p.GetNext()->Accept( this );
 		out << endl;
 	}
+	st.pop();
 }
