@@ -60,6 +60,9 @@
     <ClCompile Include="CodeFrament.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IRTreeGraphVizPrinter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="flex.txt">
@@ -110,6 +113,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CodeFragment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IRTreeGraphVizPrinter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
