@@ -64,8 +64,8 @@ const CAccessList* CAccessList::GetNext() const
 CFrame::CFrame( Temp::CLabel* _name, int formalsCount )
 {
 	name = _name;
-	pointer = new Temp::CTemp();
-	th = new Temp::CTemp();
+	pointer = new Temp::CTemp( CSymbol::CSymbolGet( "FP" ) );
+	th = new Temp::CTemp( CSymbol::CSymbolGet( "this" ) );
 	formals = 0;
 
 	IAccess* newAccess = new CInFrame( pointer, GetWordSize() );
