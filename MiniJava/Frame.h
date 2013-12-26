@@ -34,7 +34,7 @@ public:
 	Temp::CTemp* GetFP() const;
 
 	const IAccess* GetFormal( int index );
-	const IAccess* AllocLocal();
+	const IAccess* AllocLocal( int );
 
 	int GetWordSize() const;
 

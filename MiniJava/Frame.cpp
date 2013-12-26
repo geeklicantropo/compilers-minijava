@@ -109,9 +109,9 @@ const IAccess* CFrame::GetFormal( int index )
 	return currentList->GetAccess();
 }
 
-const IAccess* CFrame::AllocLocal()
+const IAccess* CFrame::AllocLocal( int index)
 {
-	IAccess* temp = new CInReg(new Temp::CTemp());
+	IAccess* temp = new CInFrame( pointer, index * GetWordSize() );
 	CAccessList* tempList = new CAccessList(temp, locals);
 	locals = tempList;
 	return temp;
