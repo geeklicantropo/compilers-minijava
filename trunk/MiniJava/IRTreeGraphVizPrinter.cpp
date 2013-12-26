@@ -6,7 +6,7 @@ using namespace IRTree;
 IRTreeGraphVizPrinter::IRTreeGraphVizPrinter( ofstream& _out ) :
 	out( _out )
 {
-	constNum = nameNum = tempNum = binOpNum = memNum = callNum = eseqNum =
+	constNum = nameNum = tempNum = binOpNum = memNum = callNum = eseqNum = id =
 	moveNum = expNum = jumpNum = cjumpNum = seqNum = labelNum = expListNum = stmListNum = 0;
 	out << endl;
 }
@@ -20,7 +20,7 @@ void IRTreeGraphVizPrinter::Visit( const CConst& p )
 void IRTreeGraphVizPrinter::Visit( const CName& p )
 {
 	nameNum++;
-	out << "NAME" << nameNum << "->" << "\"" << p.GetLabel()->Name() << "\"" << endl;
+	out << "NAME" << nameNum << "->" << "\"" << p.GetLabel()->Name() << " " << nameNum << "\"" << endl;
 }
 
 void IRTreeGraphVizPrinter::Visit( const CTemp& p )
@@ -132,14 +132,15 @@ void IRTreeGraphVizPrinter::Visit( const CExp& p )
 void IRTreeGraphVizPrinter::Visit( const CJump& p )
 {
 	jumpNum++;
+	id++;
 	st.push( "JUMP" + to_string( jumpNum ) );
 	out << st.top() << "->";
 	const Temp::CLabelList* pwh( p.GetTargets() );
-	out << pwh->Label()->Name() << endl;
+	out << "\"" << pwh->Label()->Name() << " " << id  << "\"" << endl;
 	pwh = pwh->Next();
 	while( pwh ) {
 		out << st.top() << "->";
-		out << pwh->Label()->Name() << endl;
+		out << "\"" << pwh->Label()->Name() << " " << id << "\"" << endl;
 		pwh = pwh->Next();
 	}
 	st.pop();
@@ -148,6 +149,7 @@ void IRTreeGraphVizPrinter::Visit( const CJump& p )
 void IRTreeGraphVizPrinter::Visit( const CCJump& p )
 {
 	cjumpNum++;
+	id++;
 	st.push( "CJUMP" + to_string( cjumpNum ) );
 	out << st.top() << "->";
 	out << "\"";
@@ -192,9 +194,9 @@ void IRTreeGraphVizPrinter::Visit( const CCJump& p )
 	p.GetRight()->Accept( this );
 	out << endl;
 	out << st.top() << "->";
-	out << p.GetTrueLabel()->Name() << endl;
+	out << "\"" << p.GetTrueLabel()->Name() << " " << id << "\"" << endl;
 	out << st.top() << "->";
-	out << p.GetFalseLabel()->Name() << endl;
+	out << "\"" << p.GetFalseLabel()->Name() << " " << id << "\"" << endl;
 	st.pop();
 }
 
@@ -214,9 +216,10 @@ void IRTreeGraphVizPrinter::Visit( const CSeq& p )
 void IRTreeGraphVizPrinter::Visit( const CLabel& p )
 {
 	labelNum++;
+	id++;
 	st.push( "LABEL" + to_string( labelNum ) );
 	out << st.top() << "->";
-	out << p.GetLabel()->Name() << endl;
+	out << "\"" << p.GetLabel()->Name() << " " << id << "\"" << endl;
 	st.pop();
 }
 

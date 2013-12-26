@@ -477,7 +477,7 @@ int CTranslator::Visit( const CExpressionVar* n )
 	if ( currentMethodLocalVariables.count( n->GetId() ) )
 	{
 		lastValue = new CExpConverter( currentFrame->AllocLocal( currentMethodLocalVariables[n->GetId()] )
-			->GetVar( currentMethodLocalVariables[n->GetId()] ) );
+			->GetVar( ( currentMethodLocalVariables[n->GetId()] ) * currentFrame->GetWordSize() ) );
 	}
 	else
 	{
@@ -488,10 +488,10 @@ int CTranslator::Visit( const CExpressionVar* n )
 		}
 		else
 		{
-			const IRTree::IExpression* thisExpression = currentFrame->GetFormal( 0 )->GetVar();
+			const IRTree::IExpression* thisExpression = currentFrame->GetFormal( 0 )->GetVar( 0 );
 			lastValue = new CExpConverter( new IRTree::CMem( new IRTree::CBinOp( IRTree::PLUS, thisExpression, 
 				new IRTree::CConst( currentFrame->GetWordSize() * ( symbolTable->LookUpClass( currentClass->GetName() )
-				->GetFieldOffset( n->GetId() ) ) ) ) ) );
+				->GetFieldOffset( n->GetId() ) + 1 ) ) ) ) );
 		}
 	}
 	return 0;

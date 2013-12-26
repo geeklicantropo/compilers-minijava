@@ -54,6 +54,7 @@ const IRTree::IExpression* CInFrame::GetVar() const
 
 const IRTree::IExpression* CInFrame::GetVar( int off ) const
 {
+	//TODO +wordSize
 	return new IRTree::CMem( new IRTree::CBinOp( IRTree::TBinOp::MINUS, new IRTree::CTemp( fp ), new IRTree::CConst( off ) ) );
 }
 
@@ -121,7 +122,7 @@ const IAccess* CFrame::GetFormal( int index )
 	return currentList->GetAccess();
 }
 
-const IAccess* CFrame::AllocLocal( int index)
+const IAccess* CFrame::AllocLocal( int index )
 {
 	IAccess* temp = new CInFrame( pointer, index * GetWordSize() );
 	CAccessList* tempList = new CAccessList(temp, locals);
