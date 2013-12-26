@@ -401,6 +401,9 @@ int CTranslator::Visit( const CExpressionBinOp* n )
 	case LESS:
 		lastValue = new CRelativeCmpConverter( IRTree::TCJump::LT, left, right );
 		break;
+	case EQUALS:
+		lastValue = new CRelativeCmpConverter( IRTree::TCJump::EQ, left, right );
+		break;
 	case PLUS:
 		lastValue = new CExpConverter( new IRTree::CBinOp( IRTree::TBinOp::PLUS, left, right ) );
 		break;
