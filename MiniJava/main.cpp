@@ -31,5 +31,6 @@ int main()
 		cout << endl << endl;
 		cf = cf->GetNext();
 	}
+
 	return 0;
 }
