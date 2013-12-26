@@ -331,12 +331,12 @@ int CTranslator::Visit( const CStatementWhile* n )
 	n->GetStatement()->Accept( this );
 	assert( lastValue != 0 );
 	const IRTree::IStatement* whileStm = lastValue->ToStm();
-	Temp::CLabel* t = new Temp::CLabel();
-	Temp::CLabel* f = new Temp::CLabel();
-	Temp::CLabel* r = new Temp::CLabel();
-	IRTree::IStatement* tSeq = new IRTree::CSeq( new IRTree::CLabel( t ), whileStm );
-	IRTree::IStatement* whileSubtree = new IRTree::CSeq( new IRTree::CSeq( new IRTree::CLabel( t ), whileExpr->ToConditional( f, r ) ), 
-													new IRTree::CSeq( tSeq , new IRTree::CSeq( new IRTree::CJump( t ), new IRTree::CLabel( r ) ) ) );
+	Temp::CLabel* next = new Temp::CLabel();
+	Temp::CLabel* enter = new Temp::CLabel();
+	Temp::CLabel* exit = new Temp::CLabel();
+	IRTree::IStatement* tSeq = new IRTree::CSeq( new IRTree::CLabel( enter ), whileStm );
+	IRTree::IStatement* whileSubtree = new IRTree::CSeq( new IRTree::CSeq( new IRTree::CLabel( next ), whileExpr->ToConditional( enter, exit ) ), 
+		new IRTree::CSeq( new IRTree::CSeq( tSeq , new IRTree::CJump( next ) ), new IRTree::CLabel( exit ) ) );
 
 	lastValue = new CStmConverter( whileSubtree );
 	return 0;
@@ -477,7 +477,7 @@ int CTranslator::Visit( const CExpressionVar* n )
 	if ( currentMethodLocalVariables.count( n->GetId() ) )
 	{
 		lastValue = new CExpConverter( currentFrame->AllocLocal( currentMethodLocalVariables[n->GetId()] )
-			->GetVar() );
+			->GetVar( currentMethodLocalVariables[n->GetId()] ) );
 	}
 	else
 	{
@@ -502,7 +502,7 @@ int CTranslator::Visit( const CExpressionThis* n )
 	lastValue = new CExpConverter( new IRTree::CTemp( currentFrame->GetThis() ) );
 	return 0;
 }
-
+	
 int CTranslator::Visit( const CExpressionNewInt* n )
 {
 	n->GetExpression()->Accept( this );

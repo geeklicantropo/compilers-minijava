@@ -41,5 +41,6 @@ private:
 	int labelNum;
 	int expListNum;
 	int stmListNum;
+	int id;
 
 };

@@ -9,6 +9,7 @@ public:
 	virtual ~IAccess();
 
 	virtual const IRTree::IExpression* GetVar() const = 0;
+	virtual const IRTree::IExpression* GetVar( int ) const = 0;
 };
 
 class CAccessList
