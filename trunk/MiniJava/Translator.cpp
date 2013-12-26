@@ -204,7 +204,7 @@ int CTranslator::Visit( const CVarDeclare* n )
 { 	
 	assert( currentClass != 0 );
 	currentMethodLocalVariables[n->GetId()] = currentMethodLocalVariables.size();
-	lastValue = new CStmConverter( new IRTree::CSeq( lastValue->ToStm(), new IRTree::CMove( currentFrame->AllocLocal()
+	lastValue = new CStmConverter( new IRTree::CSeq( lastValue->ToStm(), new IRTree::CMove( currentFrame->AllocLocal( currentMethodLocalVariables[n->GetId()] )
 		->GetVar(), new IRTree::CConst( 0 ) ) ) );
 	return 0;
 }
@@ -473,7 +473,7 @@ int CTranslator::Visit( const CExpressionVar* n )
 {
 	if ( currentMethodLocalVariables.count( n->GetId() ) )
 	{
-		lastValue = new CExpConverter( currentFrame->AllocLocal()
+		lastValue = new CExpConverter( currentFrame->AllocLocal( currentMethodLocalVariables[n->GetId()] )
 			->GetVar() );
 	}
 	else
@@ -514,7 +514,7 @@ int CTranslator::Visit( const CExpressionNewId* n )
 {
 	lastValue = new CExpConverter( currentFrame->ExternalCall( "allocateMemory",
 		new IRTree::CExpList( new IRTree::CConst( currentFrame->GetWordSize() *
-		( symbolTable->LookUpClass( n->GetId() )->SizeOf() ) ), 0 ) ) );
+		( 1 + symbolTable->LookUpClass( n->GetId() )->SizeOf() ) ), 0 ) ) );
 	
 	return 0;
 }
