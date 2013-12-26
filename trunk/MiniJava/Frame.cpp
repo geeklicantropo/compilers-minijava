@@ -10,6 +10,7 @@ class CInReg : public IAccess
 public:
 	CInReg( Temp::CTemp* t );
 	const IRTree::IExpression* GetVar() const;
+	const IRTree::IExpression* GetVar( int off ) const;
 private:
 	Temp::CTemp* temp;
 };
@@ -19,6 +20,7 @@ class CInFrame : public IAccess
 public:
 	CInFrame( const Temp::CTemp* _fp, int _offset );
 	const IRTree::IExpression* GetVar() const;
+	const IRTree::IExpression* GetVar( int off ) const;
 private:
 	const Temp::CTemp* const fp;
 	const int offset;
@@ -35,6 +37,11 @@ const IRTree::IExpression* CInReg::GetVar() const
 	return new IRTree::CTemp( temp );
 }
 
+const IRTree::IExpression* CInReg::GetVar( int off ) const 
+{
+	return GetVar();
+}
+
 CInFrame::CInFrame( const Temp::CTemp* _fp, int _offset ) : fp(_fp), offset(_offset)
 {
 	
@@ -42,7 +49,12 @@ CInFrame::CInFrame( const Temp::CTemp* _fp, int _offset ) : fp(_fp), offset(_off
 
 const IRTree::IExpression* CInFrame::GetVar() const
 {
-	return new IRTree::CMem( new IRTree::CBinOp( IRTree::TBinOp::PLUS, new IRTree::CTemp( fp ), new IRTree::CConst( offset ) ) );
+	return new IRTree::CMem( new IRTree::CBinOp( IRTree::TBinOp::MINUS, new IRTree::CTemp( fp ), new IRTree::CConst( offset ) ) );
+}
+
+const IRTree::IExpression* CInFrame::GetVar( int off ) const
+{
+	return new IRTree::CMem( new IRTree::CBinOp( IRTree::TBinOp::MINUS, new IRTree::CTemp( fp ), new IRTree::CConst( off ) ) );
 }
 
 CAccessList::CAccessList( const IAccess* a, const CAccessList* n )
