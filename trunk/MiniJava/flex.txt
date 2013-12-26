@@ -15,31 +15,12 @@
 
 %%
 
-&& {
-	yylval.BinopType = AND;
-	return BINOP;
-}
-
-"==" {
-	yylval.BinopType = EQUALS;
-	return BINOP;
-}
-"<" {
-	yylval.BinopType = LESS;
-	return BINOP;
-}
-"+" {
-	yylval.BinopType = PLUS;
-	return BINOP;
-}
-"-" {
-	yylval.BinopType = MINUS;
-	return BINOP;
-}
-"*" {
-	yylval.BinopType = TIMES;
-	return BINOP;
-}
+&& { return ANDTOKEN; }
+"==" { return EQUALSTOKEN; }
+"<" { return LESSTOKEN; }
+"+" { return yytext[0]; }
+"-" { return yytext[0]; }
+"*" { return yytext[0]; }
 
 [0-9]+ {
 	yylval.Int = atoi(yytext);//CSymbol::CSymbolGet( string(yytext, yyleng) );

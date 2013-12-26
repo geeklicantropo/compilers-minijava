@@ -20,7 +20,7 @@ public:
 };
 
 enum TBinaryOperation {
-	AND, LESS, EQUALS, PLUS,  MINUS, TIMES
+	PLUS,  MINUS, TIMES, AND, LESS, EQUALS
 };
 
 void ErrorMessage( ostream& out, const string& msg, int line );

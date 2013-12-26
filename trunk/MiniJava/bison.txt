@@ -69,7 +69,8 @@ int yywrap()
 %token INTEGERLITERAL
 %token EXTENDS
 
-%left <BinopType> BINOP
+%left ANDTOKEN
+%left EQUALSTOKEN LESSTOKEN
 %left '!'
 %left '+' '-'
 %left '*' '/'
@@ -227,9 +228,30 @@ Statement:
 	;
 
 Expression:
-	Expression BINOP Expression {
-		$$ = new CExpressionBinOp( $1, $2, $3, yylloc.first_line );
+	Expression ANDTOKEN Expression {
+		$$ = new CExpressionBinOp( $1, TBinaryOperation::AND, $3, yylloc.first_line );
 	}
+
+	| Expression EQUALSTOKEN Expression {
+		$$ = new CExpressionBinOp( $1, TBinaryOperation::EQUALS, $3, yylloc.first_line );
+	}
+
+	| Expression LESSTOKEN Expression {
+		$$ = new CExpressionBinOp( $1, TBinaryOperation::LESS, $3, yylloc.first_line );
+	}
+
+	| Expression '+' Expression {
+		$$ = new CExpressionBinOp( $1, TBinaryOperation::PLUS, $3, yylloc.first_line );
+	}
+
+	| Expression '-' Expression {
+		$$ = new CExpressionBinOp( $1, TBinaryOperation::MINUS, $3, yylloc.first_line );
+	}
+
+	| Expression '*' Expression {
+		$$ = new CExpressionBinOp( $1, TBinaryOperation::TIMES, $3, yylloc.first_line );
+	}
+
 	| Expression '[' Expression ']' {
 		$$ = new CExpressionArray( $1, $3, yylloc.first_line );
 	}
