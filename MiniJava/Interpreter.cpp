@@ -227,6 +227,9 @@ int CInterpreter::Visit( const CExpressionBinOp* n )
 		case LESS:
 			std::cout << " < ";
 			break;
+		case EQUALS:
+			std::cout << " == ";
+			break;
 		case AND:
 			std::cout << " && ";
 			break;

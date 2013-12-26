@@ -212,7 +212,18 @@ int CTypeChecker::Visit( const CExpressionBinOp* n )
 		if( currentType->GetType() != INT )	
 			ErrorMessage( cout, "int type expected", n->GetLocation() );			
 		currentType = new CTypeInfo( BOOL );
-	} else {
+	} else if( type == EQUALS ) {
+		n->GetExpressionFirst()->Accept( this );
+		assert( currentType != 0 );
+		const CTypeInfo firstType = currentType->GetType();			
+		n->GetExpressionSecond()->Accept( this );
+		assert( currentType != 0 );
+		const CTypeInfo secondType = currentType->GetType();
+		if( firstType.GetType() != secondType.GetType() )	
+			ErrorMessage( cout, "the same types expected", n->GetLocation() );			
+		currentType = new CTypeInfo( firstType.GetType() );
+	}
+	else {
 		n->GetExpressionFirst()->Accept( this );
 		assert( currentType != 0 );
 		if( currentType->GetType() != BOOL )
