@@ -1,13 +1,14 @@
 #pragma once
 #include "IRTranslationTree.h"
 #include <stack>
+#include <vector>
 #include <fstream>
 
 
 class IRTreeGraphVizPrinter: public IRTree::IRTreeVisitor
 {
 public:
-	IRTreeGraphVizPrinter( ofstream& _out );
+	IRTreeGraphVizPrinter( ofstream& _out, vector<string>& _labels );
 	void Visit( const IRTree::CConst& p );
 	void Visit( const IRTree::CName& p );
 	void Visit( const IRTree::CTemp& p );
@@ -25,22 +26,7 @@ public:
 	void Visit( const IRTree::CStmList& p );
 private:
 	ofstream& out;
-	stack<string> st;
-	int constNum;
-	int nameNum;
-	int tempNum;
-	int binOpNum;
-	int memNum;
-	int callNum;
-	int eseqNum;
-	int moveNum;
-	int expNum;
-	int jumpNum;
-	int cjumpNum;
-	int seqNum;
-	int labelNum;
-	int expListNum;
-	int stmListNum;
+	vector<string>& labels;
+	stack<int> st;
 	int id;
-
 };
