@@ -25,12 +25,17 @@ int main()
 	while( cf != 0 ) {
 		out << cf->GetFrame()->GetName()->Name() << endl;
 		cout << cf->GetFrame()->GetName()->Name() << endl;
-		cf->GetIRTree()->Accept( new IRTreeGraphVizPrinter( out ) );
+		out << "digraph G {" << endl;
+		vector<string> labels;
+		cf->GetIRTree()->Accept( new IRTreeGraphVizPrinter( out, labels ) );
+		for( int i = 0; i < labels.size(); ++i ) {
+			out << i << " [label=\"" << labels[i] << "\"]" << endl;
+		}
+		out << "}";
 		cf->GetIRTree()->Accept( new IRTreePrinter() );
 		out << endl << endl;
 		cout << endl << endl;
 		cf = cf->GetNext();
 	}
-
 	return 0;
 }
