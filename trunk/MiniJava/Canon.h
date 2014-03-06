@@ -4,7 +4,8 @@
 class StmExpList
 {
 public:
-	IRTree::IExpression* exp;
+	IRTree::CExpList* exps;
 	IRTree::IStatement* stm;
-	StmExpList( IRTree::IStatement* _stm, IRTree::IExpression* _exp ) : stm( _stm ), exp( _exp ) {}
+	StmExpList( IRTree::IStatement* _stm, IRTree::CExpList* _exps ) : stm( _stm ), exps( _exps ) {}
 };
+
