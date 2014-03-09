@@ -69,6 +69,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="bison.cpp" />
+    <ClCompile Include="Canon.cpp" />
     <ClCompile Include="CodeFrament.cpp" />
     <ClCompile Include="flex.cpp" />
     <ClCompile Include="Frame.cpp" />
@@ -104,6 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bison.hpp" />
+    <ClInclude Include="Canon.h" />
     <ClInclude Include="CodeFragment.h" />
     <ClInclude Include="Frame.h" />
     <ClInclude Include="Interpreter.h" />

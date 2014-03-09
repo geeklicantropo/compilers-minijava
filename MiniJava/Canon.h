@@ -1,11 +1,40 @@
 #pragma once
 #include "IRTranslationTree.h"
 
-class StmExpList {
+class CStmExpList {
 public:
-	IRTree::CExpList* exps;
-	IRTree::IStatement* stm;
-	StmExpList( IRTree::IStatement* _stm, IRTree::CExpList* _exps ) : stm( _stm ), exps( _exps ) {}
+	CStmExpList( const IRTree::IStatement* _stm, const IRTree::CExpList* _exps ) : stm( _stm ), exps( _exps ) {}
+private:
+	const IRTree::CExpList* exps;
+	const IRTree::IStatement* stm;
 };
 
-IRTree::CEseq do_exp( IRTree::CEseq e );
+class CMoveCall : public IRTree::IStatement {
+public:
+	CMoveCall( const IRTree::CTemp* d, const IRTree::CCall* s );
+	const IRTree::CExpList* GetChild() const;
+	void Accept( IRTree::IRTreeVisitor* v ) const;
+private:
+};
+
+class CExpCall : public IRTree::IStatement {
+public:
+	CExpCall( const IRTree::CCall* c );
+	const IRTree::CExpList* GetChild() const;
+	void Accept( IRTree::IRTreeVisitor* v ) const;
+private:
+};
+
+const IRTree::CEseq* DoExp( const IRTree::CEseq* e );
+const IRTree::CEseq* DoExp( const IRTree::CExp* e );
+
+const IRTree::IStatement* DoStm( const IRTree::CSeq* s );
+const IRTree::IStatement* DoStm( const IRTree::CMove* s );
+const IRTree::IStatement* DoStm( const IRTree::CExp* s );
+const IRTree::IStatement* DoStm( const IRTree::IStatement* s );
+
+const IRTree::IStatement* ReorderStm( const IRTree::IStatement* s );
+const IRTree::CEseq* ReorderExp( const IRTree::CExp* e );
+
+const CStmExpList* Reorder( const IRTree::CExpList*	exps );
+
