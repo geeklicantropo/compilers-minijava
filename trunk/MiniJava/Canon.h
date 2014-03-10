@@ -16,17 +16,29 @@ class CMoveCall : public IRTree::IStatement {
 public:
 	CMoveCall( const IRTree::CTemp* d, const IRTree::CCall* s );
 	const IRTree::CExpList* GetChild() const;
+	const IRTree::IStatement* Build( const IRTree::CExpList* kids );
 	void Accept( IRTree::IRTreeVisitor* v ) const;
 private:
+	const IRTree::CTemp* dst;
+	const IRTree::CCall* src;
 };
 
 class CExpCall : public IRTree::IStatement {
 public:
 	CExpCall( const IRTree::CCall* c );
 	const IRTree::CExpList* GetChild() const;
+	const IRTree::IStatement* Build( const IRTree::CExpList* kids );
 	void Accept( IRTree::IRTreeVisitor* v ) const;
 private:
+	const IRTree::CCall* call;
 };
+
+bool IsNop( const IRTree::IStatement* stm );
+const IRTree::IStatement* Seq( const IRTree::IStatement* a, const IRTree::IStatement* b );
+bool Commute( const IRTree::IStatement* a, const IRTree::IExpression* b );
+const IRTree::CStmList* Linear( const IRTree::CStmList* s, const IRTree::CStmList* l );
+const IRTree::CStmList* Linear( const IRTree::IStatement* s, const IRTree::CStmList* l);
+const IRTree::CStmList* Linearize( const IRTree::IStatement* s );
 
 const IRTree::CEseq* DoExp( const IRTree::CEseq* e );
 const IRTree::CEseq* DoExp( const IRTree::IExpression* e );
@@ -41,6 +53,6 @@ const IRTree::CEseq* ReorderExp( const IRTree::IExpression* e );
 
 const CStmExpList* Reorder( const IRTree::CExpList*	exps );
 
-const CStmExpList* nopNull = new CStmExpList( new IRTree::CExp( new IRTree::CConst( 0 ) ), NULL );
 
-bool commute( const IRTree::IStatement* a, const IRTree::IExpression* b );
+
+const CStmExpList* nopNull = new CStmExpList( new IRTree::CExp( new IRTree::CConst( 0 ) ), NULL );
