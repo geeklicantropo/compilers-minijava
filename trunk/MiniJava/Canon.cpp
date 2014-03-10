@@ -140,7 +140,7 @@ const CStmExpList* Reorder( const IRTree::CExpList*	exps )
 	{
 		const IRTree::CEseq* eseq = DoExp( exp );
 		const CStmExpList* list = Reorder( exps->GetNext() );
-		if ( commute( list->getStm(), eseq->GetExp() ) )
+		if ( Commute( list->getStm(), eseq->GetExp() ) )
 		{
 			return new CStmExpList( new IRTree::CSeq( eseq->GetStm(), list->getStm() ),
 				new IRTree::CExpList( eseq->GetExp(), list->getExps() ) );

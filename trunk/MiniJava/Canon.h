@@ -53,6 +53,4 @@ const IRTree::CEseq* ReorderExp( const IRTree::IExpression* e );
 
 const CStmExpList* Reorder( const IRTree::CExpList*	exps );
 
-
-
 const CStmExpList* nopNull = new CStmExpList( new IRTree::CExp( new IRTree::CConst( 0 ) ), NULL );
