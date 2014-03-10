@@ -1,4 +1,5 @@
 #include "IRTranslationTree.h"
+#include <assert.h>
 
 using namespace IRTree;
 
@@ -73,9 +74,14 @@ void CConst::Accept( IRTreeVisitor* v ) const
 	v->Visit( *this );
 }
 
-const CExpList* CConst::GetChild() const
+const CExpList* CConst::GetKids() const
 {
 	return 0;
+}
+
+const IExpression* CConst::Build( CExpList* kids ) const
+{
+	return this;
 }
 
 CName::CName(const Temp::CLabel* l)
@@ -93,9 +99,14 @@ void CName::Accept( IRTreeVisitor* v ) const
 	v->Visit( *this );
 }
 
-const CExpList* CName::GetChild() const 
+const CExpList* CName::GetKids() const 
 {
 	return 0;
+}
+
+const IExpression* CName::Build( CExpList* kids ) const
+{
+	return this;
 }
 
 CTemp::CTemp( const Temp::CTemp* t ) 
@@ -113,9 +124,14 @@ void CTemp::Accept( IRTreeVisitor* v ) const
 	v->Visit( *this );
 }
 
-const CExpList* CTemp::GetChild() const
+const CExpList* CTemp::GetKids() const
 {
 	return 0;
+}
+
+const IExpression* CTemp::Build( CExpList* kids ) const
+{
+	return this;
 }
 
 CBinOp::CBinOp( TBinOp _binop, const IRTree::IExpression* _left, const IRTree::IExpression* _right )
@@ -145,10 +161,17 @@ void CBinOp::Accept( IRTreeVisitor* v ) const
 	return v->Visit( *this );
 }
 
-const CExpList* CBinOp::GetChild() const
+const CExpList* CBinOp::GetKids() const
 {
 	return new CExpList( left, new CExpList( right, 0 ) );
 }
+
+const IExpression* CBinOp::Build( CExpList* kids ) const
+{
+	assert( kids->GetExp() != 0 );
+	return new CBinOp( binop, kids->GetExp(), kids->GetNext()->GetExp() );
+}
+
 
 CMem::CMem( const IRTree::IExpression* e ) 
 {
@@ -165,9 +188,15 @@ void CMem::Accept( IRTreeVisitor* v ) const
 	return v->Visit( *this );
 }
 
-const CExpList* CMem::GetChild() const
+const CExpList* CMem::GetKids() const
 {
 	return new CExpList( exp, 0 );
+}
+
+const IExpression* CMem::Build( CExpList* kids ) const
+{
+	assert( kids->GetExp() != 0 );
+	return new CMem( kids->GetExp() );
 }
 
 CCall::CCall( const IRTree::IExpression* f, const CExpList* a )
@@ -191,9 +220,15 @@ void CCall::Accept( IRTreeVisitor* v ) const
 	return v->Visit( *this );
 }
 
-const CExpList* CCall::GetChild() const
+const CExpList* CCall::GetKids() const
 {
 	return new CExpList( func, args );
+}
+
+const IExpression* CCall::Build( CExpList* kids ) const
+{
+	assert( kids->GetExp() != 0 );
+	return new CCall( kids->GetExp(), kids->GetNext() );
 }
 
 CEseq::CEseq( const IRTree::IStatement* s, const IRTree::IExpression* e )
@@ -201,6 +236,7 @@ CEseq::CEseq( const IRTree::IStatement* s, const IRTree::IExpression* e )
 	stm = s;
 	exp = e;
 }
+
 const IRTree::IStatement* CEseq::GetStm() const
 {
 	return stm;
@@ -216,7 +252,12 @@ void CEseq::Accept( IRTreeVisitor* v ) const
 	return v->Visit( *this );
 }
 
-const CExpList* CEseq::GetChild() const
+const CExpList* CEseq::GetKids() const
+{
+	return 0;
+}
+
+const IExpression* CEseq::Build( CExpList* kids ) const
 {
 	return 0;
 }
@@ -242,15 +283,22 @@ void CMove::Accept( IRTreeVisitor* v ) const
 	return v->Visit( *this );
 }
 
-const CExpList* CMove::GetChild() const
+const CExpList* CMove::GetKids() const
 {
-	if( dynamic_cast<const CMem*>(dst) != 0 ) {
-		return new CExpList(dynamic_cast<const CMem*>(dst)->GetExp(), new CExpList(src, 0));
+	if( dynamic_cast<const CMem*>(dst) != 0 ){
+		return new CExpList( dynamic_cast<const CMem*>(dst)->GetExp(), new CExpList(src, 0));
 	} else {
-		return new CExpList(src, 0);
+		return new CExpList( src, 0 );
 	}
 }
 
+const IStatement* CMove::Build( CExpList* kids ) const
+{
+	if( dynamic_cast<const CMem*>(dst) != 0 ){
+		return new CMove( dynamic_cast<const CMem*>(kids->GetExp()), kids->GetNext()->GetExp() );
+	}
+	else return new CMove( dst, kids->GetExp() );
+}
 CExp::CExp( const IRTree::IExpression* e )
 {
 	exp = e;
@@ -266,9 +314,14 @@ void CExp::Accept( IRTreeVisitor* v ) const
 	return v->Visit( *this );
 }
 
-const CExpList* CExp::GetChild() const
+const CExpList* CExp::GetKids() const
 {
 	return new CExpList(exp, 0);
+}
+
+const IStatement* CExp::Build( CExpList* kids ) const
+{
+	return new CExp( kids->GetExp() );
 }
 
 CJump::CJump( const IRTree::IExpression* e, const Temp::CLabelList* t )
@@ -298,9 +351,14 @@ void CJump::Accept( IRTreeVisitor* v ) const
 	return v->Visit( *this );
 }
 
-const CExpList* CJump::GetChild() const
+const CExpList* CJump::GetKids() const
 {
 	return new CExpList(exp, 0);
+}
+
+const IStatement* CJump::Build( CExpList* kids ) const
+{
+	return new CJump( kids->GetExp(), targets );
 }
 
 CCJump::CCJump( TCJump r, 
@@ -344,9 +402,14 @@ void CCJump::Accept( IRTreeVisitor* v ) const
 	return v->Visit( *this );
 }
 
-const CExpList* CCJump::GetChild() const
+const CExpList* CCJump::GetKids() const
 {
 	return new CExpList(left, new CExpList(right, 0));
+}
+
+const IStatement* CCJump::Build( CExpList* kids ) const
+{
+	return new CCJump(relop, kids->GetExp(), kids->GetNext()->GetExp(), iftrue, iffalse);
 }
 
 CSeq::CSeq( const IRTree::IStatement* l, const IRTree::IStatement* r )
@@ -370,7 +433,12 @@ void CSeq::Accept( IRTreeVisitor* v ) const
 	return v->Visit( *this );
 }
 
-const CExpList* CSeq::GetChild() const
+const CExpList* CSeq::GetKids() const
+{
+	return 0;
+}
+
+const IStatement* CSeq::Build( CExpList* kids ) const
 {
 	return 0;
 }
@@ -390,7 +458,12 @@ void CLabel::Accept( IRTreeVisitor* v ) const
 	return v->Visit( *this );
 }
 
-const CExpList* CLabel::GetChild() const
+const CExpList* CLabel::GetKids() const
 {
 	return 0;
+}
+
+const IStatement* CLabel::Build( CExpList* kids ) const
+{
+	return this;
 }
