@@ -74,24 +74,37 @@ const IRTree::IStatement* DoStm( const IRTree::IStatement* s )
 
 CMoveCall::CMoveCall( const IRTree::CTemp* d, const IRTree::CCall* s )
 {
+	dst = d;
+	src = s;
 }
 
 const IRTree::CExpList* CMoveCall::GetChild() const
 {
-	return 0;
+	return src->GetChild();
+}
+
+const IRTree::IStatement* CMoveCall::Build( const IRTree::CExpList* kids )
+{
+	return new IRTree::CMove( dst, src->Build( kids ) );
 }
 
 void CMoveCall::Accept( IRTree::IRTreeVisitor* v ) const
 {
 }
 
-const IRTree::CExpList* CExpCall::GetChild() const
-{
-	return 0;
-}
-
 CExpCall::CExpCall( const IRTree::CCall* c )
 {
+	call = c;
+}
+
+const IRTree::CExpList* CExpCall::GetChild() const
+{
+	return call->GetChild();
+}
+
+const IRTree::IStatement* CExpCall::Build( const IRTree::CExpList* kids )
+{
+	return new IRTree::CExp( call->Build( kids ) );
 }
 
 void CExpCall::Accept( IRTree::IRTreeVisitor* v ) const
@@ -101,13 +114,13 @@ void CExpCall::Accept( IRTree::IRTreeVisitor* v ) const
 const IRTree::IStatement* ReorderStm( const IRTree::IStatement* s )
 {
 	const CStmExpList* list = Reorder( s->GetChild() );
-	return new IRTree::CSeq( list->getStm(), s->build( list->getExps() ) ); //need BUILD
+	return new IRTree::CSeq( list->getStm(), s->Build( list->getExps() ) ); 
 }
 
 const IRTree::CEseq* ReorderExp( const IRTree::IExpression* e )
 {
 	const CStmExpList* list = Reorder( e->GetChild() );
-	return new IRTree::CEseq( list->getStm(), e->build( list->getExps() ) );
+	return new IRTree::CEseq( list->getStm(), e->Build( list->getExps() ) );
 }
 
 const CStmExpList* Reorder( const IRTree::CExpList*	exps )
@@ -142,3 +155,63 @@ const CStmExpList* Reorder( const IRTree::CExpList*	exps )
 	}
 	return 0;
 }
+
+bool IsNop( const IRTree::IStatement* stm ) {
+	const IRTree::CExp* exp = dynamic_cast<const IRTree::CExp*>( stm );
+	if( exp != 0 ) {
+		const IRTree::CConst* val = dynamic_cast<const IRTree::CConst*>( exp->GetExp() );
+		return val != 0;
+	}
+}
+
+const IRTree::IStatement* Seq( const IRTree::IStatement* a, const IRTree::IStatement* b ) {
+    if( IsNop( a ) ) {
+		return b;
+	}
+    else if ( IsNop( b ) ) {
+		return a;
+	}
+    else {
+		return new IRTree::CSeq( a, b );
+	}
+ }
+
+bool Commute( const IRTree::IStatement* a, const IRTree::IExpression* b ) {
+	if( IsNop( a ) ) {
+		return true;
+	}
+	else {
+		const IRTree::CName* name = dynamic_cast<const IRTree::CName*>( b );
+		if( name != 0 ) {
+			return true;
+		}
+		else {
+			const IRTree::CConst* cconst = dynamic_cast<const IRTree::CConst*>( b );
+			if( cconst != 0 ) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+}
+
+const IRTree::CStmList* Linear( const IRTree::CStmList* s, const IRTree::CStmList* l ) {
+	return Linear( s->GetStm(), Linear( s->GetNext(), l ) );
+}
+
+const IRTree::CStmList* Linear( const IRTree::IStatement* s, const IRTree::CStmList* l ) {
+	const IRTree::CSeq* seq = dynamic_cast<const IRTree::CSeq*>( s );
+	if( s != 0 ) {
+		return Linear( s, l );
+	}
+	else {
+		return new IRTree::CStmList( s, l );
+	}
+}
+
+const IRTree::CStmList* Linearize( const IRTree::IStatement* s ) {
+	return Linear( DoStm( s ), NULL );
+}
+
