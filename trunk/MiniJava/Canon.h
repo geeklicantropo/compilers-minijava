@@ -12,8 +12,6 @@ private:
 	const IRTree::IStatement* stm;
 };
 
-
-
 bool IsNop( const IRTree::IStatement* stm );
 const IRTree::IStatement* Seq( const IRTree::IStatement* a, const IRTree::IStatement* b );
 bool Commute( const IRTree::IStatement* a, const IRTree::IExpression* b );

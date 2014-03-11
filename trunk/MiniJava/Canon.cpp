@@ -92,7 +92,7 @@ const CStmExpList* Reorder( const IRTree::CExpList*	exps )
 		return nopNull;
 	const IRTree::IExpression* exp = exps->GetExp();
 	const IRTree::CCall* call = dynamic_cast<const IRTree::CCall*>( exp );
-	if ( exp == NULL )
+	if ( call != 0 )
 	{
 		Temp::CTemp* temp = new Temp::CTemp();
 		IRTree::IExpression* e = new IRTree::CEseq( new IRTree::CMove( new IRTree::CTemp( temp ), exp ),
