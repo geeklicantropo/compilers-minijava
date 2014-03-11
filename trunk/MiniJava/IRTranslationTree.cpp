@@ -295,10 +295,11 @@ const CExpList* CMove::GetKids() const
 const IStatement* CMove::Build( const CExpList* kids ) const
 {
 	if( dynamic_cast<const CMem*>(dst) != 0 ){
-		return new CMove( dynamic_cast<const CMem*>(kids->GetExp()), kids->GetNext()->GetExp() );
+		return new CMove( new CMem( kids->GetExp() ), kids->GetNext()->GetExp() );
 	}
 	else return new CMove( dst, kids->GetExp() );
 }
+
 CExp::CExp( const IRTree::IExpression* e )
 {
 	exp = e;
@@ -466,4 +467,59 @@ const CExpList* CLabel::GetKids() const
 const IStatement* CLabel::Build( const CExpList* kids ) const
 {
 	return this;
+}
+
+CMoveCall::CMoveCall( const IRTree::CTemp* d, const IRTree::CCall* s )
+{
+	dst = d;
+	src = s;
+}
+
+const IRTree::CExpList* CMoveCall::GetKids() const
+{
+	return src->GetKids();
+}
+
+const IRTree::IStatement* CMoveCall::Build( const IRTree::CExpList* kids ) const
+{
+	return new IRTree::CMove( dst, src->Build( kids ) );
+}
+
+void CMoveCall::Accept( IRTree::IRTreeVisitor* v ) const
+{
+	return v->Visit( *this );
+}
+
+const IRTree::CTemp* CMoveCall::GetDst() const
+{
+	return dst;
+}
+const IRTree::CCall* CMoveCall::GetSrc() const
+{
+	return src;
+}
+
+CExpCall::CExpCall( const IRTree::CCall* c )
+{
+	call = c;
+}
+
+const IRTree::CExpList* CExpCall::GetKids() const
+{
+	return call->GetKids();
+}
+
+const IRTree::IStatement* CExpCall::Build( const IRTree::CExpList* kids ) const
+{
+	return new IRTree::CExp( call->Build( kids ) );
+}
+
+void CExpCall::Accept( IRTree::IRTreeVisitor* v ) const
+{
+	return v->Visit( *this );
+}
+
+const IRTree::CCall* CExpCall::GetCall() const
+{
+	return call;
 }

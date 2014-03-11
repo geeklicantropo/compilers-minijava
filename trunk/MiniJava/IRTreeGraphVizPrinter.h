@@ -1,5 +1,6 @@
 #pragma once
 #include "IRTranslationTree.h"
+#include "Canon.h"
 #include <stack>
 #include <vector>
 #include <fstream>
@@ -24,6 +25,9 @@ public:
 	void Visit( const IRTree::CLabel& p );
 	void Visit( const IRTree::CExpList& p );
 	void Visit( const IRTree::CStmList& p );
+	void Visit( const IRTree::CMoveCall& p );
+	void Visit( const IRTree::CExpCall& p );
+
 private:
 	ofstream& out;
 	vector<string>& labels;

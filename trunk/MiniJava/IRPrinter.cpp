@@ -197,3 +197,19 @@ void IRTreePrinter::Visit( const CStmList& p )
 		p.GetNext()->Accept( this );
 	}
 }
+
+void IRTreePrinter::Visit( const CMoveCall& p )
+{
+	cout << "MOVECALL(";
+	p.GetDst()->Accept( this );
+	cout << ",";
+	p.GetSrc()->Accept( this );
+	cout << ")";
+}
+
+void IRTreePrinter::Visit( const CExpCall& p )
+{
+	cout << "EXPCALL(";
+	p.GetCall()->Accept( this );
+	cout << ")";
+}
