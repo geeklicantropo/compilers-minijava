@@ -1,11 +1,11 @@
 #include "Canon.h"
 
-const IRTree::CExpList* CStmExpList::getExps() const
+const IRTree::CExpList* CStmExpList::GetExps() const
 {
 	return exps;
 }
 
-const IRTree::IStatement* CStmExpList::getStm() const
+const IRTree::IStatement* CStmExpList::GetStm() const
 {
 	return stm;
 }
@@ -78,12 +78,12 @@ CMoveCall::CMoveCall( const IRTree::CTemp* d, const IRTree::CCall* s )
 	src = s;
 }
 
-const IRTree::CExpList* CMoveCall::GetChild() const
+const IRTree::CExpList* CMoveCall::GetKids() const
 {
-	return src->GetChild();
+	return src->GetKids();
 }
 
-const IRTree::IStatement* CMoveCall::Build( const IRTree::CExpList* kids )
+const IRTree::IStatement* CMoveCall::Build( const IRTree::CExpList* kids ) const
 {
 	return new IRTree::CMove( dst, src->Build( kids ) );
 }
@@ -97,12 +97,12 @@ CExpCall::CExpCall( const IRTree::CCall* c )
 	call = c;
 }
 
-const IRTree::CExpList* CExpCall::GetChild() const
+const IRTree::CExpList* CExpCall::GetKids() const
 {
-	return call->GetChild();
+	return call->GetKids();
 }
 
-const IRTree::IStatement* CExpCall::Build( const IRTree::CExpList* kids )
+const IRTree::IStatement* CExpCall::Build( const IRTree::CExpList* kids ) const
 {
 	return new IRTree::CExp( call->Build( kids ) );
 }
@@ -113,14 +113,14 @@ void CExpCall::Accept( IRTree::IRTreeVisitor* v ) const
 
 const IRTree::IStatement* ReorderStm( const IRTree::IStatement* s )
 {
-	const CStmExpList* list = Reorder( s->GetChild() );
-	return new IRTree::CSeq( list->getStm(), s->Build( list->getExps() ) ); 
+	const CStmExpList* list = Reorder( s->GetKids() );
+	return new IRTree::CSeq( list->GetStm(), s->Build( list->GetExps() ) ); 
 }
 
 const IRTree::CEseq* ReorderExp( const IRTree::IExpression* e )
 {
-	const CStmExpList* list = Reorder( e->GetChild() );
-	return new IRTree::CEseq( list->getStm(), e->Build( list->getExps() ) );
+	const CStmExpList* list = Reorder( e->GetKids() );
+	return new IRTree::CEseq( list->GetStm(), e->Build( list->GetExps() ) );
 }
 
 const CStmExpList* Reorder( const IRTree::CExpList*	exps )
@@ -140,17 +140,17 @@ const CStmExpList* Reorder( const IRTree::CExpList*	exps )
 	{
 		const IRTree::CEseq* eseq = DoExp( exp );
 		const CStmExpList* list = Reorder( exps->GetNext() );
-		if ( Commute( list->getStm(), eseq->GetExp() ) )
+		if ( Commute( list->GetStm(), eseq->GetExp() ) )
 		{
-			return new CStmExpList( new IRTree::CSeq( eseq->GetStm(), list->getStm() ),
-				new IRTree::CExpList( eseq->GetExp(), list->getExps() ) );
+			return new CStmExpList( new IRTree::CSeq( eseq->GetStm(), list->GetStm() ),
+				new IRTree::CExpList( eseq->GetExp(), list->GetExps() ) );
 		}
 		else
 		{
 			Temp::CTemp* t = new Temp::CTemp();
 			return new CStmExpList( new IRTree::CSeq( eseq->GetStm(),
 				new IRTree::CSeq( new IRTree::CMove( new IRTree::CTemp( t ), eseq->GetExp() ),
-				list->getStm() ) ), new IRTree::CExpList( new IRTree::CTemp( t ), list->getExps() ) );
+				list->GetStm() ) ), new IRTree::CExpList( new IRTree::CTemp( t ), list->GetExps() ) );
 		}
 	}
 	return 0;
