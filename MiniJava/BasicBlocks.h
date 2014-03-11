@@ -7,6 +7,7 @@ public:
 	CStmListList( const IRTree::CStmList* _stm, const CStmListList* _next ) : stm( _stm ), next( _next ) {}
 	const IRTree::CStmList* getStm() const;
 	const CStmListList* getNext() const;
+	void setNext( const CStmListList* stmList );
 private:
 	const IRTree::CStmList* stm;
 	const CStmListList* next;
