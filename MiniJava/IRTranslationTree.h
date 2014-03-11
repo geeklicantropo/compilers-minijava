@@ -19,6 +19,8 @@ namespace IRTree {
 	class CLabel;
 	class CExpList;
 	class CStmList;
+	class CMoveCall;
+	class CExpCall;
 
 	class IExpression {
 	public:
@@ -54,6 +56,8 @@ namespace IRTree {
 		virtual void Visit( const CLabel& p ) = 0;
 		virtual void Visit( const CExpList& p ) = 0;
 		virtual void Visit( const CStmList& p ) = 0;
+		virtual void Visit( const CMoveCall& p ) = 0;
+		virtual void Visit( const CExpCall& p ) = 0;
 	};
 
 	enum TBinOp {
@@ -270,4 +274,29 @@ namespace IRTree {
 		const IRTree::IStatement* stm;
 		const CStmList* next;
 	};
+
+	class CMoveCall : public IRTree::IStatement {
+	public:
+		CMoveCall( const IRTree::CTemp* d, const IRTree::CCall* s );
+		const IRTree::CExpList* GetKids() const;
+		const IRTree::IStatement* Build( const IRTree::CExpList* kids ) const;
+		void Accept( IRTree::IRTreeVisitor* v ) const;
+		const IRTree::CTemp* GetDst() const;
+		const IRTree::CCall* GetSrc() const;
+	private:
+		const IRTree::CTemp* dst;
+		const IRTree::CCall* src;
+	};
+
+	class CExpCall : public IRTree::IStatement {
+	public:
+		CExpCall( const IRTree::CCall* c );
+		const IRTree::CExpList* GetKids() const;
+		const IRTree::IStatement* Build( const IRTree::CExpList* kids ) const;
+		void Accept( IRTree::IRTreeVisitor* v ) const;
+		const IRTree::CCall* GetCall() const;
+	private:
+		const IRTree::CCall* call;
+	};
+
 }

@@ -38,7 +38,7 @@ const IRTree::IStatement* DoStm( const IRTree::CMove* s )
 	const IRTree::CEseq* eseqSrc = dynamic_cast<const IRTree::CEseq*>( s->GetSrc() );
 	
 	if( (tempDst != 0) && (callSrc != 0) ) {
-		return ReorderStm( new CMoveCall( tempDst, callSrc ) );
+		return ReorderStm( new IRTree::CMoveCall( tempDst, callSrc ) );
 	} else if( eseqDst != 0 ) {
 		return DoStm( new IRTree::CSeq( eseqDst->GetStm(), new IRTree::CMove( eseqDst->GetExp() , s->GetSrc() ) ) );
 	} else {
@@ -50,7 +50,7 @@ const IRTree::IStatement* DoStm( const IRTree::CExp* s )
 {
 	const IRTree::CCall* exp = dynamic_cast<const IRTree::CCall*>( s->GetExp() );
 	if( exp != 0 ) {
-		return ReorderStm( new CExpCall( exp ) );
+		return ReorderStm( new IRTree::CExpCall( exp ) );
 	} else {
 		return ReorderStm( s );
 	}
@@ -72,44 +72,7 @@ const IRTree::IStatement* DoStm( const IRTree::IStatement* s )
 	return ReorderStm( s );
 }
 
-CMoveCall::CMoveCall( const IRTree::CTemp* d, const IRTree::CCall* s )
-{
-	dst = d;
-	src = s;
-}
 
-const IRTree::CExpList* CMoveCall::GetKids() const
-{
-	return src->GetKids();
-}
-
-const IRTree::IStatement* CMoveCall::Build( const IRTree::CExpList* kids ) const
-{
-	return new IRTree::CMove( dst, src->Build( kids ) );
-}
-
-void CMoveCall::Accept( IRTree::IRTreeVisitor* v ) const
-{
-}
-
-CExpCall::CExpCall( const IRTree::CCall* c )
-{
-	call = c;
-}
-
-const IRTree::CExpList* CExpCall::GetKids() const
-{
-	return call->GetKids();
-}
-
-const IRTree::IStatement* CExpCall::Build( const IRTree::CExpList* kids ) const
-{
-	return new IRTree::CExp( call->Build( kids ) );
-}
-
-void CExpCall::Accept( IRTree::IRTreeVisitor* v ) const
-{
-}
 
 const IRTree::IStatement* ReorderStm( const IRTree::IStatement* s )
 {
@@ -162,6 +125,7 @@ bool IsNop( const IRTree::IStatement* stm ) {
 		const IRTree::CConst* val = dynamic_cast<const IRTree::CConst*>( exp->GetExp() );
 		return val != 0;
 	}
+	return false;
 }
 
 const IRTree::IStatement* Seq( const IRTree::IStatement* a, const IRTree::IStatement* b ) {
@@ -197,14 +161,14 @@ bool Commute( const IRTree::IStatement* a, const IRTree::IExpression* b ) {
 	}
 }
 
-const IRTree::CStmList* Linear( const IRTree::CStmList* s, const IRTree::CStmList* l ) {
-	return Linear( s->GetStm(), Linear( s->GetNext(), l ) );
+const IRTree::CStmList* Linear( const IRTree::CSeq* s, const IRTree::CStmList* l ) {
+	return Linear( s->GetLeft(), Linear( s->GetRight(), l ) );
 }
 
 const IRTree::CStmList* Linear( const IRTree::IStatement* s, const IRTree::CStmList* l ) {
 	const IRTree::CSeq* seq = dynamic_cast<const IRTree::CSeq*>( s );
-	if( s != 0 ) {
-		return Linear( s, l );
+	if( seq != 0 ) {
+		return Linear( seq, l );
 	}
 	else {
 		return new IRTree::CStmList( s, l );

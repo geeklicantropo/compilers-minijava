@@ -276,3 +276,26 @@ void IRTreeGraphVizPrinter::Visit( const CStmList& p )
 	}
 	st.pop();
 }
+
+void IRTreeGraphVizPrinter::Visit( const CMoveCall& p )
+{
+	st.push( id++ );
+	labels.push_back( "MOVECALL" );
+	out << st.top() << "->";
+	p.GetDst()->Accept( this );
+	out << endl;
+	out << st.top() << "->";
+	p.GetSrc()->Accept( this );
+	out << endl;
+	st.pop();
+}
+
+void IRTreeGraphVizPrinter::Visit( const CExpCall& p )
+{
+	st.push( id++ );
+	labels.push_back( "EXPCALL" );
+	out << st.top() << "->";
+	p.GetCall()->Accept( this );
+	out << endl;
+	st.pop();
+}
