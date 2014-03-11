@@ -25,7 +25,7 @@ namespace IRTree {
 		virtual ~IExpression() {}
 		virtual void Accept( IRTreeVisitor* v ) const = 0;
 		virtual const CExpList* GetKids() const = 0;
-		virtual const IExpression* Build( CExpList* kids) const = 0;
+		virtual const IExpression* Build( const CExpList* kids) const = 0;
 	};
 	
 	class IStatement {
@@ -33,7 +33,7 @@ namespace IRTree {
 		virtual ~IStatement() {}
 		virtual void Accept( IRTreeVisitor* v ) const = 0;
 		virtual const CExpList* GetKids() const = 0;
-		virtual const IStatement* Build( CExpList* kids ) const = 0;
+		virtual const IStatement* Build( const CExpList* kids ) const = 0;
 	};
 
 	class IRTreeVisitor {
@@ -71,7 +71,7 @@ namespace IRTree {
 	
 		void Accept( IRTreeVisitor* v ) const;
 		const CExpList* GetKids() const;
-		const IExpression* Build( CExpList* kids ) const;
+		const IExpression* Build( const CExpList* kids ) const;
 	private:
 		int val;
 	};
@@ -83,7 +83,7 @@ namespace IRTree {
 		
 		void Accept( IRTreeVisitor* v ) const;
 		const CExpList* GetKids() const;
-		const IExpression* Build( CExpList* kids ) const;
+		const IExpression* Build( const CExpList* kids ) const;
 	private:
 		const Temp::CLabel* label;
 	};
@@ -95,7 +95,7 @@ namespace IRTree {
 
 		void Accept( IRTreeVisitor* v ) const;
 		const CExpList* GetKids() const;
-		const IExpression* Build( CExpList* kids ) const;
+		const IExpression* Build( const CExpList* kids ) const;
 	private:
 		const Temp::CTemp* temp;
 	};
@@ -109,7 +109,7 @@ namespace IRTree {
 
 		void Accept( IRTreeVisitor* v ) const;
 		const CExpList* GetKids() const;
-		const IExpression* Build( CExpList* kids ) const;
+		const IExpression* Build( const CExpList* kids ) const;
 	private:
 		const IRTree::IExpression* left;
 		const IRTree::IExpression* right;
@@ -123,7 +123,7 @@ namespace IRTree {
 
 		void Accept( IRTreeVisitor* v ) const;
 		const CExpList* GetKids() const;
-		const IExpression* Build( CExpList* kids ) const;
+		const IExpression* Build( const CExpList* kids ) const;
 	private:
 		const IRTree::IExpression* exp;
 	};
@@ -136,7 +136,7 @@ namespace IRTree {
 
 		void Accept( IRTreeVisitor* v ) const;
 		const CExpList* GetKids() const;
-		const IExpression* Build( CExpList* kids ) const;
+		const IExpression* Build( const CExpList* kids ) const;
 	private:
 		const IRTree::IExpression* func;
 		const CExpList* args;
@@ -150,7 +150,7 @@ namespace IRTree {
 
 		void Accept( IRTreeVisitor* v ) const;
 		const CExpList* GetKids() const;
-		const IExpression* Build( CExpList* kids ) const;
+		const IExpression* Build( const CExpList* kids ) const;
 	private:
 		const IRTree::IStatement* stm;
 		const IRTree::IExpression* exp;
@@ -164,7 +164,7 @@ namespace IRTree {
 	
 		void Accept( IRTreeVisitor* v ) const;
 		const CExpList* GetKids() const;
-		const IStatement* Build( CExpList* kids ) const;
+		const IStatement* Build( const CExpList* kids ) const;
 	private:
 		const IRTree::IExpression* dst;
 		const IRTree::IExpression* src;
@@ -177,7 +177,7 @@ namespace IRTree {
 
 		void Accept( IRTreeVisitor* v ) const;
 		const CExpList* GetKids() const;
-		const IStatement* Build( CExpList* kids ) const;
+		const IStatement* Build( const CExpList* kids ) const;
 	private:
 		const IRTree::IExpression* exp;
 	};
@@ -191,7 +191,7 @@ namespace IRTree {
 			
 		void Accept( IRTreeVisitor* v ) const;
 		const CExpList* GetKids() const;
-		const IStatement* Build( CExpList* kids ) const;
+		const IStatement* Build( const CExpList* kids ) const;
 	private:
 		const IRTree::IExpression* exp;
 		const Temp::CLabelList* targets;
@@ -208,7 +208,7 @@ namespace IRTree {
 
 		void Accept( IRTreeVisitor* v ) const;
 		const CExpList* GetKids() const;
-		const IStatement* Build( CExpList* kids ) const;
+		const IStatement* Build( const CExpList* kids ) const;
 	private:
 		TCJump relop;
 		const IRTree::IExpression* left;
@@ -225,7 +225,7 @@ namespace IRTree {
 
 		void Accept( IRTreeVisitor* v ) const;
 		const CExpList* GetKids() const;
-		const IStatement* Build( CExpList* kids ) const;
+		const IStatement* Build( const CExpList* kids ) const;
 	private:
 		const IRTree::IStatement* left;
 		const IRTree::IStatement* right;
@@ -238,7 +238,7 @@ namespace IRTree {
 
 		void Accept( IRTreeVisitor* v ) const;
 		const CExpList* GetKids() const;
-		const IStatement* Build( CExpList* kids ) const;
+		const IStatement* Build( const CExpList* kids ) const;
 	private:
 		const Temp::CLabel* label;
 	};

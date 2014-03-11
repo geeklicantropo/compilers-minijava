@@ -79,7 +79,7 @@ const CExpList* CConst::GetKids() const
 	return 0;
 }
 
-const IExpression* CConst::Build( CExpList* kids ) const
+const IExpression* CConst::Build( const CExpList* kids ) const
 {
 	return this;
 }
@@ -104,7 +104,7 @@ const CExpList* CName::GetKids() const
 	return 0;
 }
 
-const IExpression* CName::Build( CExpList* kids ) const
+const IExpression* CName::Build( const CExpList* kids ) const
 {
 	return this;
 }
@@ -129,7 +129,7 @@ const CExpList* CTemp::GetKids() const
 	return 0;
 }
 
-const IExpression* CTemp::Build( CExpList* kids ) const
+const IExpression* CTemp::Build( const CExpList* kids ) const
 {
 	return this;
 }
@@ -166,7 +166,7 @@ const CExpList* CBinOp::GetKids() const
 	return new CExpList( left, new CExpList( right, 0 ) );
 }
 
-const IExpression* CBinOp::Build( CExpList* kids ) const
+const IExpression* CBinOp::Build( const CExpList* kids ) const
 {
 	assert( kids->GetExp() != 0 );
 	return new CBinOp( binop, kids->GetExp(), kids->GetNext()->GetExp() );
@@ -193,7 +193,7 @@ const CExpList* CMem::GetKids() const
 	return new CExpList( exp, 0 );
 }
 
-const IExpression* CMem::Build( CExpList* kids ) const
+const IExpression* CMem::Build( const CExpList* kids ) const
 {
 	assert( kids->GetExp() != 0 );
 	return new CMem( kids->GetExp() );
@@ -225,7 +225,7 @@ const CExpList* CCall::GetKids() const
 	return new CExpList( func, args );
 }
 
-const IExpression* CCall::Build( CExpList* kids ) const
+const IExpression* CCall::Build( const CExpList* kids ) const
 {
 	assert( kids->GetExp() != 0 );
 	return new CCall( kids->GetExp(), kids->GetNext() );
@@ -257,7 +257,7 @@ const CExpList* CEseq::GetKids() const
 	return 0;
 }
 
-const IExpression* CEseq::Build( CExpList* kids ) const
+const IExpression* CEseq::Build( const CExpList* kids ) const
 {
 	return 0;
 }
@@ -292,7 +292,7 @@ const CExpList* CMove::GetKids() const
 	}
 }
 
-const IStatement* CMove::Build( CExpList* kids ) const
+const IStatement* CMove::Build( const CExpList* kids ) const
 {
 	if( dynamic_cast<const CMem*>(dst) != 0 ){
 		return new CMove( dynamic_cast<const CMem*>(kids->GetExp()), kids->GetNext()->GetExp() );
@@ -319,7 +319,7 @@ const CExpList* CExp::GetKids() const
 	return new CExpList(exp, 0);
 }
 
-const IStatement* CExp::Build( CExpList* kids ) const
+const IStatement* CExp::Build( const CExpList* kids ) const
 {
 	return new CExp( kids->GetExp() );
 }
@@ -356,7 +356,7 @@ const CExpList* CJump::GetKids() const
 	return new CExpList(exp, 0);
 }
 
-const IStatement* CJump::Build( CExpList* kids ) const
+const IStatement* CJump::Build( const CExpList* kids ) const
 {
 	return new CJump( kids->GetExp(), targets );
 }
@@ -407,7 +407,7 @@ const CExpList* CCJump::GetKids() const
 	return new CExpList(left, new CExpList(right, 0));
 }
 
-const IStatement* CCJump::Build( CExpList* kids ) const
+const IStatement* CCJump::Build( const CExpList* kids ) const
 {
 	return new CCJump(relop, kids->GetExp(), kids->GetNext()->GetExp(), iftrue, iffalse);
 }
@@ -438,7 +438,7 @@ const CExpList* CSeq::GetKids() const
 	return 0;
 }
 
-const IStatement* CSeq::Build( CExpList* kids ) const
+const IStatement* CSeq::Build( const CExpList* kids ) const
 {
 	return 0;
 }
@@ -463,7 +463,7 @@ const CExpList* CLabel::GetKids() const
 	return 0;
 }
 
-const IStatement* CLabel::Build( CExpList* kids ) const
+const IStatement* CLabel::Build( const CExpList* kids ) const
 {
 	return this;
 }
