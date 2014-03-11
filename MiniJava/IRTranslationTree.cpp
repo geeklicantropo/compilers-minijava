@@ -49,7 +49,7 @@ void CStmList::SetStm( const IStatement* s )
 	stm = s;
 }
 
-void CStmList::SetNext( const CStmList* n ) 
+void CStmList::SetNext( const CStmList* n )
 {
 	next = n;
 }

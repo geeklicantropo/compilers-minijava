@@ -1,11 +1,11 @@
 #include "BasicBlocks.h"
 
-const IRTree::CStmList* CStmListList::getStm()
+const IRTree::CStmList* CStmListList::getStm() const
 {
 	return stm;
 }
 
-const CStmListList* CStmListList::getNext()
+const CStmListList* CStmListList::getNext() const
 {
 	return next;
 }
@@ -16,12 +16,12 @@ BasicBlocks::BasicBlocks( const IRTree::CStmList* stms )
 	mkBlocks( stms );
 }
 
-const CStmListList* BasicBlocks::getBlocks()
+const CStmListList* BasicBlocks::getBlocks() const
 {
 	return blocks;
 }
 
-const Temp::CLabel* BasicBlocks::getDone()
+const Temp::CLabel* BasicBlocks::getDone() const
 {
 	return done;
 }
@@ -43,7 +43,21 @@ void BasicBlocks::doStms( const IRTree::CStmList* stmList )
 		const IRTree::CCJump* cjump = dynamic_cast<const IRTree::CCJump*>( stmList->GetStm() );
 		if ( jump != 0 || cjump != 0 )
 		{
-
+			addStm( stmList->GetStm() );
+			mkBlocks( stmList->GetNext() );
+		}
+		else
+		{
+			const IRTree::CLabel* label = dynamic_cast<const IRTree::CLabel*>( stmList->GetStm() );
+			if ( label != 0 )
+			{
+				doStms( new IRTree::CStmList( new IRTree::CJump( ( ( IRTree::CLabel* ) stmList->GetStm() )->GetLabel() ), stmList ) );
+			}
+			else
+			{
+				addStm( stmList->GetStm() );
+				doStms( stmList->GetNext() );
+			}
 		}
 	}
 }
