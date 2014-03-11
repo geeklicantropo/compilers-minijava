@@ -1,11 +1,11 @@
 #include "BasicBlocks.h"
 
-const IRTree::CStmList* CStmListList::getStm() const
+const IRTree::CStmList* CStmListList::GetStm() const
 {
 	return stm;
 }
 
-const CStmListList* CStmListList::getNext() const
+const CStmListList* CStmListList::GetNext() const
 {
 	return next;
 }
@@ -16,19 +16,14 @@ BasicBlocks::BasicBlocks( const IRTree::CStmList* stms )
 	mkBlocks( stms );
 }
 
-const CStmListList* BasicBlocks::getBlocks() const
+const CStmListList* BasicBlocks::GetBlocks() const
 {
 	return blocks;
 }
 
-const Temp::CLabel* BasicBlocks::getDone() const
+const Temp::CLabel* BasicBlocks::GetDone() const
 {
 	return done;
-}
-
-void CStmListList::setNext( const CStmListList* stmList )
-{
-	next = stmList;
 }
 
 void BasicBlocks::addStm( const IRTree::IStatement* stm )
@@ -84,8 +79,8 @@ void BasicBlocks::mkBlocks( const IRTree::CStmList* stmList )
 			}
 			else
 			{
-				lastBlock = lastBlock->getNext();
-				lastBlock = new CStmListList(lastBlock->getStm(), new CStmListList( stmList, 0 ) );
+				lastBlock = lastBlock->GetNext();
+				lastBlock = new CStmListList(lastBlock->GetStm(), new CStmListList( stmList, 0 ) );
 			}
 			doStms( stmList->GetNext() );
 		}

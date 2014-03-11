@@ -5,9 +5,8 @@
 class CStmListList {
 public:
 	CStmListList( const IRTree::CStmList* _stm, const CStmListList* _next ) : stm( _stm ), next( _next ) {}
-	const IRTree::CStmList* getStm() const;
-	const CStmListList* getNext() const;
-	void setNext( const CStmListList* stmList );
+	const IRTree::CStmList* GetStm() const;
+	const CStmListList* GetNext() const;
 private:
 	const IRTree::CStmList* stm;
 	const CStmListList* next;
@@ -16,8 +15,8 @@ private:
 class BasicBlocks {
 public:
 	BasicBlocks( const IRTree::CStmList* stms );
-	const CStmListList* getBlocks() const;
-	const Temp::CLabel* getDone() const;
+	const CStmListList* GetBlocks() const;
+	const Temp::CLabel* GetDone() const;
 private:
 	const CStmListList* blocks;
 	const Temp::CLabel* done;
