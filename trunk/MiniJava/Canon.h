@@ -5,8 +5,8 @@
 class CStmExpList {
 public:
 	CStmExpList( const IRTree::IStatement* _stm, const IRTree::CExpList* _exps ) : stm( _stm ), exps( _exps ) {}
-	const IRTree::CExpList* getExps() const;
-	const IRTree::IStatement* getStm() const;
+	const IRTree::CExpList* GetExps() const;
+	const IRTree::IStatement* GetStm() const;
 private:
 	const IRTree::CExpList* exps;
 	const IRTree::IStatement* stm;
@@ -15,8 +15,8 @@ private:
 class CMoveCall : public IRTree::IStatement {
 public:
 	CMoveCall( const IRTree::CTemp* d, const IRTree::CCall* s );
-	const IRTree::CExpList* GetChild() const;
-	const IRTree::IStatement* Build( const IRTree::CExpList* kids );
+	const IRTree::CExpList* GetKids() const;
+	const IRTree::IStatement* Build( const IRTree::CExpList* kids ) const;
 	void Accept( IRTree::IRTreeVisitor* v ) const;
 private:
 	const IRTree::CTemp* dst;
@@ -26,8 +26,8 @@ private:
 class CExpCall : public IRTree::IStatement {
 public:
 	CExpCall( const IRTree::CCall* c );
-	const IRTree::CExpList* GetChild() const;
-	const IRTree::IStatement* Build( const IRTree::CExpList* kids );
+	const IRTree::CExpList* GetKids() const;
+	const IRTree::IStatement* Build( const IRTree::CExpList* kids ) const;
 	void Accept( IRTree::IRTreeVisitor* v ) const;
 private:
 	const IRTree::CCall* call;
