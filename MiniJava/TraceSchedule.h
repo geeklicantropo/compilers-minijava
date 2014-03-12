@@ -9,7 +9,7 @@ public:
 	TraceSchedule( const BasicBlocks* b );
 	const IRTree::CStmList* stms;
 	const BasicBlocks* theBlocks;
-	std::map<IRTree::CLabel*, CStmListList*>* table;
+	std::map<IRTree::CLabel*, CStmListList*> table;
 
 private:
 	const IRTree::CStmList* GetLast( const IRTree::CStmList* block );
