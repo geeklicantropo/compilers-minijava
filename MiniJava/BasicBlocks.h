@@ -17,6 +17,7 @@ public:
 	BasicBlocks( const IRTree::CStmList* stms );
 	const CStmListList* GetBlocks() const;
 	const Temp::CLabel* GetDone() const;
+	void SetBlocks( const CStmListList* _blocks );
 private:
 	const CStmListList* blocks;
 	const Temp::CLabel* done;

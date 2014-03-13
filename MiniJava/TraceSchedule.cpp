@@ -1,9 +1,14 @@
 #include "TraceSchedule.h"
 
-TraceSchedule::TraceSchedule( const BasicBlocks* b )
+TraceSchedule::TraceSchedule( BasicBlocks* b )
 {
-	
-}
+	theBlocks = b;
+	for( const CStmListList* list = b->GetBlocks(); list!=0; list=list->GetNext() ) {
+		table[((IRTree::CLabel*)list->GetStm()->GetStm())->GetLabel()] = list->GetStm();
+	}
+	stms = getNext();
+	table.clear();
+}  
 
 const IRTree::CStmList* TraceSchedule::getLast( const IRTree::CStmList* block )
 {
@@ -62,5 +67,19 @@ void TraceSchedule::trace( const IRTree::CStmList* list )
 	
 const IRTree::CStmList* TraceSchedule::getNext()
 {
-	return 0;
+	if( theBlocks->GetBlocks() == 0 ) { 
+		return new IRTree::CStmList( new IRTree::CLabel( theBlocks->GetDone() ) , 0);
+	}
+	else {
+		const IRTree::CStmList* stmList = theBlocks->GetBlocks()->GetStm();
+		IRTree::CLabel* label = (IRTree::CLabel*)stmList->GetStm();
+		if( table[label->GetLabel()]!=0 ) {
+			trace(stmList);
+			return stmList;
+		}
+		else {
+			theBlocks->SetBlocks( theBlocks->GetBlocks()->GetNext() );
+			return getNext();
+		}
+	}
 }
