@@ -7,6 +7,7 @@
 #include "IRPrinter.h"
 #include "IRTreeGraphVizPrinter.h"
 #include "Canon.h"
+#include "TraceSchedule.h"
 
 extern int yylex( void );
 extern int yyparse( const IProgram*&);
@@ -28,9 +29,14 @@ int main()
 		cout << cf->GetFrame()->GetName()->Name() << endl;
 		out << "digraph G {" << endl;
 		vector<string> labels;
-		const IRTree::IExpression* tmp = DoExp( cf->GetIRTree() );
-		//cf->GetIRTree()->Accept( new IRTreeGraphVizPrinter( out, labels ) );
+		const IRTree::IExpression* tmp =  DoExp( cf->GetIRTree() );
+		//tmp->Accept( new IRTreeGraphVizPrinter( out, labels ) );
 		const IRTree::CStmList* tmpStm = Linearize( ((const IRTree::CEseq*) tmp)->GetStm() );
+		
+		BasicBlocks* bb = new BasicBlocks( tmpStm );
+
+		//TraceSchedule ts = TraceSchedule( bb );
+
 		tmpStm->Accept( new IRTreeGraphVizPrinter( out, labels ) );
 		for( int i = 0; i < labels.size(); ++i ) {
 			out << i << " [label=\"" << labels[i] << "\"]" << endl;

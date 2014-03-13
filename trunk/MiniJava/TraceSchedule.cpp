@@ -3,7 +3,7 @@
 TraceSchedule::TraceSchedule( BasicBlocks* b )
 {
 	theBlocks = b;
-	for( const CStmListList* list = b->GetBlocks(); list!=0; list=list->GetNext() ) {
+	for( const CStmListList* list = b->GetBlocks(); list != 0; list = list->GetNext() ) {
 		table[((IRTree::CLabel*)list->GetStm()->GetStm())->GetLabel()] = list->GetStm();
 	}
 	stms = getNext();
@@ -13,7 +13,7 @@ TraceSchedule::TraceSchedule( BasicBlocks* b )
 const IRTree::CStmList* TraceSchedule::getLast( const IRTree::CStmList* block )
 {
 	const IRTree::CStmList* list = block;
-	while( list->GetNext()->GetNext()!=0 ) 
+	while( list->GetNext()->GetNext() != 0 ) 
 		list = list->GetNext();
 	return list;
 }
@@ -74,7 +74,7 @@ const IRTree::CStmList* TraceSchedule::getNext()
 		const IRTree::CStmList* stmList = theBlocks->GetBlocks()->GetStm();
 		IRTree::CLabel* label = (IRTree::CLabel*)stmList->GetStm();
 		if( table.find(label->GetLabel()) != table.end() ) {
-			trace(stmList);
+			trace( stmList );
 			return stmList;
 		}
 		else {
