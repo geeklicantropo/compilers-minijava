@@ -73,7 +73,7 @@ const IRTree::CStmList* TraceSchedule::getNext()
 	else {
 		const IRTree::CStmList* stmList = theBlocks->GetBlocks()->GetStm();
 		IRTree::CLabel* label = (IRTree::CLabel*)stmList->GetStm();
-		if( table[label->GetLabel()]!=0 ) {
+		if( table.find(label->GetLabel()) != table.end() ) {
 			trace(stmList);
 			return stmList;
 		}
