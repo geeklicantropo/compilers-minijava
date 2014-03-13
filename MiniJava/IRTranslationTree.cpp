@@ -413,6 +413,30 @@ const IStatement* CCJump::Build( const CExpList* kids ) const
 	return new CCJump(relop, kids->GetExp(), kids->GetNext()->GetExp(), iftrue, iffalse);
 }
 
+TCJump CCJump::NotRelop( TCJump r )
+{
+	switch ( r ) {
+	case EQ:
+		return NE;
+	case NE:
+		return EQ;
+	case LT:
+		return GE;
+	case GE:
+		return LT;
+	case ULT:
+		return UGE;
+	case UGE:
+		return ULT;
+	case UGT:
+		return ULE;
+	case ULE:
+		return UGT;
+	default:
+		break;
+	}
+}
+
 CSeq::CSeq( const IRTree::IStatement* l, const IRTree::IStatement* r )
 {
 	left = l;
