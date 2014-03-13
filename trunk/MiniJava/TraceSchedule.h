@@ -6,9 +6,9 @@
 
 class TraceSchedule {
 public:
-	TraceSchedule( const BasicBlocks* b );
+	TraceSchedule( BasicBlocks* b );
 	const IRTree::CStmList* stms;
-	const BasicBlocks* theBlocks;
+	BasicBlocks* theBlocks;
 	std::map< const Temp::CLabel*, const IRTree::CStmList* > table;
 
 private:

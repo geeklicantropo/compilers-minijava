@@ -16,6 +16,11 @@ BasicBlocks::BasicBlocks( const IRTree::CStmList* stms )
 	mkBlocks( stms );
 }
 
+void BasicBlocks::SetBlocks( const CStmListList* _blocks )
+{
+	blocks = _blocks;
+}
+
 const CStmListList* BasicBlocks::GetBlocks() const
 {
 	return blocks;
