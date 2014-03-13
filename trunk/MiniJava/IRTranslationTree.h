@@ -213,6 +213,9 @@ namespace IRTree {
 		void Accept( IRTreeVisitor* v ) const;
 		const CExpList* GetKids() const;
 		const IStatement* Build( const CExpList* kids ) const;
+
+		static TCJump NotRelop( TCJump r );
+
 	private:
 		TCJump relop;
 		const IRTree::IExpression* left;
