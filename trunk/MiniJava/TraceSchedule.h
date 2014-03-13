@@ -9,10 +9,10 @@ public:
 	TraceSchedule( const BasicBlocks* b );
 	const IRTree::CStmList* stms;
 	const BasicBlocks* theBlocks;
-	std::map<IRTree::CLabel*, CStmListList*> table;
+	std::map< const Temp::CLabel*, const CStmListList* > table;
 
 private:
-	const IRTree::CStmList* GetLast( const IRTree::CStmList* block );
-	void trace( const IRTree::CStmList* l );
+	const IRTree::CStmList* getLast( const IRTree::CStmList* block );
+	void trace( const IRTree::CStmList* list );
 	const IRTree::CStmList* getNext();
 };
