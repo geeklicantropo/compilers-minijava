@@ -14,7 +14,7 @@ const IRTree::CEseq* DoExp( const IRTree::CEseq* e )
 {
 	const IRTree::IStatement* stms = DoStm( e->GetStm() );
 	const IRTree::CEseq* expr = DoExp( e->GetExp() );
-	return new IRTree::CEseq( new IRTree::CSeq( stms, expr->GetStm() ), expr->GetExp() );
+	return new IRTree::CEseq( Seq( stms, expr->GetStm() ), expr->GetExp() );
 }
 
 const IRTree::CEseq* DoExp( const IRTree::IExpression* e )
@@ -27,7 +27,7 @@ const IRTree::CEseq* DoExp( const IRTree::IExpression* e )
 
 const IRTree::IStatement* DoStm( const IRTree::CSeq* s )
 {
-	return new IRTree::CSeq( DoStm( s->GetLeft() ), DoStm( s->GetRight() ) );
+	return Seq( DoStm( s->GetLeft() ), DoStm( s->GetRight() ) );
 }
 
 const IRTree::IStatement* DoStm( const IRTree::CMove* s )
@@ -77,7 +77,7 @@ const IRTree::IStatement* DoStm( const IRTree::IStatement* s )
 const IRTree::IStatement* ReorderStm( const IRTree::IStatement* s )
 {
 	const CStmExpList* list = Reorder( s->GetKids() );
-	return new IRTree::CSeq( list->GetStm(), s->Build( list->GetExps() ) ); 
+	return Seq( list->GetStm(), s->Build( list->GetExps() ) ); 
 }
 
 const IRTree::CEseq* ReorderExp( const IRTree::IExpression* e )
@@ -105,14 +105,14 @@ const CStmExpList* Reorder( const IRTree::CExpList*	exps )
 		const CStmExpList* list = Reorder( exps->GetNext() );
 		if ( Commute( list->GetStm(), eseq->GetExp() ) )
 		{
-			return new CStmExpList( new IRTree::CSeq( eseq->GetStm(), list->GetStm() ),
+			return new CStmExpList( Seq( eseq->GetStm(), list->GetStm() ),
 				new IRTree::CExpList( eseq->GetExp(), list->GetExps() ) );
 		}
 		else
 		{
 			Temp::CTemp* t = new Temp::CTemp();
-			return new CStmExpList( new IRTree::CSeq( eseq->GetStm(),
-				new IRTree::CSeq( new IRTree::CMove( new IRTree::CTemp( t ), eseq->GetExp() ),
+			return new CStmExpList( Seq( eseq->GetStm(),
+				Seq( new IRTree::CMove( new IRTree::CTemp( t ), eseq->GetExp() ),
 				list->GetStm() ) ), new IRTree::CExpList( new IRTree::CTemp( t ), list->GetExps() ) );
 		}
 	}

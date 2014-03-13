@@ -13,7 +13,10 @@ const CStmListList* CStmListList::GetNext() const
 BasicBlocks::BasicBlocks( const IRTree::CStmList* stms )
 {
 	done = new Temp::CLabel();
-	mkBlocks( stms );
+	lastBlock = 0;
+	lastStm = 0;
+	blocks = 0;
+	mkBlocks( stms );	
 }
 
 void BasicBlocks::SetBlocks( const CStmListList* _blocks )
@@ -35,7 +38,7 @@ void BasicBlocks::addStm( const IRTree::IStatement* stm )
 {
 	const IRTree::CStmList* next = new IRTree::CStmList( stm, NULL );
 	lastStm = new IRTree::CStmList( lastStm->GetStm(), next );
-	lastStm = lastStm->GetNext();
+	lastStm = next;
 }
 
 void BasicBlocks::doStms( const IRTree::CStmList* stmList )
@@ -79,12 +82,10 @@ void BasicBlocks::mkBlocks( const IRTree::CStmList* stmList )
 			lastStm = new IRTree::CStmList( stmList->GetStm(), NULL );
 			if ( lastBlock == NULL )
 			{
-				lastBlock = blocks;
-				blocks = new CStmListList( lastStm, NULL );
+				lastBlock = blocks = new CStmListList( lastStm, NULL );
 			}
 			else
 			{
-				lastBlock = lastBlock->GetNext();
 				lastBlock = new CStmListList(lastBlock->GetStm(), new CStmListList( stmList, 0 ) );
 			}
 			doStms( stmList->GetNext() );
