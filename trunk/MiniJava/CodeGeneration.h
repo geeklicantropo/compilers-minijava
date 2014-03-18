@@ -13,6 +13,10 @@ namespace CodeGeneration {
 		CTargets( const Temp::CLabelList* list ) {
 			labels = list;
 		}
+		const Temp::CLabelList* GetLabels() const {
+			return labels; 
+		}
+	private:
 		const Temp::CLabelList* labels;
 	};
 
@@ -22,7 +26,11 @@ namespace CodeGeneration {
 		virtual const Temp::CTempList* UsedVars() const = 0;
 		virtual const Temp::CTempList* DefinedVars() const = 0;
 		virtual const CTargets* JumpTargets() const = 0;
-		virtual string Format( const Temp::CTempMap* varsMapping ) const = 0;
+		string Format( const Temp::CTempMap* varsMapping ) const;
+	private:
+		const Temp::CTemp* nthTemp(const Temp::CTempList* list, int i) const ;
+		const Temp::CLabel* nthLabel(const Temp::CLabelList* list, int i) const;
+		string asmCode;
 	};
 
 	class IInstructionList 
@@ -41,7 +49,6 @@ namespace CodeGeneration {
 		virtual const Temp::CTempList* UsedVars() const { return 0; }
 		virtual const Temp::CTempList* DefinedVars() const { return 0; }
 		virtual const CTargets* JumpTargets() const { return 0; }
-		virtual string format(const Temp::CTempMap* varsMapping) const;
 	private:
 		const string asmCode;
 		const Temp::CLabel* lable;
@@ -54,7 +61,6 @@ namespace CodeGeneration {
 		virtual const Temp::CTempList* UsedVars() const { return new Temp::CTempList(src, 0); }
 		virtual const Temp::CTempList* DefinedVars() const { return new Temp::CTempList(dst, 0); }
 		virtual const CTargets* JumpTargets() const { return 0; }
-		virtual string format(const Temp::CTempMap* m) const;
 	private:
 		string asmCode;
 		const Temp::CTemp* dst;
@@ -69,7 +75,6 @@ namespace CodeGeneration {
 		virtual const Temp::CTempList* UsedVars() const { return src; }
 		virtual const Temp::CTempList* DefinedVars() const { return dst; }
 		virtual const CTargets* JumpTargets() const { jump; }
-		virtual string format(const Temp::CTempMap* m) const;
 	private:
 		string asmCode;
 		const Temp::CTempList* dst;
