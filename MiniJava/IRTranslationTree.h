@@ -266,16 +266,16 @@ namespace IRTree {
 	
 	class CStmList {
 	public:
-		CStmList( const IRTree::IStatement* e, const CStmList* n );
+		CStmList( const IRTree::IStatement* e, CStmList* n );
 		const IRTree::IStatement* GetStm() const;
-		const CStmList* GetNext() const;
+		CStmList* GetNext() const;
 		void SetStm( const IRTree::IStatement* e );
-		void SetNext( const CStmList* n );
+		void SetNext( CStmList* n );
 	
 		void Accept( IRTreeVisitor* v ) const;
 	private:
 		const IRTree::IStatement* stm;
-		const CStmList* next;
+		CStmList* next;
 	};
 
 	class CMoveCall : public IRTree::IStatement {

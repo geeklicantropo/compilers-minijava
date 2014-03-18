@@ -31,11 +31,11 @@ int main()
 		vector<string> labels;
 		const IRTree::IExpression* tmp =  DoExp( cf->GetIRTree() );
 		//tmp->Accept( new IRTreeGraphVizPrinter( out, labels ) );
-		const IRTree::CStmList* tmpStm = Linearize( ((const IRTree::CEseq*) tmp)->GetStm() );
+		IRTree::CStmList* tmpStm = Linearize( ((const IRTree::CEseq*) tmp)->GetStm() );
 		
 		BasicBlocks* bb = new BasicBlocks( tmpStm );
-
-		//TraceSchedule ts = TraceSchedule( bb );
+		
+		TraceSchedule ts = TraceSchedule( bb );
 
 		tmpStm->Accept( new IRTreeGraphVizPrinter( out, labels ) );
 		for( int i = 0; i < labels.size(); ++i ) {

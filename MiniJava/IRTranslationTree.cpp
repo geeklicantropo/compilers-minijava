@@ -31,7 +31,7 @@ void CExpList::Accept( IRTreeVisitor* v ) const
 	return v->Visit( *this );
 }
 
-CStmList::CStmList( const IStatement* s, const CStmList* n ) : 
+CStmList::CStmList( const IStatement* s, CStmList* n ) : 
 	stm( s ), next( n ) {}
 
 const IStatement* CStmList::GetStm() const 
@@ -39,7 +39,7 @@ const IStatement* CStmList::GetStm() const
 	return stm;
 }
 
-const CStmList* CStmList::GetNext() const
+CStmList* CStmList::GetNext() const
 {
 	return next;
 }
@@ -49,7 +49,7 @@ void CStmList::SetStm( const IStatement* s )
 	stm = s;
 }
 
-void CStmList::SetNext( const CStmList* n )
+void CStmList::SetNext( CStmList* n )
 {
 	next = n;
 }
