@@ -35,6 +35,7 @@ namespace Temp {
 		explicit CTemp( const CSymbol* symbol );
 
 		const string& Name() const;
+		string getName() const { return name; }
 	private:
 		static int nextUniqueId;
 		string name;
@@ -49,6 +50,15 @@ namespace Temp {
 	private:
 		const CTemp* temp;
 		CTempList* next;
+	};
+
+	class CTempMap 
+	{
+	public:
+		CTempMap() {}
+		string TempMap( const CTemp* temp ) {
+			return temp->getName();
+		}
 	};
 
 };
