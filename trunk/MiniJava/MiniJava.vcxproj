@@ -68,6 +68,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CodeGeneration.cpp" />
     <ClCompile Include="BasicBlocks.cpp" />
     <ClCompile Include="bison.cpp" />
     <ClCompile Include="Canon.cpp" />
@@ -106,6 +107,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CodeGeneration.h" />
     <ClInclude Include="BasicBlocks.h" />
     <ClInclude Include="bison.hpp" />
     <ClInclude Include="Canon.h" />
