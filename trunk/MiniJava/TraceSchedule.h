@@ -7,12 +7,12 @@
 class TraceSchedule {
 public:
 	TraceSchedule( BasicBlocks* b );
-	const IRTree::CStmList* stms;
+	IRTree::CStmList* stms;
 	BasicBlocks* theBlocks;
-	std::map< const Temp::CLabel*, const IRTree::CStmList* > table;
+	std::map< const Temp::CLabel*, IRTree::CStmList* > table;
 
 private:
-	const IRTree::CStmList* getLast( const IRTree::CStmList* block );
-	void trace( const IRTree::CStmList* list );
-	const IRTree::CStmList* getNext();
+	IRTree::CStmList* getLast( IRTree::CStmList* block );
+	void trace( IRTree::CStmList* list );
+	IRTree::CStmList* getNext();
 };

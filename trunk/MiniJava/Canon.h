@@ -15,9 +15,9 @@ private:
 bool IsNop( const IRTree::IStatement* stm );
 const IRTree::IStatement* Seq( const IRTree::IStatement* a, const IRTree::IStatement* b );
 bool Commute( const IRTree::IStatement* a, const IRTree::IExpression* b );
-const IRTree::CStmList* Linear( const IRTree::CSeq* s, const IRTree::CStmList* l );
-const IRTree::CStmList* Linear( const IRTree::IStatement* s, const IRTree::CStmList* l);
-const IRTree::CStmList* Linearize( const IRTree::IStatement* s );
+IRTree::CStmList* Linear( const IRTree::CSeq* s, IRTree::CStmList* l );
+IRTree::CStmList* Linear( const IRTree::IStatement* s, IRTree::CStmList* l);
+IRTree::CStmList* Linearize( const IRTree::IStatement* s );
 
 const IRTree::CEseq* DoExp( const IRTree::CEseq* e );
 const IRTree::CEseq* DoExp( const IRTree::IExpression* e );

@@ -161,11 +161,11 @@ bool Commute( const IRTree::IStatement* a, const IRTree::IExpression* b ) {
 	}
 }
 
-const IRTree::CStmList* Linear( const IRTree::CSeq* s, const IRTree::CStmList* l ) {
+IRTree::CStmList* Linear( const IRTree::CSeq* s, IRTree::CStmList* l ) {
 	return Linear( s->GetLeft(), Linear( s->GetRight(), l ) );
 }
 
-const IRTree::CStmList* Linear( const IRTree::IStatement* s, const IRTree::CStmList* l ) {
+IRTree::CStmList* Linear( const IRTree::IStatement* s, IRTree::CStmList* l ) {
 	const IRTree::CSeq* seq = dynamic_cast<const IRTree::CSeq*>( s );
 	if( seq != 0 ) {
 		return Linear( seq, l );
@@ -175,7 +175,7 @@ const IRTree::CStmList* Linear( const IRTree::IStatement* s, const IRTree::CStmL
 	}
 }
 
-const IRTree::CStmList* Linearize( const IRTree::IStatement* s ) {
-	return Linear( DoStm( s ), NULL );
+IRTree::CStmList* Linearize( const IRTree::IStatement* s ) {
+	return Linear( DoStm( s ), 0 );
 }
 

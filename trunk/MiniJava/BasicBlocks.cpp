@@ -1,16 +1,26 @@
 #include "BasicBlocks.h"
 
-const IRTree::CStmList* CStmListList::GetStm() const
+IRTree::CStmList* CStmListList::GetStm() const
 {
 	return stm;
 }
 
-const CStmListList* CStmListList::GetNext() const
+CStmListList* CStmListList::GetNext() const
 {
 	return next;
 }
 
-BasicBlocks::BasicBlocks( const IRTree::CStmList* stms )
+void CStmListList::SetNext( CStmListList* n )
+{
+	next = n;
+}
+
+void CStmListList::SetStm( IRTree::CStmList* s )
+{
+	stm = s;
+}
+
+BasicBlocks::BasicBlocks( IRTree::CStmList* stms )
 {
 	done = new Temp::CLabel();
 	lastBlock = 0;
@@ -19,7 +29,7 @@ BasicBlocks::BasicBlocks( const IRTree::CStmList* stms )
 	mkBlocks( stms );	
 }
 
-void BasicBlocks::SetBlocks( const CStmListList* _blocks )
+void BasicBlocks::SetBlocks( CStmListList* _blocks )
 {
 	blocks = _blocks;
 }
@@ -36,15 +46,15 @@ const Temp::CLabel* BasicBlocks::GetDone() const
 
 void BasicBlocks::addStm( const IRTree::IStatement* stm )
 {
-	const IRTree::CStmList* next = new IRTree::CStmList( stm, NULL );
-	lastStm = new IRTree::CStmList( lastStm->GetStm(), next );
+	IRTree::CStmList* next = new IRTree::CStmList( stm, 0 );
+	lastStm->SetNext( next );
 	lastStm = next;
 }
 
-void BasicBlocks::doStms( const IRTree::CStmList* stmList )
+void BasicBlocks::doStms( IRTree::CStmList* stmList )
 {
-	if ( stmList == NULL )
-		doStms( new IRTree::CStmList( new IRTree::CJump( done ), NULL ) );
+	if ( stmList == 0 )
+		doStms( new IRTree::CStmList( new IRTree::CJump( done ), 0 ) );
 	else
 	{
 		const IRTree::CJump* jump = dynamic_cast<const IRTree::CJump*>( stmList->GetStm() );
@@ -70,23 +80,19 @@ void BasicBlocks::doStms( const IRTree::CStmList* stmList )
 	}
 }
 
-void BasicBlocks::mkBlocks( const IRTree::CStmList* stmList )
+void BasicBlocks::mkBlocks( IRTree::CStmList* stmList )
 {
-	if ( stmList == NULL )
+	if( stmList == NULL )
 		return;
-	else
-	{
+	else {
 		const IRTree::CLabel* label = dynamic_cast<const IRTree::CLabel*>( stmList->GetStm() );
-		if ( label != 0 )
-		{
+		if( label != 0 ) {
 			lastStm = new IRTree::CStmList( stmList->GetStm(), NULL );
-			if ( lastBlock == NULL )
-			{
+			if( lastBlock == NULL ) {
 				lastBlock = blocks = new CStmListList( lastStm, NULL );
-			}
-			else
-			{
-				lastBlock = new CStmListList(lastBlock->GetStm(), new CStmListList( stmList, 0 ) );
+			} else {
+				lastBlock->SetNext( new CStmListList( lastStm, 0 ) );
+				lastBlock = lastBlock->GetNext();
 			}
 			doStms( stmList->GetNext() );
 		}
