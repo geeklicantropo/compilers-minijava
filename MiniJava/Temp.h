@@ -56,7 +56,7 @@ namespace Temp {
 	{
 	public:
 		CTempMap() {}
-		string TempMap( const CTemp* temp ) {
+		string TempMap( const CTemp* temp ) const {
 			return temp->getName();
 		}
 	};
