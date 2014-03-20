@@ -27,24 +27,38 @@ int main()
 	while( cf != 0 ) {
 		out << cf->GetFrame()->GetName()->Name() << endl;
 		cout << cf->GetFrame()->GetName()->Name() << endl;
-		out << "digraph G {" << endl;
-		vector<string> labels;
+		
 		const IRTree::IExpression* tmp =  DoExp( cf->GetIRTree() );
 		//tmp->Accept( new IRTreeGraphVizPrinter( out, labels ) );
 		IRTree::CStmList* tmpStm = Linearize( ((const IRTree::CEseq*) tmp)->GetStm() );
 		
 		BasicBlocks* bb = new BasicBlocks( tmpStm );
 		
+		const CStmListList* block = bb->GetBlocks();
+		out << "digraph G {" << endl;
+		vector<string> labels;
+		IRTreeGraphVizPrinter* gp = new IRTreeGraphVizPrinter( out, labels );
+		while( block != 0 ) {
+			out << "subgraph {" << endl;
+			block->GetStm()->Accept( gp );
+			out << "}";
+			out << endl << endl;
+			block = block->GetNext();
+		}
+		for( int i = 0; i < labels.size(); ++i ) {
+				out << i << " [label=\"" << labels[i] << "\"]" << endl;
+			}
+		out << "}" << endl;
+
 		TraceSchedule ts = TraceSchedule( bb );
 
-		tmpStm->Accept( new IRTreeGraphVizPrinter( out, labels ) );
-		for( int i = 0; i < labels.size(); ++i ) {
-			out << i << " [label=\"" << labels[i] << "\"]" << endl;
-		}
-		out << "}";
+		//tmpStm->Accept( new IRTreeGraphVizPrinter( out, labels ) );
+		ts.stms->Accept( new IRTreeGraphVizPrinter( out, labels ) );
+		
 		//cf->GetIRTree()->Accept( new IRTreePrinter() );
 		tmp->Accept( new IRTreePrinter() );
-		out << endl << endl;
+		
+		
 		cout << endl << endl;
 		cf = cf->GetNext();
 	}

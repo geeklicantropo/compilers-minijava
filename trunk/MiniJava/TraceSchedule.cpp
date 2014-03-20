@@ -1,4 +1,5 @@
 #include "TraceSchedule.h"
+#include "assert.h"
 
 TraceSchedule::TraceSchedule( BasicBlocks* b )
 {
@@ -21,7 +22,8 @@ IRTree::CStmList* TraceSchedule::getLast( IRTree::CStmList* block )
 void TraceSchedule::trace( IRTree::CStmList* list )
 {
 	while( true ) {
-		const IRTree::CLabel* label = (const IRTree::CLabel*) list->GetStm();
+		const IRTree::CLabel* label = dynamic_cast<const IRTree::CLabel*>( list->GetStm() );
+		assert( label != 0 );
 		table.erase( label->GetLabel() );
 
 		IRTree::CStmList* last = getLast( list );
@@ -54,12 +56,13 @@ void TraceSchedule::trace( IRTree::CStmList* list )
 				const Temp::CLabel* newLabel = new Temp::CLabel;
 				const IRTree::CCJump* newcjump = new IRTree::CCJump( cjump->GetRelop(), cjump->GetLeft(),
 					cjump->GetRight(), cjump->GetTrueLabel(), newLabel );
-				IRTree::CStmList* tmp = new IRTree::CStmList( new IRTree::CLabel( newLabel), new IRTree::CStmList( new IRTree::CJump( cjump->GetFalseLabel() ), getNext() ) );
+				IRTree::CStmList* tmp = new IRTree::CStmList( new IRTree::CLabel( newLabel ), new IRTree::CStmList( new IRTree::CJump( cjump->GetFalseLabel() ), getNext() ) );
 				last->GetNext()->SetStm( newcjump );
 				last->GetNext()->SetNext( tmp );
 				break;
 			}
 		} else {
+			assert( false );
 			cerr << "TraceShedule Error!" << endl;
 			break;
 		}
@@ -72,7 +75,8 @@ IRTree::CStmList* TraceSchedule::getNext()
 		return new IRTree::CStmList( new IRTree::CLabel( theBlocks->GetDone() ) , 0);
 	} else {
 		IRTree::CStmList* stmList = theBlocks->GetBlocks()->GetStm();
-		IRTree::CLabel* label = (IRTree::CLabel*)stmList->GetStm();
+		const IRTree::CLabel* label = dynamic_cast<const IRTree::CLabel*>( stmList->GetStm() );
+		assert( label != 0 );
 		if( table.find(label->GetLabel()) != table.end() ) {
 			trace( stmList );
 			return stmList;
