@@ -46,17 +46,21 @@ int main()
 			block = block->GetNext();
 		}
 		for( int i = 0; i < labels.size(); ++i ) {
-				out << i << " [label=\"" << labels[i] << "\"]" << endl;
-			}
+			out << i << " [label=\"" << labels[i] << "\"]" << endl;
+		}
 		out << "}" << endl;
-
+		labels.clear();
 		TraceSchedule ts = TraceSchedule( bb );
 
 		//tmpStm->Accept( new IRTreeGraphVizPrinter( out, labels ) );
+		out << "digraph trace {" << endl;
 		ts.stms->Accept( new IRTreeGraphVizPrinter( out, labels ) );
-		
+		for( int i = 0; i < labels.size(); ++i ) {
+			out << i << " [label=\"" << labels[i] << "\"]" << endl;
+		}
+		out << "}" << endl;
 		//cf->GetIRTree()->Accept( new IRTreePrinter() );
-		tmp->Accept( new IRTreePrinter() );
+		//tmp->Accept( new IRTreePrinter() );
 		
 		
 		cout << endl << endl;
