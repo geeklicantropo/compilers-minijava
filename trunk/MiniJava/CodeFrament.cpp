@@ -1,6 +1,6 @@
 #include "CodeFragment.h"
 
-CCodeFragment::CCodeFragment( const CFrame* f, const IRTree::IExpression* t, const CCodeFragment* n ) :
+CCodeFragment::CCodeFragment( const CFrame* f, const IRTree::IStatement* t, const CCodeFragment* n ) :
 	frame( f ), irtree( t ), next( n )
 {
 	assert( frame != 0 );
@@ -17,7 +17,7 @@ const CFrame* CCodeFragment::GetFrame() const
 	return frame;
 }
 
-const IRTree::IExpression* CCodeFragment::GetIRTree() const
+const IRTree::IStatement* CCodeFragment::GetIRTree() const
 {
 	return irtree;
 }

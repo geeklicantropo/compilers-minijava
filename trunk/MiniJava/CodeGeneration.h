@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
-#include <Temp.h>
+#include "Temp.h"
+#include "CodeFragment.h"
 
 using namespace std;
 
@@ -72,5 +73,33 @@ namespace CodeGeneration {
 		const Temp::CTempList* dst;
 		const Temp::CTempList* src;
 		const CTargets* jump;
+	};
+
+	class CCodeGenerator {
+	public:
+		CCodeGenerator( const CFrame* fr, const IRTree::IStatement* tr );
+		
+	private:
+		const CFrame* frame;
+		const IRTree::IStatement* tree;
+		IInstructionList* list;
+
+		void munchStm( const IRTree::IStatement* stm );
+		const Temp::CTemp* munchExp( const IRTree::IExpression* exp );
+
+		void startGeneration();
+		
+		void munchStm( const IRTree::CMove* stm );
+		void munchStm( const IRTree::CSeq* stm );
+		void munchStm( const IRTree::CLabel* stm );
+		void munchStm( const IRTree::CJump* stm );
+		void munchStm( const IRTree::CCJump* stm );
+		void munchStm( const IRTree::CExp* stm );
+	
+		const Temp::CTemp* munchExp( const IRTree::CMem* exp );
+		const Temp::CTemp* munchExp( const IRTree::CBinOp* exp );
+		const Temp::CTemp* munchExp( const IRTree::CConst* exp );
+		const Temp::CTemp* munchExp( const IRTree::CTemp* exp );
+		const Temp::CTemp* munchExp( const IRTree::CName* exp );
 	};
 }

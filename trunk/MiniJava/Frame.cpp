@@ -78,6 +78,7 @@ CFrame::CFrame( Temp::CLabel* _name, int formalsCount )
 {
 	name = _name;
 	pointer = new Temp::CTemp( CSymbol::CSymbolGet( "FP" ) );
+	rv = new Temp::CTemp( CSymbol::CSymbolGet( "RV" ) );
 	th = new Temp::CTemp( CSymbol::CSymbolGet( "this" ) );
 	formals = 0;
 

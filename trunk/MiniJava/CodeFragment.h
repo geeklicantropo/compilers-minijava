@@ -4,14 +4,15 @@
 
 class CCodeFragment {
 public:
-	CCodeFragment( const CFrame* f, const IRTree::IExpression* t, const CCodeFragment* n );
+	CCodeFragment( const CFrame* f, const IRTree::IStatement* t, const CCodeFragment* n );
 	
 	void SetNext( const CCodeFragment* n );
 	const CFrame* GetFrame() const;
-	const IRTree::IExpression* GetIRTree() const;
+	const IRTree::IStatement* GetIRTree() const;
 	const CCodeFragment* GetNext() const;
 private:
 	const CFrame* frame;
-	const IRTree::IExpression* irtree;
+	const IRTree::IStatement* irtree;
 	const CCodeFragment* next;
+
 };
