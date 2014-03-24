@@ -165,7 +165,8 @@ int CTranslator::Visit( const CMainClass* n )
 	currentMethod = currentClass->LookUpMethod( CSymbol::CSymbolGet( "main" ) );
 	currentFrame = new CFrame( new Temp::CLabel( makeLabelName( currentClass, currentMethod ) ), 0 );
 	n->GetStatement()->Accept( this );
-	*lastCodeFragment = new CCodeFragment( currentFrame, new IRTree::CEseq( lastValue->ToStm(), new IRTree::CConst(0) ), *lastCodeFragment );
+	*lastCodeFragment = new CCodeFragment( currentFrame, new IRTree::CMove( new IRTree::CTemp( new Temp::CTemp( CSymbol::CSymbolGet( "RV" ) ) ), 
+		new IRTree::CEseq( lastValue->ToStm(), new IRTree::CConst(0) ) ), *lastCodeFragment );
 	currentClass = 0;
 	return 0;
 }
@@ -254,7 +255,7 @@ int CTranslator::Visit( const CMethodDeclare* n )
 	const IRTree::IStatement* stm = lastValue->ToStm();
 	n->GetExpression()->Accept( this );
 	const IRTree::IExpression* exp = lastValue->ToExp();
-	*lastCodeFragment = new CCodeFragment( currentFrame,  new IRTree::CEseq( stm, exp ) , *lastCodeFragment );
+	*lastCodeFragment = new CCodeFragment( currentFrame,  new IRTree::CMove( new IRTree::CTemp( new Temp::CTemp( CSymbol::CSymbolGet( "RV" ) ) ), new IRTree::CEseq( stm, exp ) ), *lastCodeFragment );
 	currentMethod = 0;
 	currentFrame = 0;
 	return 0;

@@ -42,6 +42,7 @@ public:
 	IRTree::IExpression* ExternalCall( std::string func, IRTree::CExpList* args );
 private:
 	Temp::CTemp* pointer;
+	Temp::CTemp* rv;
 	Temp::CLabel* name;
 	
 	CAccessList* formals;

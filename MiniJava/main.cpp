@@ -28,9 +28,9 @@ int main()
 		out << cf->GetFrame()->GetName()->Name() << endl;
 		cout << cf->GetFrame()->GetName()->Name() << endl;
 		
-		const IRTree::IExpression* tmp =  DoExp( cf->GetIRTree() );
+		const IRTree::IStatement* tmp =  DoStm( cf->GetIRTree() );
 		//tmp->Accept( new IRTreeGraphVizPrinter( out, labels ) );
-		IRTree::CStmList* tmpStm = Linearize( ((const IRTree::CEseq*) tmp)->GetStm() );
+		IRTree::CStmList* tmpStm = Linearize( tmp );
 		
 		BasicBlocks* bb = new BasicBlocks( tmpStm );
 		
@@ -59,9 +59,6 @@ int main()
 			out << i << " [label=\"" << labels[i] << "\"]" << endl;
 		}
 		out << "}" << endl;
-		//cf->GetIRTree()->Accept( new IRTreePrinter() );
-		//tmp->Accept( new IRTreePrinter() );
-		
 		
 		cout << endl << endl;
 		cf = cf->GetNext();
