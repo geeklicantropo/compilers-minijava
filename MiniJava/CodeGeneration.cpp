@@ -1,16 +1,21 @@
 #include "CodeGeneration.h"
+#include <assert.h>
 #include <string>
 
 const Temp::CTemp* CodeGeneration::IInstruction::nthTemp( const Temp::CTempList* list, int i ) const
 {
-	if(i == 0) return list->Temp();
-    else return nthTemp( list->Next(), i-1 );
+	if( i == 0 ) 
+		return list->Temp();
+    else 
+		return nthTemp( list->Next(), i - 1 );
 }
 
 const Temp::CLabel* CodeGeneration::IInstruction::nthLabel( const Temp::CLabelList* list, int i ) const 
 {
-	if(i == 0) return list->Label();
-	else return nthLabel( list->Next(), i-1 );	
+	if( i == 0 ) 
+		return list->Label();
+	else 
+		return nthLabel( list->Next(), i - 1 );	
 }
 
 string CodeGeneration::IInstruction::Format( const Temp::CTempMap* m ) const
@@ -40,7 +45,8 @@ string CodeGeneration::IInstruction::Format( const Temp::CTempMap* m ) const
 			case '`': 
 				result.append("`"); 
 				break;
-			default: 
+			default:
+				assert( false );
 				printf( "bad Assem format" );
 		   }
 		   else result.append( (const char*) asmCode[i] );
