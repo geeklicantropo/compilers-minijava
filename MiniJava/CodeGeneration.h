@@ -32,10 +32,14 @@ namespace CodeGeneration {
 
 	class IInstructionList {
 	public:
-		IInstructionList ( const IInstruction* _head, const IInstructionList* _tail ) : head( _head ), tail( _tail ) {}
+		IInstructionList( const IInstruction* i, IInstructionList* n ) : instr( i ), next( n ) {}
+		const IInstruction* GetInstr() const;
+		IInstructionList* GetNext() const;
+		void SetInstr( const IInstruction* i );
+		void SetNext( IInstructionList* n );
 	private:
-		const IInstruction* head;
-		const IInstructionList* tail;
+		const IInstruction* instr;
+		IInstructionList* next;
 	};
 
 	class CLabel : public IInstruction {
@@ -82,13 +86,12 @@ namespace CodeGeneration {
 	private:
 		const CFrame* frame;
 		const IRTree::IStatement* tree;
-		IInstructionList* list;
+		IInstructionList* head;
+		IInstructionList* last;
 
 		void munchStm( const IRTree::IStatement* stm );
 		const Temp::CTemp* munchExp( const IRTree::IExpression* exp );
 
-		void startGeneration();
-		
 		void munchStm( const IRTree::CMove* stm );
 		void munchStm( const IRTree::CSeq* stm );
 		void munchStm( const IRTree::CLabel* stm );
@@ -101,5 +104,8 @@ namespace CodeGeneration {
 		const Temp::CTemp* munchExp( const IRTree::CConst* exp );
 		const Temp::CTemp* munchExp( const IRTree::CTemp* exp );
 		const Temp::CTemp* munchExp( const IRTree::CName* exp );
+
+		void emit( IInstruction* instr );
+
 	};
 }
