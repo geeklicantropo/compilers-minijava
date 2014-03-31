@@ -25,8 +25,8 @@ namespace CodeGeneration {
 		virtual const CTargets* JumpTargets() const = 0;
 		string Format( const Temp::CTempMap* varsMapping ) const;
 	private:
-		const Temp::CTemp* nthTemp(const Temp::CTempList* list, int i) const ;
-		const Temp::CLabel* nthLabel(const Temp::CLabelList* list, int i) const;
+		const Temp::CTemp* getAt(const Temp::CTempList* list, int i) const ;
+		const Temp::CLabel* getAt(const Temp::CLabelList* list, int i) const;
 		string asmCode;
 	};
 
@@ -106,6 +106,8 @@ namespace CodeGeneration {
 		const Temp::CTemp* munchExp( const IRTree::CName* exp );
 
 		void emit( IInstruction* instr );
+
+		Temp::CTempList* munchArgs( const IRTree::CExpList* args );
 
 	};
 }
