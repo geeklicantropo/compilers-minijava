@@ -159,6 +159,41 @@ void CCodeGenerator::emit( IInstruction* instr )
 
 void CCodeGenerator::munchStm( const IRTree::CMove* stm )
 {
+	const IRTree::CMem* dstMem = dynamic_cast<const IRTree::CMem*>( stm->GetDst() );
+	const IRTree::CMem* srcMem = dynamic_cast<const IRTree::CMem*>( stm->GetSrc() );
+	if( dstMem != 0 ) {
+		const IRTree::CBinOp* binop = dynamic_cast<const IRTree::CBinOp*>( dstMem->GetExp() );
+		const IRTree::CConst* c = dynamic_cast<const IRTree::CConst*>( dstMem->GetExp() );
+		if( binop != 0 ) {
+			const IRTree::CConst* right = dynamic_cast<const IRTree::CConst*>( binop->GetRight() );
+			const IRTree::CConst* left = dynamic_cast<const IRTree::CConst*>( binop->GetLeft() );
+			if( binop->GetBinOp() == IRTree::TBinOp::PLUS && right != 0 ) {
+				//MOVE(MEM(BINOP(PLUS, e1, CONST(i))), e2)
+				string s = "STORE M['s0+" + to_string(right->GetValue()) + "] <- 's1\n";
+				Temp::CTempList* list = new Temp::CTempList( munchExp( binop->GetLeft() ),
+					new Temp::CTempList( munchExp( stm->GetSrc() ), 0 ) );
+				emit( new COper( s, 0, list ) );
+			} else if( binop->GetBinOp() == IRTree::TBinOp::PLUS && left != 0 ) {
+				//MOVE(MEM(BINOP(PLUS, CONST(i), e1)), e2)
+				string s = "STORE M['s0+" + to_string(left->GetValue()) + "] <- 's1\n";
+				Temp::CTempList* list = new Temp::CTempList( munchExp( binop->GetRight() ),
+					new Temp::CTempList( munchExp( stm->GetSrc() ), 0 ) );
+				emit( new COper( s, 0, list ) );
+			} else {
+				assert( false );
+			}
+		} else if( srcMem != 0 ) {
+			//MOVE(MEM(e1), MEM(e2))
+			string s = "MOVE M['s0] <- M['s1]\n";
+			Temp::CTempList* list = new Temp::CTempList( munchExp( dstMem->GetExp() ),
+				new Temp::CTempList( munchExp( srcMem->GetExp() ), 0 ) );
+			emit( new COper( s, 0, list ) );
+		} else if( c != 0 ) {
+			//MOVE(MEM(CONST), e)
+			string s = "STORE M[r0+" + to_string( c->GetValue() ) + "] <- 's0\n";
+			emit( new COper( s, 0, new Temp::CTempList( munchExp( stm->GetSrc() ), 0 ) ) );
+		}
+	}
 }
 
 void CCodeGenerator::munchStm( const IRTree::CSeq* stm )

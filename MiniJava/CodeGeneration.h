@@ -71,7 +71,7 @@ namespace CodeGeneration {
 		COper( string _assem, const Temp::CTempList* _dst, const Temp::CTempList* _src, const Temp::CLabelList* _jump ) : asmCode( _assem ), dst( _dst ), src( _src ), jump(new CTargets( _jump )) {}
 		virtual const Temp::CTempList* UsedVars() const { return src; }
 		virtual const Temp::CTempList* DefinedVars() const { return dst; }
-		virtual const CTargets* JumpTargets() const { jump; }
+		virtual const CTargets* JumpTargets() const { return jump; }
 	private:
 		string asmCode;
 		const Temp::CTempList* dst;
