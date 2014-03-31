@@ -147,7 +147,14 @@ const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::IExpression* exp )
 
 void CCodeGenerator::emit( IInstruction* instr )
 {
-	head = new IInstructionList( instr, head );
+	IInstructionList* newElement = new IInstructionList( instr, 0 );
+	if( last != 0 ) {
+		last->SetNext( newElement );
+		last = newElement;
+	} else {
+		last = newElement;
+		head = newElement;
+	}
 }
 
 void CCodeGenerator::munchStm( const IRTree::CMove* stm )
