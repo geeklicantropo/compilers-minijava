@@ -163,6 +163,8 @@ void CCodeGenerator::munchStm( const IRTree::CMove* stm )
 
 void CCodeGenerator::munchStm( const IRTree::CSeq* stm )
 {
+	munchStm( stm->GetLeft() );
+	munchStm( stm->GetRight() );
 }
 
 void CCodeGenerator::munchStm( const IRTree::CLabel* stm )
@@ -172,14 +174,67 @@ void CCodeGenerator::munchStm( const IRTree::CLabel* stm )
 
 void CCodeGenerator::munchStm( const IRTree::CJump* stm )
 {
+	emit( new CodeGeneration::COper( "JMP 'l0\n", 0, 0, stm->GetTargets() ) );
 }
 
 void CCodeGenerator::munchStm( const IRTree::CCJump* stm )
 {
+	string name;
+    Temp::CTemp* resultExp = new Temp::CTemp();
+	IRTree::IStatement* resultExpTree = new IRTree::CMove( new IRTree::CTemp( resultExp ), 
+		new IRTree::CBinOp( IRTree::TBinOp::MINUS, stm->GetLeft(), stm->GetRight() ) );
+    munchStm( resultExpTree );
+    
+    switch( stm->GetRelop() ) {
+		case IRTree::TCJump::EQ:
+			name = "CJmpEQ "; 
+			break;
+		case IRTree::TCJump::NE:
+			name = "CJmpNE ";
+			break;
+		case IRTree::TCJump::GT:
+			name = "CJmpGT ";
+			break;
+		case IRTree::TCJump::LT:
+			name = "CJmpLT ";
+			break;
+		case IRTree::TCJump::LE: 
+			name = "CJmpLE ";
+			break;
+		case IRTree::TCJump::GE:
+			name = "CJmpGE ";
+			break;
+		case IRTree::TCJump::ULT: 
+			name = "CJmpULT ";
+			break;
+		case IRTree::TCJump::ULE:
+			name = "CJmpULE ";
+			break;
+		case IRTree::TCJump::UGT: 
+			name = "CJmpUGT ";
+			break;
+		case IRTree::TCJump::UGE:
+			name = "CJmpUGE ";
+			break;
+		default:
+			assert(false);
+    }
+    name += "'s0 'l0\n";
+    Temp::CLabelList* possibleLabels = new Temp::CLabelList( stm->GetTrueLabel(), 
+		new Temp::CLabelList( stm->GetFalseLabel(), 0) );
+	emit( new CodeGeneration::COper( name, 0, new Temp::CTempList( resultExp, 0 ), possibleLabels ) );
 }
 
 void CCodeGenerator::munchStm( const IRTree::CExp* stm )
 {
+	const IRTree::CCall* exp = dynamic_cast<const IRTree::CCall*>( stm->GetExp() );
+	if( exp != 0 ) {
+		const Temp::CTemp* r = munchExp( exp->GetExp() ); 
+		Temp::CTempList* l = munchArgs( exp->GetArgs() );
+		emit( new CodeGeneration::COper( "CALL 's0\n", 0, new const Temp::CTempList( r, l ) ) );
+		return;
+	}
+	assert(false);
 }
 
 const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::CMem* exp ) 
