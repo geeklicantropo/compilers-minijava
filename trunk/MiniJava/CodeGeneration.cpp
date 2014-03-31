@@ -4,20 +4,20 @@
 
 using namespace CodeGeneration;
 
-const Temp::CTemp* IInstruction::nthTemp( const Temp::CTempList* list, int i ) const
+const Temp::CTemp* IInstruction::getAt( const Temp::CTempList* list, int i ) const
 {
 	if( i == 0 ) 
 		return list->Temp();
     else 
-		return nthTemp( list->Next(), i - 1 );
+		return getAt( list->Next(), i - 1 );
 }
 
-const Temp::CLabel* IInstruction::nthLabel( const Temp::CLabelList* list, int i ) const 
+const Temp::CLabel* IInstruction::getAt( const Temp::CLabelList* list, int i ) const 
 {
 	if( i == 0 ) 
 		return list->Label();
 	else 
-		return nthLabel( list->Next(), i - 1 );	
+		return getAt( list->Next(), i - 1 );	
 }
 
 string IInstruction::Format( const Temp::CTempMap* m ) const
@@ -34,15 +34,15 @@ string IInstruction::Format( const Temp::CTempMap* m ) const
 			switch( asmCode[++i] ) {
 			case 's': 
 				n = atoi( (const char*)asmCode[++i] );
-				result.append( m->TempMap( nthTemp( src, n ) ));
+				result.append( m->TempMap( getAt( src, n ) ));
 				break;
 			case 'd':
 				n = atoi( (const char*)asmCode[++i] );
-				result.append( m->TempMap( nthTemp( dst, n ) ));
+				result.append( m->TempMap( getAt( dst, n ) ));
 				break;
 			case 'j': 
 				n = atoi( (const char*)asmCode[++i] );
-				result.append( nthLabel(list, n)->Name() );
+				result.append( getAt(list, n)->Name() );
 				break;
 			case '`': 
 				result.append("`"); 
@@ -57,12 +57,12 @@ string IInstruction::Format( const Temp::CTempMap* m ) const
     return result;
 }
 
-const IInstruction* ::IInstructionList::GetInstr() const
+const IInstruction* IInstructionList::GetInstr() const
 {
 	return instr;
 }
 
-::IInstructionList* IInstructionList::GetNext() const
+IInstructionList* IInstructionList::GetNext() const
 {
 	return next;
 }
@@ -72,19 +72,30 @@ void IInstructionList::SetInstr( const IInstruction* i )
 	instr = i;
 }
 
-void ::IInstructionList::SetNext( IInstructionList* n )
+void IInstructionList::SetNext( IInstructionList* n )
 {
 	next = n;
 }
 
-::CCodeGenerator::CCodeGenerator( const CFrame* fr, const IRTree::IStatement* tr ) :
+CCodeGenerator::CCodeGenerator( const CFrame* fr, const IRTree::IStatement* tr ) :
 	tree( tr ), frame( fr )
 {
 	head = last = 0;
 	munchStm( tr );
 }
 
-void ::CCodeGenerator::munchStm( const IRTree::IStatement* stm )
+Temp::CTempList* CCodeGenerator::munchArgs( const IRTree::CExpList* args )
+{
+	if( args == 0 )
+		return 0;
+
+	Temp::CTemp* r = new Temp::CTemp();
+	IRTree::CMove* move = new IRTree::CMove( new IRTree::CTemp( r ), args->GetExp() );
+	munchStm( move );
+	return new Temp::CTempList( r, munchArgs( args->GetNext() ) );
+}
+
+void CCodeGenerator::munchStm( const IRTree::IStatement* stm )
 {
 	const IRTree::CMove* move = dynamic_cast<const IRTree::CMove*>( stm );
 	const IRTree::CSeq* seq = dynamic_cast<const IRTree::CSeq*>( stm );
@@ -110,7 +121,7 @@ void ::CCodeGenerator::munchStm( const IRTree::IStatement* stm )
 	}
 }
 
-const Temp::CTemp* ::CCodeGenerator::munchExp( const IRTree::IExpression* exp )
+const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::IExpression* exp )
 {
 	const IRTree::CMem* mem = dynamic_cast<const IRTree::CMem*>( exp );
 	const IRTree::CBinOp* binop = dynamic_cast<const IRTree::CBinOp*>( exp );
@@ -134,57 +145,58 @@ const Temp::CTemp* ::CCodeGenerator::munchExp( const IRTree::IExpression* exp )
 	}
 }
 
-void ::CCodeGenerator::emit( ::IInstruction* instr )
+void CCodeGenerator::emit( IInstruction* instr )
 {
 	head = new IInstructionList( instr, head );
 }
 
-void ::CCodeGenerator::munchStm( const IRTree::CMove* stm )
+void CCodeGenerator::munchStm( const IRTree::CMove* stm )
 {
 }
 
-void ::CCodeGenerator::munchStm( const IRTree::CSeq* stm )
+void CCodeGenerator::munchStm( const IRTree::CSeq* stm )
 {
 }
 
-void ::CCodeGenerator::munchStm( const IRTree::CLabel* stm )
+void CCodeGenerator::munchStm( const IRTree::CLabel* stm )
 {
 	emit( new CodeGeneration::CLabel( stm->GetLabel()->Name() + ":\n", stm->GetLabel() ) );
 }
 
-void ::CCodeGenerator::munchStm( const IRTree::CJump* stm )
+void CCodeGenerator::munchStm( const IRTree::CJump* stm )
 {
 }
 
-void ::CCodeGenerator::munchStm( const IRTree::CCJump* stm )
+void CCodeGenerator::munchStm( const IRTree::CCJump* stm )
 {
 }
 
-void ::CCodeGenerator::munchStm( const IRTree::CExp* stm )
+void CCodeGenerator::munchStm( const IRTree::CExp* stm )
 {
 }
 
-const Temp::CTemp* ::CCodeGenerator::munchExp( const IRTree::CMem* exp ) 
+const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::CMem* exp ) 
 {
 	return 0;
 }
 
-const Temp::CTemp* ::CCodeGenerator::munchExp( const IRTree::CBinOp* exp ) 
+const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::CBinOp* exp ) 
 {
 	return 0;
 }
 
-const Temp::CTemp* ::CCodeGenerator::munchExp( const IRTree::CConst* exp ) 
+const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::CConst* exp ) 
 {
 	return 0;
 }
 
-const Temp::CTemp* ::CCodeGenerator::munchExp( const IRTree::CTemp* exp ) 
+const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::CTemp* exp ) 
 {
 	return 0;
 }
 
-const Temp::CTemp* ::CCodeGenerator::munchExp( const IRTree::CName* exp ) 
+const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::CName* exp ) 
 {
 	return 0;
 }
+
