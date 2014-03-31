@@ -274,22 +274,128 @@ void CCodeGenerator::munchStm( const IRTree::CExp* stm )
 
 const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::CMem* exp ) 
 {
-	return 0;
+	const IRTree::CBinOp* binExp= dynamic_cast<const IRTree::CBinOp*>( exp->GetExp() );
+	const IRTree::CConst* constExp = dynamic_cast<const IRTree::CConst*>( exp->GetExp() );
+	if( binExp != 0 ) {
+		const IRTree::CConst* leftExp = dynamic_cast<const IRTree::CConst*>( binExp->GetLeft());
+		const IRTree::CConst* rightExp = dynamic_cast<const IRTree::CConst*>( binExp->GetRight());
+		if( binExp->GetBinOp() == IRTree::TBinOp::PLUS && leftExp != 0 ) {
+			// MEM(BINOP(PLUS,CONST(i),e1))
+			Temp::CTemp* r = new Temp::CTemp();
+			string name = "LOAD 'd0 <- M['s0+" + to_string( leftExp->GetValue() ) + "]\n";
+			emit( new CodeGeneration::COper( name,
+				new const Temp::CTempList( r, 0 ), new const Temp::CTempList( munchExp( binExp->GetRight() ), 0) ) );
+			return r;
+		}
+
+		if( binExp->GetBinOp() == IRTree::TBinOp::PLUS && rightExp != 0 ) {
+			//MEM(BINOP(PLUS,e1,CONST(i)))
+			Temp::CTemp* r = new Temp::CTemp();
+			string name = "LOAD 'd0 <- M['s0+" + to_string( rightExp->GetValue() ) + "]\n";
+			emit( new CodeGeneration::COper( name,
+				new const Temp::CTempList( r, 0 ), new const Temp::CTempList( munchExp( binExp->GetRight() ), 0) ) );
+			return r;
+		}
+	}
+	if( constExp != 0 ) {
+		Temp::CTemp* r = new Temp::CTemp();
+		string name = "LOAD 'd0 <- M['r0+" + to_string( constExp->GetValue() ) + "]\n";
+		emit( new CodeGeneration::COper( name, new Temp::CTempList(r, 0),  0) );
+		return r;
+	}
+
+	Temp::CTemp* r = new Temp::CTemp();
+	emit( new CodeGeneration::COper( "LOAD 'd0 <- M['s0+0]\n",
+		new Temp::CTempList( r, 0 ), new Temp::CTempList( munchExp( exp->GetExp() ), 0) ) );
+	return r;
 }
 
 const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::CBinOp* exp ) 
 {
-	return 0;
+	if( exp->GetBinOp() == IRTree::TBinOp::PLUS ) {
+		const IRTree::CConst* leftExp = dynamic_cast<const IRTree::CConst*>( exp->GetLeft() );
+		const IRTree::CConst* rightExp = dynamic_cast<const IRTree::CConst*>( exp->GetRight() );
+		if( leftExp != 0 ) {
+			Temp::CTemp* r = new Temp::CTemp();
+			string s = "ADDI 'd0 <- 's0+";
+			s += to_string( leftExp->GetValue() );
+			s += "\n";
+			emit( new CodeGeneration::COper( s,
+				new Temp::CTempList( r, 0 ), new Temp::CTempList( munchExp(exp->GetRight() ), 0) ) );
+			return r;
+		}
+
+		if( rightExp != 0 ) {
+			Temp::CTemp* r = new Temp::CTemp();
+			string s = "ADDI 'd0 <- 's0+";
+			s += to_string( rightExp->GetValue() );
+			s += "\n";
+			emit( new CodeGeneration::COper( s,
+			new Temp::CTempList(r, 0), new Temp::CTempList( munchExp( exp->GetLeft() ), 0) ) );
+			return r;
+		}
+
+		Temp::CTemp* r = new Temp::CTemp();
+		emit( new CodeGeneration::COper("ADD 'd0 <- 's0+'s1\n",
+		new Temp::CTempList(r, 0), new Temp::CTempList( munchExp(exp->GetLeft() ), new Temp::CTempList( munchExp(exp->GetRight() ), 0) ) ) );
+		return r;
+	}
+
+	if( exp->GetBinOp() == IRTree::TBinOp::MINUS ) {
+		const IRTree::CConst* leftExp = dynamic_cast<const IRTree::CConst*>( exp->GetLeft() );
+		const IRTree::CConst* rightExp = dynamic_cast<const IRTree::CConst*>( exp->GetRight() );
+		if( leftExp != 0 ) {
+			Temp::CTemp* r = new Temp::CTemp();
+			string s = "SUBI 'd0 <- 's0-";
+			s += to_string( leftExp->GetValue() );
+			s += "\n";
+			emit( new CodeGeneration::COper( s,
+				new Temp::CTempList( r, 0 ), new Temp::CTempList( munchExp(exp->GetRight() ), 0) ) );
+			return r;
+		}
+
+		if( rightExp != 0 ) {
+			Temp::CTemp* r = new Temp::CTemp();
+			string s = "SUBI 'd0 <- 's0-";
+			s += to_string( rightExp->GetValue() );
+			s += "\n";
+			emit( new CodeGeneration::COper( s,
+			new Temp::CTempList( r, 0 ), new Temp::CTempList( munchExp( exp->GetLeft() ), 0) ) );
+			return r;
+		}
+
+		Temp::CTemp* r = new Temp::CTemp();
+		emit( new CodeGeneration::COper("SUB 'd0 <- 's0-'s1\n",
+		new const Temp::CTempList( r, 0 ), new Temp::CTempList( munchExp(exp->GetLeft() ), new Temp::CTempList( munchExp(exp->GetRight() ), 0) ) ) );
+		return r;
+	}
+
+	if( exp->GetBinOp() == IRTree::TBinOp::MUL ) {
+		Temp::CTemp* r = new Temp::CTemp();
+		emit( new CodeGeneration::COper("MUL 'd0 <- 's0*'s1\n",
+		new const Temp::CTempList( r, 0 ), new Temp::CTempList( munchExp(exp->GetLeft() ), new Temp::CTempList( munchExp(exp->GetRight() ), 0) ) ) );
+		return r;
+	}
+
+	if( exp->GetBinOp() == IRTree::TBinOp::DIV ) {
+		Temp::CTemp* r = new Temp::CTemp();
+		emit( new CodeGeneration::COper("DIV 'd0 <- 's0/'s1\n",
+		new const Temp::CTempList( r, 0 ), new Temp::CTempList( munchExp(exp->GetLeft() ), new Temp::CTempList( munchExp(exp->GetRight() ), 0) ) ) );
+		return r;
+	}
 }
 
 const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::CConst* exp ) 
 {
-	return 0;
+	Temp::CTemp* r = new Temp::CTemp();
+	string name = "ADDI 'd0 <- 'r0+" + to_string( exp->GetValue() ) + "\n";
+	emit( new CodeGeneration::COper( name, new Temp::CTempList( r, 0 ), 0) );
+	return r;
 }
 
 const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::CTemp* exp ) 
 {
-	return 0;
+	return exp->GetTemp();
 }
 
 const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::CName* exp ) 
