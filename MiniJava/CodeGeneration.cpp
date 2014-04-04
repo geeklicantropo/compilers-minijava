@@ -422,6 +422,6 @@ const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::CTemp* exp )
 
 const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::CName* exp ) 
 {
-	return 0;
+	return new Temp::CTemp( CSymbol::CSymbolGet( exp->GetLabel()->Name() ) );
 }
 
