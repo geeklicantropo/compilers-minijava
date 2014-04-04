@@ -19,12 +19,13 @@ namespace CodeGeneration {
 	};
 
 	class IInstruction {
-	public:
+ 	public:
 		virtual const Temp::CTempList* UsedVars() const = 0;
 		virtual const Temp::CTempList* DefinedVars() const = 0;
 		virtual const CTargets* JumpTargets() const = 0;
 		string Format( const Temp::CTempMap* varsMapping ) const;
-	private:
+		string GetAssemblerCode() const;
+	protected:
 		const Temp::CTemp* getAt(const Temp::CTempList* list, int i) const ;
 		const Temp::CLabel* getAt(const Temp::CLabelList* list, int i) const;
 		string asmCode;
@@ -42,38 +43,46 @@ namespace CodeGeneration {
 		IInstructionList* next;
 	};
 
+	class A {
+	protected: 
+		int a;
+	};
+
+	class B : public A {
+		B( int i ) {
+			a = i;
+		}
+	};
+
 	class CLabel : public IInstruction {
 	public:
-		CLabel( const string _assem, const Temp::CLabel* _lable ) : asmCode( _assem ), lable( _lable ) {}
+		CLabel( string _assem, const Temp::CLabel* _lable ) { asmCode = _assem; lable = _lable; }
 		virtual const Temp::CTempList* UsedVars() const { return 0; }
 		virtual const Temp::CTempList* DefinedVars() const { return 0; }
 		virtual const CTargets* JumpTargets() const { return 0; }
 	private:
-		const string asmCode;
 		const Temp::CLabel* lable;
 	};
 
 	class CMove : public IInstruction {
 	public:
-		CMove(string _assem, const Temp::CTemp* _dst, const Temp::CTemp* _src): asmCode( _assem ), dst( _dst ), src( _src ) {}
+		CMove(string _assem, const Temp::CTemp* _dst, const Temp::CTemp* _src): dst( _dst ), src( _src ) { asmCode = _assem; }
 		virtual const Temp::CTempList* UsedVars() const { return new Temp::CTempList(src, 0); }
 		virtual const Temp::CTempList* DefinedVars() const { return new Temp::CTempList(dst, 0); }
 		virtual const CTargets* JumpTargets() const { return 0; }
 	private:
-		string asmCode;
 		const Temp::CTemp* dst;
 		const Temp::CTemp* src;
 	};
 
 	class COper : public IInstruction {
 	public:
-		COper( string _assem, const Temp::CTempList* _dst, const Temp::CTempList* _src ): asmCode( _assem ), dst( _dst ), src( _src ), jump(0) {}
-		COper( string _assem, const Temp::CTempList* _dst, const Temp::CTempList* _src, const Temp::CLabelList* _jump ) : asmCode( _assem ), dst( _dst ), src( _src ), jump(new CTargets( _jump )) {}
+		COper( string _assem, const Temp::CTempList* _dst, const Temp::CTempList* _src ): dst( _dst ), src( _src ), jump(0) { asmCode = _assem; }
+		COper( string _assem, const Temp::CTempList* _dst, const Temp::CTempList* _src, const Temp::CLabelList* _jump ) : dst( _dst ), src( _src ), jump(new CTargets( _jump )) { asmCode = _assem; }
 		virtual const Temp::CTempList* UsedVars() const { return src; }
 		virtual const Temp::CTempList* DefinedVars() const { return dst; }
 		virtual const CTargets* JumpTargets() const { return jump; }
 	private:
-		string asmCode;
 		const Temp::CTempList* dst;
 		const Temp::CTempList* src;
 		const CTargets* jump;
@@ -82,6 +91,7 @@ namespace CodeGeneration {
 	class CCodeGenerator {
 	public:
 		CCodeGenerator( const CFrame* fr, const IRTree::IStatement* tr );
+		IInstructionList* GetHead() const;
 		
 	private:
 		const CFrame* frame;
@@ -108,6 +118,8 @@ namespace CodeGeneration {
 		void emit( IInstruction* instr );
 
 		Temp::CTempList* munchArgs( const IRTree::CExpList* args );
+
+		void reverseList();
 
 	};
 }
