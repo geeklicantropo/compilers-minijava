@@ -8,6 +8,7 @@
 #include "IRTreeGraphVizPrinter.h"
 #include "Canon.h"
 #include "TraceSchedule.h"
+#include "CodeGeneration.h"
 
 extern int yylex( void );
 extern int yyparse( const IProgram*&);
@@ -23,7 +24,8 @@ int main()
 	progr->Accept( new CTypeChecker( &st ) );
 	const CCodeFragment* cf = 0;
 	progr->Accept( new Translator::CTranslator( &st, &cf ) );
-	ofstream out("output.txt");
+	ofstream out( "output.txt" );
+	ofstream assemout( "assem.txt" );
 	while( cf != 0 ) {
 		out << cf->GetFrame()->GetName()->Name() << endl;
 		cout << cf->GetFrame()->GetName()->Name() << endl;
@@ -51,7 +53,19 @@ int main()
 		out << "}" << endl;
 		labels.clear();
 		TraceSchedule ts = TraceSchedule( bb );
-
+		IRTree::CStmList* list = ts.stms;
+		assemout << cf->GetFrame()->GetName()->Name() << endl << endl;
+		while( list != 0 ) {
+			CodeGeneration::CCodeGenerator cg = CodeGeneration::CCodeGenerator( cf->GetFrame(), list->GetStm() );
+			list = list->GetNext();
+			CodeGeneration::IInstructionList* curr = cg.GetHead();
+			while( curr != 0 ) {
+				assemout << curr->GetInstr()->GetAssemblerCode();
+				curr = curr->GetNext();
+			}
+		}
+		assemout << endl;
+		
 		//tmpStm->Accept( new IRTreeGraphVizPrinter( out, labels ) );
 		out << "digraph trace {" << endl;
 		ts.stms->Accept( new IRTreeGraphVizPrinter( out, labels ) );

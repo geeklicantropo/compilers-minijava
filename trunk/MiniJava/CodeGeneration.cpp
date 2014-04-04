@@ -20,6 +20,11 @@ const Temp::CLabel* IInstruction::getAt( const Temp::CLabelList* list, int i ) c
 		return getAt( list->Next(), i - 1 );	
 }
 
+string IInstruction::GetAssemblerCode() const
+{
+	return asmCode;
+}
+
 string IInstruction::Format( const Temp::CTempMap* m ) const
 {
 	const Temp::CTempList* dst = DefinedVars();
@@ -82,6 +87,7 @@ CCodeGenerator::CCodeGenerator( const CFrame* fr, const IRTree::IStatement* tr )
 {
 	head = last = 0;
 	munchStm( tr );
+	reverseList();
 }
 
 Temp::CTempList* CCodeGenerator::munchArgs( const IRTree::CExpList* args )
@@ -181,8 +187,6 @@ void CCodeGenerator::munchStm( const IRTree::CMove* stm )
 				Temp::CTempList* list = new Temp::CTempList( munchExp( binop->GetRight() ),
 					new Temp::CTempList( munchExp( stm->GetSrc() ), 0 ) );
 				emit( new COper( s, 0, list ) );
-			} else {
-				assert( false );
 			}
 		} else if( srcMem != 0 ) {
 			//MOVE(MEM(a), MEM(a))
@@ -425,3 +429,21 @@ const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::CName* exp )
 	return new Temp::CTemp( CSymbol::CSymbolGet( exp->GetLabel()->Name() ) );
 }
 
+void CCodeGenerator::reverseList()
+{
+	IInstructionList* curr = head;
+	IInstructionList* prev = 0;
+	while( curr != 0 ) {
+		IInstructionList* next = curr->GetNext();
+		curr->SetNext( prev );
+		prev = curr;
+		curr = next;
+	}
+	last = head;
+	head = prev;
+}
+
+IInstructionList* CCodeGenerator::GetHead() const
+{
+	return head;
+}
