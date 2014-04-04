@@ -43,17 +43,6 @@ namespace CodeGeneration {
 		IInstructionList* next;
 	};
 
-	class A {
-	protected: 
-		int a;
-	};
-
-	class B : public A {
-		B( int i ) {
-			a = i;
-		}
-	};
-
 	class CLabel : public IInstruction {
 	public:
 		CLabel( string _assem, const Temp::CLabel* _lable ) { asmCode = _assem; lable = _lable; }
