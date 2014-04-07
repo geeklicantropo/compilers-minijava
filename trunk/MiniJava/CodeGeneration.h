@@ -49,6 +49,8 @@ namespace CodeGeneration {
 		virtual const Temp::CTempList* UsedVars() const { return 0; }
 		virtual const Temp::CTempList* DefinedVars() const { return 0; }
 		virtual const CTargets* JumpTargets() const { return 0; }
+
+		const Temp::CLabel* GetLable() const { return lable; }
 	private:
 		const Temp::CLabel* lable;
 	};

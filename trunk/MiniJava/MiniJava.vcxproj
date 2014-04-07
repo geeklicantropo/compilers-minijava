@@ -74,6 +74,7 @@
     <ClCompile Include="Canon.cpp" />
     <ClCompile Include="CodeFrament.cpp" />
     <ClCompile Include="flex.cpp" />
+    <ClCompile Include="FlowGraph.cpp" />
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="Interpreter.cpp" />
@@ -113,6 +114,7 @@
     <ClInclude Include="bison.hpp" />
     <ClInclude Include="Canon.h" />
     <ClInclude Include="CodeFragment.h" />
+    <ClInclude Include="FlowGraph.h" />
     <ClInclude Include="Frame.h" />
     <ClInclude Include="Graph.h" />
     <ClInclude Include="Interpreter.h" />

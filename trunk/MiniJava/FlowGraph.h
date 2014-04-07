@@ -1,24 +1,30 @@
+#pragma once
+
 #include "Graph.h"
 #include "Temp.h"
 #include "CodeGeneration.h"
+#include <map>
 
-class CInstrNode:Node {
+class IFlowGraph : public CGraph {
 public:
-	CInstrNode( CodeGeneration::IInstruction* _instraction ) : instraction( _instraction ) {}
-	CodeGeneration::IInstruction* GetInstraction() const;
+	virtual ~IFlowGraph() {}
+
+	virtual const Temp::CTempList* def( const CNode* node ) = 0;
+	virtual const Temp::CTempList* use( const CNode* node ) = 0;
+	virtual bool isMove( const CNode* node ) = 0;
+};
+
+class AssemFlowGraph: public IFlowGraph {
+public:
+	AssemFlowGraph( CodeGeneration::IInstructionList* instructions );
+
+	virtual const Temp::CTempList* def( const CNode* node );
+	virtual const Temp::CTempList* use( const CNode* node );
+	virtual bool isMove( const CNode* node );
+
+	CodeGeneration::IInstruction* instruction( const CNode* node );
 private:
-	CodeGeneration::IInstruction* instraction;
-};
-
-class FlowGraph:Graph {
-public:
-	const Temp::CTempList* def( const CInstrNode* node );
-	const Temp::CTempList* use( const CInstrNode* node );
-	bool isMove( const CInstrNode* node );
-};
-
-class AssemFlowGraph:FlowGraph {
-public:
-	CodeGeneration::IInstruction* instraction( const CInstrNode* node );
-	AssemFlowGraph( CodeGeneration::IInstructionList* instractions );
+	std::map<const Temp::CLabel*, const CodeGeneration::IInstruction*> labelToInstructionTable;
+	std::map<const CNode*, const CodeGeneration::IInstruction*> nodeToInstructionTable;
+	std::map<const CodeGeneration::IInstruction*, CNode*> instructionToNodeTable;
 };
