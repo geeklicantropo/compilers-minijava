@@ -1,10 +1,10 @@
 #include "Graph.h"
 
-Node::Node( Graph* g )
+CNode::CNode( CGraph* g )
 {
 	currentGraph = g;
 	nodeKey = g->nodeCount + 1;
-	NodeList* mid = new NodeList( this, 0 );
+	CNodeList* mid = new CNodeList( this, 0 );
 	if ( g->last == 0 )
 	{
 		g->last = mid;
@@ -17,137 +17,137 @@ Node::Node( Graph* g )
 	}
 }
 
-NodeList* Node::cat( NodeList* a, NodeList* b )
+CNodeList* CNode::cat( CNodeList* a, CNodeList* b )
 {
 	if ( a == 0 )
 		return b;
 	else
-		return new NodeList( a->GetNode(), cat( a->GetNext(), b ) );
+		return new CNodeList( a->GetNode(), cat( a->GetNext(), b ) );
 }
 
-Graph* Node::GetGraph() const 
+CGraph* CNode::GetGraph() const 
 {
 	return currentGraph;
 }
 
-NodeList* Node::GetSuccs() const
+CNodeList* CNode::GetSuccs() const
 {
 	return succs;
 }
 
-NodeList* Node::GetPreds() const
+CNodeList* CNode::GetPreds() const
 {
 	return preds;
 }
 
-void Node::SetSuccs( NodeList* _succs )
+void CNode::SetSuccs( CNodeList* _succs )
 {
 	succs = _succs;
 }
 
-void Node::SetPreds( NodeList* _preds )
+void CNode::SetPreds( CNodeList* _preds )
 {
 	preds = _preds;
 }
 
-NodeList* Node::MergeSuccAndPred()
+CNodeList* CNode::MergeSuccAndPred()
 {
 	return cat( GetSuccs(), GetSuccs() );
 }
 
-int Node::InDegree()
+int CNode::InDegree()
 {
 	return preds->Length();
 }
 
-int Node::OutDegree()
+int CNode::OutDegree()
 {
 	return succs->Length();
 }
 
-int Node::Degree()
+int CNode::Degree()
 {
 	return InDegree() + OutDegree();
 }
 
-bool Node::GoesTo( const Node* n ) const
+bool CNode::GoesTo( const CNode* n ) const
 {
 	return currentGraph->InList( n, succs );
 }
 
-bool Node::ComesFrom( const Node* n ) const
+bool CNode::ComesFrom( const CNode* n ) const
 {
 	return currentGraph->InList( n, preds );
 }
 
-bool Node::Achieve( const Node* n )
+bool CNode::Adjacent( const CNode* n )
 {
 	return GoesTo( n ) || ComesFrom( n );
 }
 
-const Node* NodeList::GetNode() const
+const CNode* CNodeList::GetNode() const
 {
 	return node;
 }
 
-NodeList* NodeList::GetNext() const
+CNodeList* CNodeList::GetNext() const
 {
 	return next;
 }
 
-void NodeList::SetNext( NodeList* n )
+void CNodeList::SetNext( CNodeList* n )
 {
 	next = n;
 }
 
-int NodeList::Length()
+int CNodeList::Length()
 {
 	int i = 0;
-	for( const NodeList* p = this; p != 0; p = p->GetNext() )
+	for( const CNodeList* p = this; p != 0; p = p->GetNext() )
 		++i;
 	return i;
 }
 
-Node* Graph::newNode()
+CNode* CGraph::newNode()
 {
-	return new Node( this );
+	return new CNode( this );
 }
 
-bool Graph::check( const Node* n )
+bool CGraph::check( const CNode* n )
 {
 	if ( n->GetGraph() != this )
 		return false;
 	return true;
 }
 
-bool Graph::InList( const Node* n, NodeList* list )
+bool CGraph::InList( const CNode* n, CNodeList* list )
 {
-	for( NodeList* p = list; p != 0; p = list->GetNext() )
+	for( CNodeList* p = list; p != 0; p = list->GetNext() )
 		if ( p->GetNode() == n )
 			return true;
 	return false;
 }
 
-void Graph::AddEdge( Node* from, Node* to )
+void CGraph::AddEdge( CNode* from, CNode* to )
 {
 	assert( check( from ) );
 	assert( check( to ) );
 	if ( from->GoesTo( to ) )
 		return;
-	to->SetPreds( new NodeList( from, to->GetPreds() ) );
-	from->SetSuccs( new NodeList( to, from->GetSuccs() ) );
+	to->SetPreds( new CNodeList( from, to->GetPreds() ) );
+	from->SetSuccs( new CNodeList( to, from->GetSuccs() ) );
 }
 
-NodeList* Graph::remove( const Node* n, NodeList* list )
+CNodeList* CGraph::remove( const CNode* n, CNodeList* list )
 {
 	assert( list == 0 );
 	if ( n == list->GetNode() )
 		return list->GetNext();
 	else
-		return new NodeList( list->GetNode(), remove( n, list->GetNext() ) ); 
+		return new CNodeList( list->GetNode(), remove( n, list->GetNext() ) ); 
 }
 
-void Graph::RemoveEdge( Node* from, Node* to )
+void CGraph::RemoveEdge( CNode* from, CNode* to )
 {
 	from->SetSuccs( remove( to, from->GetSuccs() ) );
 	to->SetPreds( remove( from, to->GetPreds() ) );

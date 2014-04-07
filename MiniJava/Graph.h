@@ -1,63 +1,64 @@
+#pragma once
 #include <assert.h>
 
-class Node;
-class NodeList;
-class Graph;
+class CNode;
+class CNodeList;
+class CGraph;
 
-class Node {
+class CNode {
 public:
-	Node() {}
-	Node( Graph* g );
+	CNode() {}
+	CNode( CGraph* g );
 
-	Graph* GetGraph() const;
-	NodeList* GetSuccs() const;
-	NodeList* GetPreds() const;
-	void SetSuccs( NodeList* _succs );
-	void SetPreds( NodeList* _preds );
+	CGraph* GetGraph() const;
+	CNodeList* GetSuccs() const;
+	CNodeList* GetPreds() const;
+	void SetSuccs( CNodeList* _succs );
+	void SetPreds( CNodeList* _preds );
 
-	NodeList* MergeSuccAndPred();
+	CNodeList* MergeSuccAndPred();
 
 	int InDegree();
 	int OutDegree();
 	int Degree();
 
-	bool GoesTo( const Node* n ) const;
-	bool ComesFrom( const Node* n ) const;
-	bool Achieve( const Node* n );
+	bool GoesTo( const CNode* n ) const;
+	bool ComesFrom( const CNode* n ) const;
+	bool Adjacent( const CNode* n );
 private:
-	Graph* currentGraph;
+	CGraph* currentGraph;
 	int nodeKey;
 	
-	NodeList* succs;
-	NodeList* preds;
+	CNodeList* succs;
+	CNodeList* preds;
 
-	NodeList* cat( NodeList* a, NodeList* b );
+	CNodeList* cat( CNodeList* a, CNodeList* b );
 };
 
-class NodeList {
+class CNodeList {
 public:
-	NodeList( const Node* n,  NodeList* rest ) : node( n ), next ( rest ) {}
-	const Node* GetNode() const;
-	NodeList* GetNext() const;
-	void SetNext( NodeList* n );
+	CNodeList( const CNode* n,  CNodeList* rest ) : node( n ), next ( rest ) {}
+	const CNode* GetNode() const;
+	CNodeList* GetNext() const;
+	void SetNext( CNodeList* n );
 	int Length();
 private:
-	const Node* node;
-	NodeList* next;
+	const CNode* node;
+	CNodeList* next;
 };
 
-class Graph {
+class CGraph {
 public:
 	int nodeCount;
-	NodeList* last;
-	NodeList* nodes;
-	Graph() { nodeCount = 0; }
+	CNodeList* last;
+	CNodeList* nodes;
+	CGraph() { nodeCount = 0; }
 
-	Node* newNode();
-	bool InList( const Node* n, NodeList* list );
-	void AddEdge( Node* from, Node* to );
-	void RemoveEdge( Node* from, Node* to );
+	CNode* newNode();
+	bool InList( const CNode* n, CNodeList* list );
+	void AddEdge( CNode* from, CNode* to );
+	void RemoveEdge( CNode* from, CNode* to );
 private:
-	bool check( const Node* n );
-	NodeList* remove( const Node* n, NodeList* list );
+	bool check( const CNode* n );
+	CNodeList* remove( const CNode* n, CNodeList* list );
 };
