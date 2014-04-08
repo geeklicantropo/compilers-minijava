@@ -25,38 +25,38 @@ string IInstruction::GetAssemblerCode() const
 	return asmCode;
 }
 
-string IInstruction::Format( const Temp::CTempMap* m ) const
+string IInstruction::Format() const
 {
 	const Temp::CTempList* dst = DefinedVars();
 	const Temp::CTempList* src = UsedVars();
     const CTargets* jumps = JumpTargets();
-	const Temp::CLabelList* list = jumps->GetLabels();
+	const Temp::CLabelList* list = jumps ? jumps->GetLabels() : 0;
     string result;
     int length = asmCode.length();
 	int n;
     for( int i = 0; i < length; i++ ) {
-		if( asmCode[i] == '`')
+		if( asmCode[i] == '\'')
 			switch( asmCode[++i] ) {
 			case 's': 
-				n = atoi( (const char*)asmCode[++i] );
-				result.append( m->TempMap( getAt( src, n ) ));
+				n = atoi( (char*)(&asmCode[++i]) );
+				result.append( getAt( src, n )->Name() );
 				break;
 			case 'd':
-				n = atoi( (const char*)asmCode[++i] );
-				result.append( m->TempMap( getAt( dst, n ) ));
+				n = atoi( (char*)(&asmCode[++i]) );
+				result.append( getAt( dst, n )->Name() );
 				break;
 			case 'j': 
-				n = atoi( (const char*)asmCode[++i] );
+				n = atoi( (char*)(&asmCode[++i]) );
 				result.append( getAt(list, n)->Name() );
 				break;
-			case '`': 
-				result.append("`"); 
+			case '\'': 
+				result.append("'"); 
 				break;
 			default:
 				assert( false );
 				printf( "bad Assem format" );
 		   }
-		   else result.append( (const char*) asmCode[i] );
+	else result = result + asmCode[i];
 	}
 
     return result;
@@ -87,7 +87,6 @@ CCodeGenerator::CCodeGenerator( const CFrame* fr, const IRTree::IStatement* tr )
 {
 	head = last = 0;
 	munchStm( tr );
-	reverseList();
 }
 
 Temp::CTempList* CCodeGenerator::munchArgs( const IRTree::CExpList* args )
@@ -211,7 +210,7 @@ void CCodeGenerator::munchStm( const IRTree::CMove* stm )
 		Temp::CTempList* args = munchArgs( call->GetArgs() );
 		string s = "CALL 's0\n";
 		emit( new COper( s, 0, new Temp::CTempList( t, args ) ) );
-		s = "ADD 'd0 <- 'r0 + rv\n";
+		s = "ADD 'd0 <- r0 + rv\n";
 		emit( new COper( s, new Temp::CTempList( temp->GetTemp(), 0 ), 0 ) );
 	} else if( temp != 0 ) {
 		//MOVE(TEMP,e)
@@ -235,7 +234,7 @@ void CCodeGenerator::munchStm( const IRTree::CLabel* stm )
 
 void CCodeGenerator::munchStm( const IRTree::CJump* stm )
 {
-	emit( new CodeGeneration::COper( "JMP 'l0\n", 0, 0, stm->GetTargets() ) );
+	emit( new CodeGeneration::COper( "JMP 'j0\n", 0, 0, stm->GetTargets() ) );
 }
 
 void CCodeGenerator::munchStm( const IRTree::CCJump* stm )
@@ -280,7 +279,7 @@ void CCodeGenerator::munchStm( const IRTree::CCJump* stm )
 		default:
 			assert(false);
     }
-    name += "'s0 'l0\n";
+    name += "'s0 'j0 'j1\n";
     Temp::CLabelList* possibleLabels = new Temp::CLabelList( stm->GetTrueLabel(), 
 		new Temp::CLabelList( stm->GetFalseLabel(), 0) );
 	emit( new CodeGeneration::COper( name, 0, new Temp::CTempList( resultExp, 0 ), possibleLabels ) );
@@ -325,7 +324,7 @@ const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::CMem* exp )
 	}
 	if( constExp != 0 ) {
 		Temp::CTemp* r = new Temp::CTemp();
-		string name = "LOAD 'd0 <- M['r0+" + to_string( constExp->GetValue() ) + "]\n";
+		string name = "LOAD 'd0 <- M[r0+" + to_string( constExp->GetValue() ) + "]\n";
 		emit( new CodeGeneration::COper( name, new Temp::CTempList(r, 0),  0) );
 		return r;
 	}
@@ -414,7 +413,7 @@ const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::CBinOp* exp )
 const Temp::CTemp* CCodeGenerator::munchExp( const IRTree::CConst* exp ) 
 {
 	Temp::CTemp* r = new Temp::CTemp();
-	string name = "ADDI 'd0 <- 'r0+" + to_string( exp->GetValue() ) + "\n";
+	string name = "ADDI 'd0 <- r0+" + to_string( exp->GetValue() ) + "\n";
 	emit( new CodeGeneration::COper( name, new Temp::CTempList( r, 0 ), 0) );
 	return r;
 }

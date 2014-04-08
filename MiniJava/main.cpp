@@ -60,7 +60,7 @@ int main()
 			list = list->GetNext();
 			CodeGeneration::IInstructionList* curr = cg.GetHead();
 			while( curr != 0 ) {
-				assemout << curr->GetInstr()->GetAssemblerCode();
+				assemout << curr->GetInstr()->Format();
 				curr = curr->GetNext();
 			}
 		}
