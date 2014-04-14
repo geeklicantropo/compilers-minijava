@@ -1,6 +1,7 @@
 #pragma once
 #include "Symbols.h"
 #include <string>
+#include <set>
 
 using namespace std;
 namespace Temp {
@@ -11,7 +12,7 @@ namespace Temp {
 		explicit CLabel( string& s );
 		explicit CLabel( const CSymbol* s );
 
-		const string& Name() const;
+		const string Name() const;
 	private:
 		static int nextUniqueId;
 		string name;
@@ -36,6 +37,7 @@ namespace Temp {
 
 		const string& Name() const;
 		string getName() const { return name; }
+		bool operator< ( const CTemp& other ) const { return getName() < other.getName(); }
 	private:
 		static int nextUniqueId;
 		string name;
@@ -60,5 +62,4 @@ namespace Temp {
 			return temp->getName();
 		}
 	};
-
 };

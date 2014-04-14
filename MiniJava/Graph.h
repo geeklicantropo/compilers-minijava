@@ -42,6 +42,7 @@ public:
 	CNodeList* GetNext() const;
 	void SetNext( CNodeList* n );
 	int Length();
+	void Reverse();
 private:
 	const CNode* node;
 	CNodeList* next;

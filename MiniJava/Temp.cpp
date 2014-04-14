@@ -18,7 +18,7 @@ CLabel::CLabel( const CSymbol* s )
 
 CLabel::CLabel( string& s ) : name( s ) {}
 
-const string& CLabel::Name() const
+const string CLabel::Name() const
 { 
 	return name; 
 }
