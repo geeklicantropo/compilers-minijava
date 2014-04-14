@@ -108,6 +108,20 @@ int CNodeList::Length()
 	return i;
 }
 
+void CNodeList::Reverse() 
+{
+	CNodeList* newNext = 0;
+	CNodeList* oldNext = 0;
+	int len = Length();
+	CNodeList* currentNode = this;
+	for( int i = 0; i < len; i++ ) {
+		oldNext = currentNode->GetNext();
+		currentNode->SetNext(newNext);
+		newNext = currentNode;
+		currentNode = oldNext;
+	} 
+}
+
 CNode* CGraph::newNode()
 {
 	return new CNode( this );
