@@ -82,12 +82,22 @@ void IInstructionList::SetNext( IInstructionList* n )
 	next = n;
 }
 
-CCodeGenerator::CCodeGenerator( const CFrame* fr, const IRTree::IStatement* tr ) :
-	tree( tr ), frame( fr )
+CCodeGenerator::CCodeGenerator( const CFrame* fr, const IRTree::CStmList* _stmList ) :
+	stmList( _stmList ), frame( fr )
 {
 	head = last = 0;
-	munchStm( tr );
+	startGeneration();
 }
+
+void CCodeGenerator::startGeneration()
+{
+	const IRTree::CStmList* curr = stmList;
+	while( curr != 0 ) {
+		munchStm( curr->GetStm() );
+		curr = curr->GetNext();
+	}
+}
+
 
 Temp::CTempList* CCodeGenerator::munchArgs( const IRTree::CExpList* args )
 {
