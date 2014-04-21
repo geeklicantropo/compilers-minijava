@@ -81,12 +81,12 @@ namespace CodeGeneration {
 
 	class CCodeGenerator {
 	public:
-		CCodeGenerator( const CFrame* fr, const IRTree::IStatement* tr );
+		CCodeGenerator( const CFrame* fr, const IRTree::CStmList* _stmList );
 		IInstructionList* GetHead() const;
 		
 	private:
 		const CFrame* frame;
-		const IRTree::IStatement* tree;
+		const IRTree::CStmList* stmList;
 		IInstructionList* head;
 		IInstructionList* last;
 
@@ -109,6 +109,8 @@ namespace CodeGeneration {
 		void emit( IInstruction* instr );
 
 		Temp::CTempList* munchArgs( const IRTree::CExpList* args );
+
+		void startGeneration();
 
 		void reverseList();
 

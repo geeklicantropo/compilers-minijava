@@ -77,6 +77,7 @@
     <ClCompile Include="FlowGraph.cpp" />
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="InterferenceGraph.cpp" />
     <ClCompile Include="Interpreter.cpp" />
     <ClCompile Include="IRPrinter.cpp" />
     <ClCompile Include="IRTranslationTree.cpp" />
@@ -117,6 +118,7 @@
     <ClInclude Include="FlowGraph.h" />
     <ClInclude Include="Frame.h" />
     <ClInclude Include="Graph.h" />
+    <ClInclude Include="InterferenceGraph.h" />
     <ClInclude Include="Interpreter.h" />
     <ClInclude Include="IRPrinter.h" />
     <ClInclude Include="IRTranslationTree.h" />

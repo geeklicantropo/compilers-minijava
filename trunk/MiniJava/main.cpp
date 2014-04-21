@@ -55,15 +55,15 @@ int main()
 		TraceSchedule ts = TraceSchedule( bb );
 		IRTree::CStmList* list = ts.stms;
 		assemout << cf->GetFrame()->GetName()->Name() << endl << endl;
-		while( list != 0 ) {
-			CodeGeneration::CCodeGenerator cg = CodeGeneration::CCodeGenerator( cf->GetFrame(), list->GetStm() );
-			list = list->GetNext();
-			CodeGeneration::IInstructionList* curr = cg.GetHead();
-			while( curr != 0 ) {
-				assemout << curr->GetInstr()->Format();
-				curr = curr->GetNext();
-			}
+		
+		CodeGeneration::CCodeGenerator cg = CodeGeneration::CCodeGenerator( cf->GetFrame(), ts.stms );	
+		CodeGeneration::IInstructionList* instrList  = cg.GetHead();
+
+		while( instrList != 0 ) {
+			assemout << instrList->GetInstr()->Format();
+			instrList  = instrList ->GetNext();
 		}
+
 		assemout << endl;
 		
 		//tmpStm->Accept( new IRTreeGraphVizPrinter( out, labels ) );
