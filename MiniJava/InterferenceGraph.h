@@ -1,10 +1,11 @@
 #pragma once
 #include <assert.h>
 #include "Temp.h"
+#include "Graph.h"
+#include "FlowGraph.h"
 #include <vector>
 
 class CInterferenceGraphEdge;
-class CInterferenceGraphEdgeType;
 class CInterferenceGraphNode;
 class CInterferenceGraph;
 
@@ -13,34 +14,28 @@ class CInterferenceGraphEdge
 private:
 	CInterferenceGraphNode *first;
 	CInterferenceGraphNode *second;
-	CInterferenceGraphEdgeType *type;
+	bool isMove;
 public:
-	CInterferenceGraphEdge (CInterferenceGraphNode *f, CInterferenceGraphNode *s, CInterferenceGraphEdgeType *t);
+	CInterferenceGraphEdge (CInterferenceGraphNode *f, CInterferenceGraphNode *s, bool isMove_);
 	CInterferenceGraphNode* getFirst();
 	CInterferenceGraphNode* getSecond();
+	bool IsMove();
 
-};
-
-class CInterferenceGraphEdgeType
-{
-//здесь предполагается хранить тип инструкции, которой соответствует ребро. енамчик
-private:
-	
-public:
 };
 
 class CInterferenceGraphNode
 {
 private:
 	int color; //для раскрашивания графа
-	Temp::CTemp *temp;
+	const Temp::CTemp *temp;
 	vector<CInterferenceGraphEdge*> edgeArray;
 public:
-	CInterferenceGraphNode(Temp::CTemp *t);
-	void AddEdge(CInterferenceGraphNode *n, CInterferenceGraphEdgeType *t);
+	CInterferenceGraphNode(const Temp::CTemp *t);
+	void AddEdge(CInterferenceGraphNode *n, bool _isMove);
 	void DeleteEdge(CInterferenceGraphNode *n);
 	void DeleteAllEdges();
 	bool ExistEdge(CInterferenceGraphNode *n);
+	const Temp::CTemp* GetTemp();
 };
 
 class CInterferenceGraph
@@ -51,7 +46,8 @@ private:
 	//vector<CInterferenceGraphEdge> edgeArray;
 
 public:
-	CInterferenceGraph();
+	CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flowGraph);
+	void AddNode(const Temp::CTemp *t);
 	void AddNode(CInterferenceGraphNode *n);
 	void AddEdge(CInterferenceGraphEdge *e);
 
@@ -59,4 +55,6 @@ public:
 	void DeleteNode(CInterferenceGraphNode *n);
 
 	bool existEdge(CInterferenceGraphEdge *e);
+
+	CInterferenceGraphNode* getNode(const Temp::CTemp *t);
 };
