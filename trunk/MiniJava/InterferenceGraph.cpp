@@ -8,36 +8,59 @@ CInterferenceGraphNode :: CInterferenceGraphNode(const Temp::CTemp *t)
 	color = -1;
 }
 
-void CInterferenceGraphNode::AddEdge(CInterferenceGraphNode *n, bool _isMove)
+void CInterferenceGraphNode::AddEdge(CInterferenceGraphNode *n, bool isMove)
 {
+	/*
 	for(int i = 0; i < edgeArray.size(); i++)
-		if (edgeArray[i]->getSecond() == n && edgeArray[i]->IsMove() == _isMove) return;
+		if (edgeArray[i]->getSecond() == n && edgeArray[i]->IsMove() == isMove) return;
 	
-	CInterferenceGraphEdge *edge = new CInterferenceGraphEdge(this, n, _isMove);
+	CInterferenceGraphEdge *edge = new CInterferenceGraphEdge(this, n, isMove);
 	edgeArray.push_back(edge);
+	*/
+
+	if ( edgeMap.find(n) != edgeMap.end() && edgeMap.find(n)->second->IsMove() == isMove ) return;
+	else edgeMap.insert ( make_pair(n, new CInterferenceGraphEdge(this, n, isMove) ) );
+
 }
 
-bool CInterferenceGraphNode::ExistEdge(CInterferenceGraphNode *n)
+bool CInterferenceGraphNode::ExistEdge(CInterferenceGraphNode *n, bool isMove)
 {
+	/*
 	for(int i = 0; i < edgeArray.size(); i++)
 		if (edgeArray[i]->getSecond() == n) return true;
 	return false;
+	*/
+
+	return ( edgeMap.find(n) != edgeMap.end() && edgeMap.find(n)->second->IsMove() == isMove );
 }
 
 void CInterferenceGraphNode::DeleteAllEdges()
 {
-	for(int i = 0; i < edgeArray.size(); i++)
-		edgeArray[i]->getSecond()->DeleteEdge(this);
+	for ( auto e : edgeMap )
+	{
+		e.second->getSecond()->DeleteEdge(this, false);
+		e.second->getSecond()->DeleteEdge(this, true);
+	}
+	
+/*	for(int i = 0; i < edgeArray.size(); i++)
+	{
+		edgeArray[i]->getSecond()->DeleteEdge(this, false);
+		edgeArray[i]->getSecond()->DeleteEdge(this, true);
+	}
+*/
 }
 
-void CInterferenceGraphNode::DeleteEdge(CInterferenceGraphNode *n)
+void CInterferenceGraphNode::DeleteEdge(CInterferenceGraphNode *n, bool isMove)
 {
-	for(int i = 0; i < edgeArray.size(); i++)
-		if (edgeArray[i]->getSecond() == n) 
+/*	for(int i = 0; i < edgeArray.size(); i++)
+		if (edgeArray[i]->getSecond() == n && edgeArray[i]->IsMove() == isMove) 
 		{
 			edgeArray.erase( edgeArray.begin() + i );
 			return;
 		}
+*/
+	if ( edgeMap.find(n) != edgeMap.end() && edgeMap.find(n)->second->IsMove() == isMove )
+		edgeMap.erase( edgeMap.find(n) );
 }
 
 const Temp::CTemp* CInterferenceGraphNode::GetTemp()
@@ -69,15 +92,8 @@ bool CInterferenceGraphEdge::IsMove()
 
 void CInterferenceGraph::AddNode(const Temp::CTemp *t)
 {
-	for (int i = 0; i < nodeArray.size(); i++)
-		if ( nodeArray[i]->GetTemp() == t) 
-			return;
-	AddNode ( new CInterferenceGraphNode(t) );
-}
-
-void CInterferenceGraph::AddNode(CInterferenceGraphNode *n)
-{
-	nodeArray.push_back(n);
+	if ( nodeMap.find( t ) == nodeMap.end() ) 
+		nodeMap.insert( pair<const Temp::CTemp*, CInterferenceGraphNode*> (t , new CInterferenceGraphNode(t)) );
 }
 
 void CInterferenceGraph::AddEdge(CInterferenceGraphEdge *e)
@@ -87,37 +103,37 @@ void CInterferenceGraph::AddEdge(CInterferenceGraphEdge *e)
 
 void CInterferenceGraph::DeleteEdge(CInterferenceGraphEdge *e)
 {
-	e->getFirst()->DeleteEdge(e->getSecond());
-	e->getSecond()->DeleteEdge(e->getFirst());
+	e->getFirst()->DeleteEdge(e->getSecond(), e->IsMove() );
+	e->getSecond()->DeleteEdge(e->getFirst(), e->IsMove() );
 }
 
 void CInterferenceGraph::DeleteNode(CInterferenceGraphNode *n)
 {
 	n->DeleteAllEdges();
-	for(int i = 0; i < nodeArray.size(); i++)
-		if (nodeArray[i] == n) 
-		{
-			nodeArray.erase( nodeArray.begin() + i );
-			return;
-		}
+
+	if ( nodeMap.find( n->GetTemp() ) != nodeMap.end() )
+		nodeMap.erase( nodeMap.find( n->GetTemp() ) );
+
 }
 
 bool CInterferenceGraph::existEdge(CInterferenceGraphEdge *e)
 {
-	return e->getFirst()->ExistEdge(e->getSecond());
+	return e->getFirst()->ExistEdge(e->getSecond(), e->IsMove() );
 }
 
 CInterferenceGraphNode* CInterferenceGraph::getNode(const Temp::CTemp *t)
 {
-	for (int i = 0; i < nodeArray.size(); i++)
-		if ( nodeArray[i]->GetTemp() == t) 
-			return nodeArray[i];
-	return NULL;
+	if ( nodeMap.find( t ) != nodeMap.end() ) 
+		return nodeMap[t];
+	else
+		return NULL;
+
 }
 
 CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flowGraph)
 { 
-	nodeArray.resize(0);
+	nodeMap.clear();
+
 	while (flowNodes != NULL) //добавление всех вершин
 	{	
 		std::set<const Temp::CTemp*> fGraph = flowGraph->GetUseSet(flowNodes->GetNode());
@@ -157,6 +173,5 @@ CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flo
 		}
 		flowNodes = flowNodes->GetNext();
 	}
-
 
 } 
