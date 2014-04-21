@@ -50,16 +50,20 @@ private:
 
 class CGraph {
 public:
-	int nodeCount;
-	CNodeList* last;
-	CNodeList* nodes;
 	CGraph() { nodeCount = 0; }
-
 	CNode* newNode();
 	bool InList( const CNode* n, CNodeList* list );
 	void AddEdge( CNode* from, CNode* to );
 	void RemoveEdge( CNode* from, CNode* to );
+	CNodeList* GetLast();
+	void SetLast( CNodeList* last );
+	void SetNodes( CNodeList* nodes );
+	CNodeList* GetNodes();
+	int GetNodeCount();
 private:
+	int nodeCount;
+	CNodeList* last;
+	CNodeList* nodes;
 	bool check( const CNode* n );
 	CNodeList* remove( const CNode* n, CNodeList* list );
 };
