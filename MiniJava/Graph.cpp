@@ -3,17 +3,17 @@
 CNode::CNode( CGraph* g )
 {
 	currentGraph = g;
-	nodeKey = g->nodeCount + 1;
+	nodeKey = g->GetNodeCount() + 1;
 	CNodeList* mid = new CNodeList( this, 0 );
-	if ( g->last == 0 )
+	if ( g->GetLast() == 0 )
 	{
-		g->last = mid;
-		g->nodes = g->last;
+		g->SetLast( mid );
+		g->SetNodes( g->GetLast() );
 	}
 	else
 	{
-		g->last->SetNext( mid );
-		g->last = g->last->GetNext();
+		g->GetLast()->SetNext( mid );
+		g->SetLast( g->GetLast()->GetNext() );
 	}
 }
 
@@ -120,6 +120,31 @@ void CNodeList::Reverse()
 		newNext = currentNode;
 		currentNode = oldNext;
 	} 
+}
+
+void CGraph::SetLast( CNodeList* _last )
+{
+	last = _last;
+}
+
+void CGraph::SetNodes( CNodeList* _nodes )
+{
+	nodes = _nodes;
+}
+
+CNodeList* CGraph::GetLast()
+{
+	return last;
+}
+
+CNodeList* CGraph::GetNodes()
+{
+	return nodes;
+}
+
+int CGraph::GetNodeCount()
+{
+	return nodeCount;
 }
 
 CNode* CGraph::newNode()

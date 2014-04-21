@@ -72,7 +72,7 @@ AssemFlowGraph::AssemFlowGraph( CodeGeneration::IInstructionList* instructions )
 	}
 	// Граф построен.
 	
-	CNodeList* revNodeList = this->nodes;
+	CNodeList* revNodeList = this->GetNodes();
 	revNodeList->Reverse();
 	int i = 0;
 	for( CNodeList* n = revNodeList; n != 0; n = n->GetNext() ) {
