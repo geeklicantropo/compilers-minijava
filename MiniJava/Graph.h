@@ -50,7 +50,7 @@ private:
 
 class CGraph {
 public:
-	CGraph() { nodeCount = 0; }
+	CGraph();
 	CNode* newNode();
 	bool InList( const CNode* n, CNodeList* list );
 	void AddEdge( CNode* from, CNode* to );

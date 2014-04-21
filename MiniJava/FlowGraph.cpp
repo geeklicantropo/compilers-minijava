@@ -1,24 +1,24 @@
 #include "FlowGraph.h"
 
 
-const std::set<Temp::CTemp> AssemFlowGraph::GetDefSet( const CNode* node )
+const std::set<const Temp::CTemp*> AssemFlowGraph::GetDefSet( const CNode* node )
 {
 	const Temp::CTempList* varList = nodeToInstructionTable[node]->DefinedVars();
-	std::set<Temp::CTemp> result;
+	std::set<const Temp::CTemp*> result;
 	for( const Temp::CTempList* p = varList; p != 0; p = p->Next() ) {
 		const Temp::CTemp* currentVar = p->Temp();
-		result.insert( *currentVar );
+		result.insert( currentVar );
 	}
 	return result;
 }
 
-const std::set<Temp::CTemp> AssemFlowGraph::GetUseSet( const CNode* node )
+const std::set<const Temp::CTemp*> AssemFlowGraph::GetUseSet( const CNode* node )
 {
 	const Temp::CTempList* varList = nodeToInstructionTable[node]->UsedVars();
-	std::set<Temp::CTemp> result;
+	std::set<const Temp::CTemp*> result;
 	for( const Temp::CTempList* p = varList; p != 0; p = p->Next() ) {
 		const Temp::CTemp* currentVar = p->Temp();
-		result.insert( *currentVar );
+		result.insert( currentVar );
 	}
 	return result;
 }
@@ -61,13 +61,16 @@ AssemFlowGraph::AssemFlowGraph( CodeGeneration::IInstructionList* instructions )
 	for( const CodeGeneration::IInstructionList* p = instructions; p != 0; p = p->GetNext() ) {
 		currentInstr = p->GetInstr();
 		CNode* currentNode = instructionToNodeTable[currentInstr];
-		const Temp::CLabelList* labelsOut = currentInstr->JumpTargets()->GetLabels();
-		const Temp::CLabel* currentLabel = 0;
-		for( const Temp::CLabelList* l = labelsOut; l != 0; l = labelsOut->Next() ) {
-			currentLabel = l->Label();
-			const CodeGeneration::IInstruction* instrOut = labelToInstructionTable[currentLabel];
-			CNode* nodeOut = instructionToNodeTable[instrOut];
-			AddEdge( currentNode, nodeOut );
+		const CodeGeneration::CTargets* jt = currentInstr->JumpTargets();
+		if( jt != 0 ) {
+			const Temp::CLabelList* labelsOut = jt->GetLabels();
+			const Temp::CLabel* currentLabel = 0;
+			for( const Temp::CLabelList* l = labelsOut; l != 0; l = labelsOut->Next() ) {
+				currentLabel = l->Label();
+				const CodeGeneration::IInstruction* instrOut = labelToInstructionTable[currentLabel];
+				CNode* nodeOut = instructionToNodeTable[instrOut];
+				AddEdge( currentNode, nodeOut );
+			}
 		}
 	}
 	// Граф построен.
@@ -86,14 +89,14 @@ AssemFlowGraph::AssemFlowGraph( CodeGeneration::IInstructionList* instructions )
 			CNodeList* predList = currentNode->GetPreds();
 			for( CNodeList* pp = predList; pp != 0; pp = pp->GetNext() ) {
 				const CNode* currentPred = pp->GetNode();
-				for( std::set<Temp::CTemp>::iterator it = liveIn[currentNode].begin(); it != liveIn[currentNode].end(); it++ ) {
+				for( std::set<const Temp::CTemp*>::iterator it = liveIn[currentNode].begin(); it != liveIn[currentNode].end(); it++ ) {
 					if( liveOut[currentPred].insert( *it ).second ) {
 						isAnythingChanged = true;
 					}
 				}
 			}
-			for( std::set<Temp::CTemp>::iterator it = liveOut[currentNode].begin(); it != liveOut[currentNode].end(); it++ ) {
-				std::set<Temp::CTemp> currentDef = GetDefSet( currentNode );
+			for( std::set<const Temp::CTemp*>::iterator it = liveOut[currentNode].begin(); it != liveOut[currentNode].end(); it++ ) {
+				std::set<const Temp::CTemp*> currentDef = GetDefSet( currentNode );
 				if( currentDef.find( *it ) == currentDef.end() ) {
 					if( liveIn[currentNode].insert( *it ).second ) {
 						isAnythingChanged = true;
@@ -102,5 +105,19 @@ AssemFlowGraph::AssemFlowGraph( CodeGeneration::IInstructionList* instructions )
 			}
 		}
 	}
-		
+}
+
+const CodeGeneration::IInstruction* AssemFlowGraph::GetInstruction( const CNode* node )
+{
+	return nodeToInstructionTable[node];
+}
+
+std::set<const Temp::CTemp*> AssemFlowGraph::GetLiveIn( const CNode* node )
+{
+	return liveIn[node];
+}
+
+std::set<const Temp::CTemp*> AssemFlowGraph::GetLiveOut( const CNode* node )
+{
+	return liveOut[node];
 }

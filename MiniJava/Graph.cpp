@@ -4,6 +4,9 @@ CNode::CNode( CGraph* g )
 {
 	currentGraph = g;
 	nodeKey = g->GetNodeCount() + 1;
+	succs = 0;
+	preds = 0;
+
 	CNodeList* mid = new CNodeList( this, 0 );
 	if ( g->GetLast() == 0 )
 	{
@@ -120,6 +123,13 @@ void CNodeList::Reverse()
 		newNext = currentNode;
 		currentNode = oldNext;
 	} 
+}
+
+CGraph::CGraph() 
+{
+	nodeCount = 0;
+	last = 0;
+	nodes = 0;
 }
 
 void CGraph::SetLast( CNodeList* _last )
