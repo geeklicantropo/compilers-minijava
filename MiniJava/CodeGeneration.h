@@ -57,10 +57,12 @@ namespace CodeGeneration {
 
 	class CMove : public IInstruction {
 	public:
-		CMove(string _assem, const Temp::CTemp* _dst, const Temp::CTemp* _src): dst( _dst ), src( _src ) { asmCode = _assem; }
+		CMove( string _assem, const Temp::CTemp* _dst, const Temp::CTemp* _src ): dst( _dst ), src( _src ) { asmCode = _assem; }
 		virtual const Temp::CTempList* UsedVars() const { return new Temp::CTempList(src, 0); }
 		virtual const Temp::CTempList* DefinedVars() const { return new Temp::CTempList(dst, 0); }
 		virtual const CTargets* JumpTargets() const { return 0; }
+		const Temp::CTemp* GetDst() const;
+		const Temp::CTemp* GetSrc() const;
 	private:
 		const Temp::CTemp* dst;
 		const Temp::CTemp* src;

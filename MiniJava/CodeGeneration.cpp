@@ -456,3 +456,13 @@ IInstructionList* CCodeGenerator::GetHead() const
 {
 	return head;
 }
+
+const Temp::CTemp* CMove::GetDst() const
+{
+	return dst;
+}
+
+const Temp::CTemp* CMove::GetSrc() const
+{
+	return src;
+}
