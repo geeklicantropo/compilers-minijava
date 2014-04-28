@@ -9,6 +9,7 @@
 #include "Canon.h"
 #include "TraceSchedule.h"
 #include "CodeGeneration.h"
+#include "FlowGraph.h"
 
 extern int yylex( void );
 extern int yyparse( const IProgram*&);
@@ -58,6 +59,8 @@ int main()
 		
 		CodeGeneration::CCodeGenerator cg = CodeGeneration::CCodeGenerator( cf->GetFrame(), ts.stms );	
 		CodeGeneration::IInstructionList* instrList  = cg.GetHead();
+
+		AssemFlowGraph afg( instrList );
 
 		while( instrList != 0 ) {
 			assemout << instrList->GetInstr()->Format();
