@@ -45,14 +45,14 @@ namespace CodeGeneration {
 
 	class CLabel : public IInstruction {
 	public:
-		CLabel( string _assem, const Temp::CLabel* _lable ) { asmCode = _assem; lable = _lable; }
+		CLabel( string _assem, const Temp::CLabel* _label ) { asmCode = _assem; label = _label; }
 		virtual const Temp::CTempList* UsedVars() const { return 0; }
 		virtual const Temp::CTempList* DefinedVars() const { return 0; }
 		virtual const CTargets* JumpTargets() const { return 0; }
 
-		const Temp::CLabel* GetLable() const { return lable; }
+		const Temp::CLabel* GetLabel() const { return label; }
 	private:
-		const Temp::CLabel* lable;
+		const Temp::CLabel* label;
 	};
 
 	class CMove : public IInstruction {
