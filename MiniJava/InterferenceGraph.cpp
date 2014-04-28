@@ -151,15 +151,22 @@ CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flo
 { 
 	nodeMap.clear();
 
-	while (flowNodes != NULL) //добавление всех вершин
-	{	
-		std::set<const Temp::CTemp*> fGraph = flowGraph->GetUseSet(flowNodes->GetNode());
+	CNodeList* flowNodes1 = flowNodes;
 
-		for ( auto temp : fGraph )
+	while (flowNodes != NULL)
+	{
+		for ( auto temp : flowGraph->GetUseSet(flowNodes->GetNode()) )
 		{
 			AddNode(temp);
 		}
+		flowNodes = flowNodes->GetNext();
+	}
 
+	flowNodes = flowNodes1;
+
+	while (flowNodes != NULL) //добавление всех вершин
+	{	
+		
 		if ( flowGraph->IsMove(flowNodes->GetNode()) )
 		{
 			const Temp::CTemp* dst = ( dynamic_cast <const CodeGeneration::CMove*> ( flowGraph->GetInstruction( flowNodes->GetNode() ) ) ) -> GetDst();
