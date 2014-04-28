@@ -123,17 +123,6 @@ CNodeList* CNodeList::Reverse()
 		curr = next;
 	}
 	return prev;
-	//head = prev;
-	/*CNodeList* newNext = 0;
-	CNodeList* oldNext = 0;
-	int len = Length();
-	CNodeList* currentNode = this;
-	for( int i = 0; i < len; i++ ) {
-		oldNext = currentNode->GetNext();
-		currentNode->SetNext(newNext);
-		newNext = currentNode;
-		currentNode = oldNext;
-	} */
 }
 
 CGraph::CGraph() 

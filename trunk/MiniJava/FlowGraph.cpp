@@ -77,6 +77,7 @@ AssemFlowGraph::AssemFlowGraph( CodeGeneration::IInstructionList* instructions )
 	
 	CNodeList* nodeList = this->GetNodes();
 	CNodeList* revNodeList = nodeList->Reverse();
+	SetNodes(revNodeList);
 	int i = 0;
 	for( CNodeList* n = revNodeList; n != 0; n = n->GetNext() ) {
 		liveIn[n->GetNode()] = this->GetUseSet( n->GetNode() );
@@ -105,6 +106,8 @@ AssemFlowGraph::AssemFlowGraph( CodeGeneration::IInstructionList* instructions )
 			}
 		}
 	}
+	nodeList = revNodeList->Reverse();
+	SetNodes(nodeList);
 }
 
 const CodeGeneration::IInstruction* AssemFlowGraph::GetInstruction( const CNode* node )
