@@ -28,7 +28,9 @@ int main()
 	progr->Accept( new Translator::CTranslator( &st, &cf ) );
 	ofstream out( "output.txt" );
 	ofstream assemout( "assem.txt" );
+	int i = 0;
 	while( cf != 0 ) {
+		++i;
 		out << cf->GetFrame()->GetName()->Name() << endl;
 		cout << cf->GetFrame()->GetName()->Name() << endl;
 		
@@ -64,7 +66,7 @@ int main()
 		AssemFlowGraph afg( instrList );
 
 		CInterferenceGraph* inteferenceGraph = new CInterferenceGraph( afg.GetNodes(), &afg );
-		inteferenceGraph->WriteGraph("interference.txt");
+		inteferenceGraph->WriteGraph("interference" + to_string( i )  + ".txt");
 
 		while( instrList != 0 ) {
 			assemout << instrList->GetInstr()->Format();
