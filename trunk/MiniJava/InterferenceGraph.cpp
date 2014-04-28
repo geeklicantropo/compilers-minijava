@@ -172,8 +172,11 @@ CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flo
 			const Temp::CTemp* dst = ( dynamic_cast <const CodeGeneration::CMove*> ( flowGraph->GetInstruction( flowNodes->GetNode() ) ) ) -> GetDst();
 			const Temp::CTemp* src = ( dynamic_cast <const CodeGeneration::CMove*> ( flowGraph->GetInstruction( flowNodes->GetNode() ) ) ) -> GetSrc();
 			
-			getNode( dst )->AddEdge( getNode( src ), true );
-			getNode( src )->AddEdge( getNode( dst ), true );
+			if (src != dst)
+			{
+				getNode( dst )->AddEdge( getNode( src ), true );
+				getNode( src )->AddEdge( getNode( dst ), true );
+			}
 
 			for ( auto to : flowGraph->GetLiveOut( flowNodes->GetNode() ) )
 			{
@@ -190,8 +193,11 @@ CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flo
 			{
 				for ( auto to : flowGraph->GetLiveOut( flowNodes->GetNode() ) )
 				{
-					getNode( from )->AddEdge( getNode( to ), false );
-					getNode( to )->AddEdge( getNode( from ), false );
+					if (to != from)
+					{
+						getNode( from )->AddEdge( getNode( to ), false );
+						getNode( to )->AddEdge( getNode( from ), false );
+					}
 				}
 			}
 		}
