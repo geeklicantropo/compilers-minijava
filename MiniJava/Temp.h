@@ -38,9 +38,11 @@ namespace Temp {
 		const string& Name() const;
 		string getName() const { return name; }
 		bool operator< ( const CTemp& other ) const { return getName() < other.getName(); }
+		bool IsDefaultName() const { return isDefaultName; }
 	private:
 		static int nextUniqueId;
 		string name;
+		bool isDefaultName;
 	};
 
 	class CTempList
