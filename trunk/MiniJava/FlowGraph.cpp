@@ -41,7 +41,7 @@ AssemFlowGraph::AssemFlowGraph( CodeGeneration::IInstructionList* instructions )
 		currentInstr = p->GetInstr();
 		const CodeGeneration::CLabel* label = dynamic_cast<const CodeGeneration::CLabel*>( currentInstr );
 		if( label != 0 ) {
-			labelToInstructionTable.insert( std::pair<const Temp::CLabel*, const CodeGeneration::IInstruction*>( label->GetLable(), currentInstr ) );
+			labelToInstructionTable.insert( std::pair<const Temp::CLabel*, const CodeGeneration::IInstruction*>( label->GetLabel(), currentInstr ) );
 		}
 	}
 	CNode* prevNode = 0;
