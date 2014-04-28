@@ -216,7 +216,10 @@ void CInterferenceGraph::WriteGraph(string path)
 	{
 		for ( auto e : n.second->GetEdgeMap() )
 		{
-			out << n.second->GetId() << "->" << e.second->getSecond()->GetId() << endl;
+			out << n.second->GetId() << "->" << e.second->getSecond()->GetId();
+			if ( e.second->IsMove() ) 
+				out << " [style=dotted]"; 
+			out << endl;
 		}
 	}
 
