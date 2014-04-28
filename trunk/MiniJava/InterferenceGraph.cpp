@@ -163,7 +163,16 @@ CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flo
 	}
 
 	flowNodes = flowNodes1;
+	while (flowNodes != NULL)
+	{
+		for ( auto temp : flowGraph->GetDefSet(flowNodes->GetNode()) )
+		{
+			AddNode(temp);
+		}
+		flowNodes = flowNodes->GetNext();
+	}
 
+	flowNodes = flowNodes1;
 	while (flowNodes != NULL) //добавление всех вершин
 	{	
 		
@@ -180,7 +189,7 @@ CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flo
 
 			for ( auto to : flowGraph->GetLiveOut( flowNodes->GetNode() ) )
 			{
-				if (to != src)
+				if (to != src && to != dst)
 				{
 					getNode( dst )->AddEdge( getNode( to ), false );
 					getNode( to )->AddEdge( getNode( dst ), false );
