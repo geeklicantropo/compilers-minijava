@@ -10,6 +10,7 @@
 #include "TraceSchedule.h"
 #include "CodeGeneration.h"
 #include "FlowGraph.h"
+#include "InterferenceGraph.h"
 
 extern int yylex( void );
 extern int yyparse( const IProgram*&);
@@ -62,6 +63,9 @@ int main()
 
 		AssemFlowGraph afg( instrList );
 
+		CInterferenceGraph* inteferenceGraph = new CInterferenceGraph( afg.GetNodes(), &afg );
+		inteferenceGraph->WriteGraph("interference.txt");
+
 		while( instrList != 0 ) {
 			assemout << instrList->GetInstr()->Format();
 			instrList  = instrList ->GetNext();
@@ -80,5 +84,7 @@ int main()
 		cout << endl << endl;
 		cf = cf->GetNext();
 	}
+
+
 	return 0;
 }
