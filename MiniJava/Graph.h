@@ -42,7 +42,7 @@ public:
 	CNodeList* GetNext() const;
 	void SetNext( CNodeList* n );
 	int Length();
-	void Reverse();
+	CNodeList* Reverse();
 private:
 	const CNode* node;
 	CNodeList* next;
@@ -55,11 +55,15 @@ public:
 	bool InList( const CNode* n, CNodeList* list );
 	void AddEdge( CNode* from, CNode* to );
 	void RemoveEdge( CNode* from, CNode* to );
+
 	CNodeList* GetLast();
 	void SetLast( CNodeList* last );
-	void SetNodes( CNodeList* nodes );
+
 	CNodeList* GetNodes();
+	void SetNodes( CNodeList* nodes );
+	
 	int GetNodeCount();
+	void IncNodeCount();
 private:
 	int nodeCount;
 	CNodeList* last;

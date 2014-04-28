@@ -65,7 +65,7 @@ AssemFlowGraph::AssemFlowGraph( CodeGeneration::IInstructionList* instructions )
 		if( jt != 0 ) {
 			const Temp::CLabelList* labelsOut = jt->GetLabels();
 			const Temp::CLabel* currentLabel = 0;
-			for( const Temp::CLabelList* l = labelsOut; l != 0; l = labelsOut->Next() ) {
+			for( const Temp::CLabelList* l = labelsOut; l != 0; l = l->Next() ) {
 				currentLabel = l->Label();
 				const CodeGeneration::IInstruction* instrOut = labelToInstructionTable[currentLabel];
 				CNode* nodeOut = instructionToNodeTable[instrOut];
@@ -75,8 +75,8 @@ AssemFlowGraph::AssemFlowGraph( CodeGeneration::IInstructionList* instructions )
 	}
 	// Граф построен.
 	
-	CNodeList* revNodeList = this->GetNodes();
-	revNodeList->Reverse();
+	CNodeList* nodeList = this->GetNodes();
+	CNodeList* revNodeList = nodeList->Reverse();
 	int i = 0;
 	for( CNodeList* n = revNodeList; n != 0; n = n->GetNext() ) {
 		liveIn[n->GetNode()] = this->GetUseSet( n->GetNode() );

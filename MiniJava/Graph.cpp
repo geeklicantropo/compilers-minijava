@@ -3,6 +3,7 @@
 CNode::CNode( CGraph* g )
 {
 	currentGraph = g;
+	g->IncNodeCount();
 	nodeKey = g->GetNodeCount() + 1;
 	succs = 0;
 	preds = 0;
@@ -111,9 +112,19 @@ int CNodeList::Length()
 	return i;
 }
 
-void CNodeList::Reverse() 
+CNodeList* CNodeList::Reverse() 
 {
-	CNodeList* newNext = 0;
+	CNodeList* curr = this;
+	CNodeList* prev = 0;
+	while( curr != 0 ) {
+		CNodeList* next = curr->GetNext();
+		curr->SetNext( prev );
+		prev = curr;
+		curr = next;
+	}
+	return prev;
+	//head = prev;
+	/*CNodeList* newNext = 0;
 	CNodeList* oldNext = 0;
 	int len = Length();
 	CNodeList* currentNode = this;
@@ -122,7 +133,7 @@ void CNodeList::Reverse()
 		currentNode->SetNext(newNext);
 		newNext = currentNode;
 		currentNode = oldNext;
-	} 
+	} */
 }
 
 CGraph::CGraph() 
@@ -155,6 +166,11 @@ CNodeList* CGraph::GetNodes()
 int CGraph::GetNodeCount()
 {
 	return nodeCount;
+}
+
+void CGraph::IncNodeCount()
+{
+	nodeCount++;
 }
 
 CNode* CGraph::newNode()
