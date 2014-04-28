@@ -214,5 +214,10 @@ void CInterferenceGraph::WriteGraph(string path)
 		}
 	}
 
+	for ( auto n : nodeMap )
+	{
+		out << n.second->GetId() << "[label=\"" << n.second->GetTemp()->getName() << "\"]" << endl;
+	}
+
 	out << "}" ;
 }
