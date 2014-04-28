@@ -1,11 +1,13 @@
 #pragma once
 #include <assert.h>
 #include "InterferenceGraph.h"
+#include <fstream>
 
-CInterferenceGraphNode :: CInterferenceGraphNode(const Temp::CTemp *t)
+CInterferenceGraphNode :: CInterferenceGraphNode(const Temp::CTemp *t, int _id)
 {
 	temp = t;
 	color = -1;
+	id = _id;
 }
 
 void CInterferenceGraphNode::AddEdge(CInterferenceGraphNode *n, bool isMove)
@@ -68,6 +70,11 @@ const Temp::CTemp* CInterferenceGraphNode::GetTemp()
 	return temp;
 }
 
+int CInterferenceGraphNode::GetId()
+{
+	return id;
+}
+
 CInterferenceGraphEdge::CInterferenceGraphEdge (CInterferenceGraphNode *f, CInterferenceGraphNode *s, bool _isMove)
 {
 	isMove = _isMove;
@@ -85,6 +92,11 @@ CInterferenceGraphNode* CInterferenceGraphEdge::getSecond()
 	return second;
 }
 
+std::map<CInterferenceGraphNode*, CInterferenceGraphEdge*> CInterferenceGraphNode::GetEdgeMap()
+{
+	return edgeMap;
+}
+
 bool CInterferenceGraphEdge::IsMove()
 {
 	return isMove;
@@ -93,7 +105,7 @@ bool CInterferenceGraphEdge::IsMove()
 void CInterferenceGraph::AddNode(const Temp::CTemp *t)
 {
 	if ( nodeMap.find( t ) == nodeMap.end() ) 
-		nodeMap.insert( pair<const Temp::CTemp*, CInterferenceGraphNode*> (t , new CInterferenceGraphNode(t)) );
+		nodeMap.insert( pair<const Temp::CTemp*, CInterferenceGraphNode*> (t , new CInterferenceGraphNode(t, nodesCount() )) );
 }
 
 void CInterferenceGraph::AddEdge(CInterferenceGraphEdge *e)
@@ -128,6 +140,11 @@ CInterferenceGraphNode* CInterferenceGraph::getNode(const Temp::CTemp *t)
 	else
 		return NULL;
 
+}
+
+int CInterferenceGraph::nodesCount()
+{
+	return nodeMap.size();
 }
 
 CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flowGraph)
@@ -175,3 +192,20 @@ CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flo
 	}
 
 } 
+
+void CInterferenceGraph::WriteGraph(string path)
+{
+	ofstream out(path);
+	
+	out << "digraph G {" << endl;
+
+	for ( auto n : nodeMap )
+	{
+		for ( auto e : n.second->GetEdgeMap() )
+		{
+			out << n.second->GetId() << "->" << e.second->getSecond()->GetId() << endl;
+		}
+	}
+
+	out << "}" ;
+}

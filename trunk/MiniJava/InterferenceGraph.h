@@ -26,6 +26,8 @@ public:
 class CInterferenceGraphNode
 {
 private:
+	int id;
+
 	int color; //для раскрашивания графа
 	const Temp::CTemp *temp;
 
@@ -33,12 +35,15 @@ private:
 
 	//vector<CInterferenceGraphEdge*> edgeArray;
 public:
-	CInterferenceGraphNode(const Temp::CTemp *t);
+	CInterferenceGraphNode(const Temp::CTemp *t, int _id);
 	void AddEdge(CInterferenceGraphNode *n, bool isMove);
 	void DeleteEdge(CInterferenceGraphNode *n, bool isMove);
 	bool ExistEdge(CInterferenceGraphNode *n, bool isMove);
 	void DeleteAllEdges();
 	const Temp::CTemp* GetTemp();
+	int GetId();
+
+	std::map<CInterferenceGraphNode*, CInterferenceGraphEdge*> GetEdgeMap();
 };
 
 class CInterferenceGraph
@@ -60,4 +65,8 @@ public:
 	bool existEdge(CInterferenceGraphEdge *e);
 
 	CInterferenceGraphNode* getNode(const Temp::CTemp *t);
+
+	int nodesCount();
+
+	void WriteGraph(string path);
 };
