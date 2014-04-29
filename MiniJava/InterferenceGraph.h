@@ -32,7 +32,6 @@ private:
 	const Temp::CTemp *temp;
 	bool freezed;
 
-	std::vector<const Temp::CTemp*> innerTemps;
 	std::map<CInterferenceGraphNode*, CInterferenceGraphEdge*> edgeMap;
 
 	//vector<CInterferenceGraphEdge*> edgeArray;
@@ -49,6 +48,11 @@ public:
 	bool HasMoveEdge();
 	bool IsFreezed();
 	void SetFreeze(bool f);
+
+	int GetColor();
+	void SetColor(int c);
+
+	std::vector<const Temp::CTemp*> innerTemps;
 };
 
 class CInterferenceGraph
@@ -58,10 +62,10 @@ private:
 	int nextId;
 	std::map<const Temp::CTemp*, CInterferenceGraphNode*> nodeMap;
 	
-	const Temp::CTemp* simplify(int K); //названия взяты из лекции
- 	bool coalesce(int id, int k);
+	CInterferenceGraphNode* simplify(int K); //названия взяты из лекции
+ 	CInterferenceGraphNode* coalesce(int k);
 	bool freeze(int k);
-	const Temp::CTemp* spill();
+	CInterferenceGraphNode* spill();
 	void select();
 
 public:
@@ -71,7 +75,7 @@ public:
 	void AddNode(CInterferenceGraphNode *n);
 	void AddEdge(CInterferenceGraphEdge *e);
 
-	bool PopEdge(CInterferenceGraphEdge *e, int id, int k);
+	CInterferenceGraphNode* PopEdge(CInterferenceGraphEdge *e, int k);
 
 	void DeleteEdge(CInterferenceGraphEdge *e);
 	void DeleteNode(CInterferenceGraphNode *n);
@@ -82,7 +86,7 @@ public:
 
 	int nodesCount();
 
-	void WriteGraph(string path);
+	void WriteGraph(string path, bool enableColors, int k);
 
 	void SetColors(int K);
 };

@@ -11,6 +11,7 @@ CInterferenceGraphNode :: CInterferenceGraphNode(const Temp::CTemp *t, int _id)
 	color = -1;
 	id = _id;
 	freezed = false;
+	edgeMap.clear();
 }
 
 void CInterferenceGraphNode::AddEdge(CInterferenceGraphNode *n, bool isMove)
@@ -71,6 +72,16 @@ bool CInterferenceGraphNode::IsFreezed()
 void CInterferenceGraphNode::SetFreeze(bool f)
 {
 	freezed = f;
+}
+
+int CInterferenceGraphNode::GetColor()
+{
+	return color;
+}
+
+void CInterferenceGraphNode::SetColor(int c)
+{
+	color = c;
 }
 
 CInterferenceGraphEdge::CInterferenceGraphEdge (CInterferenceGraphNode *f, CInterferenceGraphNode *s, bool _isMove)
@@ -148,7 +159,7 @@ int CInterferenceGraph::nodesCount()
 	return nodeMap.size();
 }
 
-bool CInterferenceGraph::PopEdge(CInterferenceGraphEdge* edge, int id, int k)
+CInterferenceGraphNode* CInterferenceGraph::PopEdge(CInterferenceGraphEdge* edge, int k)
 {
 	CInterferenceGraphNode* fst = edge->getFirst();
 	CInterferenceGraphNode* snd = edge->getSecond();
@@ -156,7 +167,7 @@ bool CInterferenceGraph::PopEdge(CInterferenceGraphEdge* edge, int id, int k)
 	string name = fst->GetTemp()->getName() + "&" + snd->GetTemp()->getName();
 	const Temp::CTemp* temp = new Temp::CTemp( CSymbol::CSymbolGet(name) );
 	
-	CInterferenceGraphNode* node = new CInterferenceGraphNode( temp, id );
+	CInterferenceGraphNode* node = new CInterferenceGraphNode( temp, nextId++ );
 
 	for ( auto n : nodeMap )
 	{
@@ -172,12 +183,19 @@ bool CInterferenceGraph::PopEdge(CInterferenceGraphEdge* edge, int id, int k)
 	if (node->GetEdgeMap().size() < k)
 	{
 		AddNode(node);
+
+		if ( fst->innerTemps.empty() ) node->innerTemps.push_back(fst->GetTemp());
+		else node->innerTemps.insert( node->innerTemps.end(), fst->innerTemps.begin(), fst->innerTemps.begin() );
+
+		if ( snd->innerTemps.empty() ) node->innerTemps.push_back(snd->GetTemp());
+		else node->innerTemps.insert( node->innerTemps.end(), snd->innerTemps.begin(), snd->innerTemps.begin() );
+
 		DeleteNode(fst);
 		DeleteNode(snd);
-		return true;
+		return node;
 	}
 
-	return false;
+	return NULL;
 }
 
 CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flowGraph)
@@ -187,7 +205,7 @@ CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flo
 
 	CNodeList* flowNodes1 = flowNodes;
 
-	while (flowNodes != NULL)
+	/*while (flowNodes != NULL)
 	{
 		for ( auto temp : flowGraph->GetUseSet(flowNodes->GetNode()) )
 		{
@@ -204,7 +222,7 @@ CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flo
 			AddNode(temp);
 		}
 		flowNodes = flowNodes->GetNext();
-	}
+	}*/
 
 	flowNodes = flowNodes1;
 	while (flowNodes != NULL) //добавление всех вершин
@@ -215,10 +233,16 @@ CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flo
 			const Temp::CTemp* dst = ( dynamic_cast <const CodeGeneration::CMove*> ( flowGraph->GetInstruction( flowNodes->GetNode() ) ) ) -> GetDst();
 			const Temp::CTemp* src = ( dynamic_cast <const CodeGeneration::CMove*> ( flowGraph->GetInstruction( flowNodes->GetNode() ) ) ) -> GetSrc();
 			
+			if ( getNode( src ) == NULL ) AddNode( src );
+			if ( getNode( dst ) == NULL ) AddNode( dst );
+
 			if (src != dst)
 			{
-				getNode( dst )->AddEdge( getNode( src ), true );
-				getNode( src )->AddEdge( getNode( dst ), true );
+				if ( getNode( src ) )
+				{
+					getNode( dst )->AddEdge( getNode( src ), true );
+					getNode( src )->AddEdge( getNode( dst ), true );
+				}
 			}
 
 			for ( auto to : flowGraph->GetLiveOut( flowNodes->GetNode() ) )
@@ -234,8 +258,10 @@ CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flo
 		{
 			for ( auto from : flowGraph->GetDefSet( flowNodes->GetNode() ) )
 			{
+				if ( getNode( from ) == NULL ) AddNode( from );
 				for ( auto to : flowGraph->GetLiveOut( flowNodes->GetNode() ) )
 				{
+					if ( getNode( to ) == NULL ) AddNode( to );
 					if (to != from)
 					{
 						getNode( from )->AddEdge( getNode( to ), false );
@@ -249,12 +275,23 @@ CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flo
 
 } 
 
-void CInterferenceGraph::WriteGraph(string path)
+void CInterferenceGraph::WriteGraph(string path, bool enableColors, int k)
 {
 	ofstream out(path);
 	
 	out << "digraph G {" << endl;
 
+	vector<string> color;
+	color.push_back("red");
+	color.push_back("orange");
+	color.push_back("yellow");
+	color.push_back("green");
+	color.push_back("blue");
+	color.push_back("violet");
+	color.push_back("purple");
+	color.push_back("maroon");
+	color.push_back("navy");
+	
 	for ( auto n : nodeMap )
 	{
 		for ( auto e : n.second->GetEdgeMap() )
@@ -268,7 +305,18 @@ void CInterferenceGraph::WriteGraph(string path)
 
 	for ( auto n : nodeMap )
 	{
-		out << n.second->GetId() << "[label=\"" << n.second->GetTemp()->getName() << "\"]" << endl;
+		out << n.second->GetId() << " [label=\"" << n.second->GetTemp()->getName();
+		
+		if ( enableColors && n.second->GetColor() < k && n.second->GetColor() < color.size() )
+			out << "\",fillcolor=\"" << color [n.second->GetColor()] << "\",style=\"filled";
+		
+		if ( enableColors && n.second->GetColor() < k && n.second->GetColor() >= color.size() )
+			out << "\",fillcolor=\"" << "white" << "\",style=\"filled";
+		
+		if ( enableColors && n.second->GetColor() == k)
+			out << "\",fillcolor=\"" << "grey" << "\",style=\"filled";
+		
+		out << "\"]" << endl;
 	}
 
 	out << "}" ;
@@ -276,10 +324,26 @@ void CInterferenceGraph::WriteGraph(string path)
 
 CInterferenceGraph::CInterferenceGraph(CInterferenceGraph* graph)
 {
-	//здесь бы конструктор копирования
+	nextId = graph->nextId;
+
+	for ( auto n : graph->nodeMap )
+	{
+		nodeMap.insert ( make_pair ( n.first, new CInterferenceGraphNode(n.first, n.second->GetId() ) ) );
+	}
+	for ( auto n : graph->nodeMap )
+	{
+		for ( auto e : n.second->GetEdgeMap() )
+		{
+			AddEdge(
+				new CInterferenceGraphEdge(
+					getNode( e.second->getFirst() ->GetTemp() ),
+					getNode( e.second->getSecond()->GetTemp() ),
+					e.second->IsMove() ) );
+		}
+	}
 }
 
-const Temp::CTemp* CInterferenceGraph::simplify(int K)
+CInterferenceGraphNode* CInterferenceGraph::simplify(int K)
 {
 	for (auto n : nodeMap)
 	{
@@ -287,25 +351,28 @@ const Temp::CTemp* CInterferenceGraph::simplify(int K)
 			n.second->GetEdgeMap().size() < K &&  n.second->HasMoveEdge() && n.second->IsFreezed() )
 		{
 			DeleteNode(n.second);
-			return n.second->GetTemp();
+			return n.second;
 		}
 
 	}
 	return NULL;
 }
 
-bool CInterferenceGraph::coalesce(int id, int k)
+CInterferenceGraphNode* CInterferenceGraph::coalesce(int k)
 {
 	for (auto n : nodeMap)
 	{
 		for ( auto e : n.second->GetEdgeMap() )
 		{
 			if ( e.second->IsMove() && !e.second->getFirst()->IsFreezed() && !e.second->getSecond()->IsFreezed() )
-				if ( PopEdge ( e.second, id, k ) )
-					return true;
+			{
+				CInterferenceGraphNode* node = PopEdge ( e.second, k );
+				if (node != NULL)
+					return node;
+			}
 		}
 	}
-	return false;
+	return NULL;
 }
 
 bool CInterferenceGraph::freeze(int k)
@@ -321,7 +388,7 @@ bool CInterferenceGraph::freeze(int k)
 	return false;
 }
 
-const Temp::CTemp* CInterferenceGraph::spill()
+CInterferenceGraphNode* CInterferenceGraph::spill()
 {
 	int min = 100000;
 	CInterferenceGraphNode* node = NULL;
@@ -333,23 +400,77 @@ const Temp::CTemp* CInterferenceGraph::spill()
 	}
 
 	DeleteNode(node);
-	return (node->GetTemp());
+	return node;
 }
 
 void CInterferenceGraph::SetColors(int K)
 {
 	CInterferenceGraph graph = CInterferenceGraph(this);
-	std::stack< std::pair <const Temp::CTemp*, bool> > stack;
-
-	while ( graph.nodesCount() > 0)
+	//std::stack< const Temp::CTemp* > stack;
+	std::stack<CInterferenceGraphNode*> stack;
+	while ( graph.nodesCount() > 0 )
 	{
-		//здесь надо написать нормально.
-		bool isCandidate;
-		const Temp::CTemp* temp = graph.simplify(K);
-		isCandidate = temp == NULL;
-		if (temp == NULL) temp = graph.spill();
-		stack.push ( std::make_pair(temp, isCandidate) );
+		bool simplifyResult, coalesceResult, freezeResult;
+
+		CInterferenceGraphNode* node = graph.simplify(K);
+		simplifyResult = node != NULL;
+		if ( simplifyResult ) stack.push( node );
+		if (graph.nodesCount() == 0) continue;
+
+		node = graph.coalesce(K);
+		coalesceResult = node != NULL;
+		if ( coalesceResult ) stack.push( node );
+		if (graph.nodesCount() == 0) continue;
+
+		if (!simplifyResult && !coalesceResult) freezeResult = graph.freeze(K);
+
+		if (!simplifyResult && !coalesceResult && !freezeResult) stack.push( graph.spill() );
+		
+		//stack.push ( temp );
 	}
 
+	while (!stack.empty())
+	{
+		CInterferenceGraphNode* node = stack.top();
+		const Temp::CTemp* temp = node->GetTemp();
+		stack.pop();
 
+		std::vector<bool> posColor(K + 1, true);
+		
+		if ( node->innerTemps.empty() )
+		{
+			for ( auto e : getNode ( temp ) -> GetEdgeMap() )
+			{
+				if ( e.second->getSecond()->GetColor() != -1 && e.second->getSecond()->GetColor() != K )
+					posColor[ e.second->getSecond()->GetColor() ] = false;
+			}
+			
+			int c = -1;
+		
+			for (int i = 0; i <= K && c == -1; i++)
+				if (posColor[i]) c = i;
+
+			getNode(temp)->SetColor(c);
+		}
+		else
+		{
+			for ( auto t : node->innerTemps )
+			{
+				for ( auto e : getNode ( t ) -> GetEdgeMap() )
+				{
+					if ( e.second->getSecond()->GetColor() != -1 && e.second->getSecond()->GetColor() != K )
+						posColor[ e.second->getSecond()->GetColor() ] = false;
+				}
+			}
+		
+			int c = -1;
+		
+			for (int i = 0; i <= K && c == -1; i++)
+				if (posColor[i]) c = i;
+
+			for (auto t : node->innerTemps)
+				getNode(t)->SetColor(c);
+		}
+
+	}
 }

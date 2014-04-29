@@ -66,7 +66,9 @@ int main()
 		AssemFlowGraph afg( instrList );
 
 		CInterferenceGraph* inteferenceGraph = new CInterferenceGraph( afg.GetNodes(), &afg );
-		inteferenceGraph->WriteGraph("interference" + to_string( i )  + ".txt");
+		inteferenceGraph->WriteGraph("interference" + to_string( i )  + ".txt", false, 0);
+		inteferenceGraph->SetColors(3);
+		inteferenceGraph->WriteGraph("interferenceColored" + to_string( i )  + ".txt", true, 3);
 
 		while( instrList != 0 ) {
 			assemout << instrList->GetInstr()->Format();
