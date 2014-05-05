@@ -7,9 +7,7 @@ const std::set<const Temp::CTemp*> AssemFlowGraph::GetDefSet( const CNode* node 
 	std::set<const Temp::CTemp*> result;
 	for( const Temp::CTempList* p = varList; p != 0; p = p->Next() ) {
 		const Temp::CTemp* currentVar = p->Temp();
-		if( currentVar->IsDefaultName() ) {
-			result.insert( currentVar );
-		}
+		result.insert( currentVar );
 	}
 	return result;
 }
@@ -20,9 +18,7 @@ const std::set<const Temp::CTemp*> AssemFlowGraph::GetUseSet( const CNode* node 
 	std::set<const Temp::CTemp*> result;
 	for( const Temp::CTempList* p = varList; p != 0; p = p->Next() ) {
 		const Temp::CTemp* currentVar = p->Temp();
-		if( currentVar->IsDefaultName() ) {
-			result.insert( currentVar );
-		}
+		result.insert( currentVar );
 	}
 	return result;
 }

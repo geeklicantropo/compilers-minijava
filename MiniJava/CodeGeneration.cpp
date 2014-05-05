@@ -225,10 +225,11 @@ void CCodeGenerator::munchStm( const IRTree::CMove* stm )
 		const Temp::CTemp* t = munchExp( call->GetExp() );
 		Temp::CTempList* args = munchArgs( call->GetArgs() );
 		string s = "CALL 's0\n";
-		emit( new COper( s, 0, new Temp::CTempList( t, args ) ) );
+		//emit( new COper( s, 0, new Temp::CTempList( t, args ) ) );
+		emit( new COper( s, 0, args ) );
 		s = "ADD 'd0 <- r0 + rv\n";
 		//emit( new COper( s, new Temp::CTempList( temp->GetTemp(), 0 ), 0 ) );
-		emit( new CMove( s, temp->GetTemp(), t ) );
+		//emit( new CMove( s, temp->GetTemp(), t ) );
 	} else if( temp != 0 ) {
 		//MOVE(TEMP,e)
 		string s = "ADD 'd0 <- 's0 + r0\n";
@@ -309,7 +310,8 @@ void CCodeGenerator::munchStm( const IRTree::CExp* stm )
 	if( exp != 0 ) {
 		const Temp::CTemp* r = munchExp( exp->GetExp() ); 
 		Temp::CTempList* l = munchArgs( exp->GetArgs() );
-		emit( new CodeGeneration::COper( "CALL 's0\n", 0, new const Temp::CTempList( r, l ) ) );
+		//emit( new CodeGeneration::COper( "CALL 's0\n", 0, new const Temp::CTempList( r, l ) ) );
+		emit( new CodeGeneration::COper( "CALL 's0\n", 0, l ) );
 		return;
 	}
 	assert(false);
