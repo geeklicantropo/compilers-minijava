@@ -68,6 +68,8 @@ private:
 	CInterferenceGraphNode* spill();
 	void select();
 
+	void addRegisterClique (int k);
+
 public:
 	CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flowGraph);
 	CInterferenceGraph(CInterferenceGraph* graph);

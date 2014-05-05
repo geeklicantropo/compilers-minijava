@@ -67,12 +67,12 @@ int main()
 
 		CInterferenceGraph* inteferenceGraph = new CInterferenceGraph( afg.GetNodes(), &afg );
 		inteferenceGraph->WriteGraph("interference" + to_string( i )  + ".txt", false, 0);
-		inteferenceGraph->SetColors(3);
-		inteferenceGraph->WriteGraph("interferenceColored" + to_string( i )  + ".txt", true, 3);
+		inteferenceGraph->SetColors(7);
+		inteferenceGraph->WriteGraph("interferenceColored" + to_string( i )  + ".txt", true, 7);
 
-		while( instrList != 0 ) {
+		while( instrList != NULL ) {
 			assemout << instrList->GetInstr()->Format();
-			instrList  = instrList ->GetNext();
+			instrList  = instrList -> GetNext();
 		}
 
 		assemout << endl;
