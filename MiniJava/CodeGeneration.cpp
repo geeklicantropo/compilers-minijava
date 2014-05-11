@@ -49,6 +49,9 @@ string IInstruction::Format() const
 				n = atoi( (char*)(&asmCode[++i]) );
 				result.append( getAt(list, n)->Name() );
 				break;
+			case 'f': 
+				result.append( dynamic_cast<const COper*>(this)->GetFuncName() );
+				break;
 			case '\'': 
 				result.append("'"); 
 				break;
@@ -187,54 +190,57 @@ void CCodeGenerator::munchStm( const IRTree::CMove* stm )
 			if( binop->GetBinOp() == IRTree::TBinOp::PLUS && right != 0 ) {
 				//MOVE(MEM(BINOP(PLUS, a, CONST)), d)
 				string s = "STORE M['s0+" + to_string(right->GetValue()) + "] <- 's1\n";
-			//	Temp::CTempList* list = new Temp::CTempList( munchExp( binop->GetLeft() ),
-			//		new Temp::CTempList( munchExp( stm->GetSrc() ), 0 ) );
-			//	emit( new COper( s, 0, list ) );
-				emit( new CMove( s, munchExp( binop->GetLeft() ), munchExp( stm->GetSrc() ) ) );
+				Temp::CTempList* list = new Temp::CTempList( munchExp( binop->GetLeft() ),
+					new Temp::CTempList( munchExp( stm->GetSrc() ), 0 ) );
+				emit( new COper( s, 0, list ) );
+			//	string s = "STORE M['d0+" + to_string(right->GetValue()) + "] <- 's0\n";
+			//	emit( new CMove( s, munchExp( binop->GetLeft() ), munchExp( stm->GetSrc() ) ) );
 			} else if( binop->GetBinOp() == IRTree::TBinOp::PLUS && left != 0 ) {
 				//MOVE(MEM(BINOP(PLUS, CONST, a)), d)
 				string s = "STORE M['s0+" + to_string(left->GetValue()) + "] <- 's1\n";
-			//	Temp::CTempList* list = new Temp::CTempList( munchExp( binop->GetRight() ),
-			//		new Temp::CTempList( munchExp( stm->GetSrc() ), 0 ) );
-			//	emit( new COper( s, 0, list ) );
-				emit( new CMove( s, munchExp( binop->GetRight() ), munchExp( stm->GetSrc() ) ) );
+				Temp::CTempList* list = new Temp::CTempList( munchExp( binop->GetRight() ),
+					new Temp::CTempList( munchExp( stm->GetSrc() ), 0 ) );
+				emit( new COper( s, 0, list ) );
+			//	string s = "STORE M['d0+" + to_string(left->GetValue()) + "] <- 's0\n";
+			//	emit( new CMove( s, munchExp( binop->GetRight() ), munchExp( stm->GetSrc() ) ) );
 			}
 		} else if( srcMem != 0 ) {
 			//MOVE(MEM(a), MEM(a))
-			string s = "MOVE M['s0] <- M['s1]\n";
+		//	string s = "MOVE M['s0] <- M['s1]\n";
 		//	Temp::CTempList* list = new Temp::CTempList( munchExp( dstMem->GetExp() ),
 		//		new Temp::CTempList( munchExp( srcMem->GetExp() ), 0 ) );
 		//	emit( new COper( s, 0, list ) );
+			string s = "MOVE M['d0] <- M['s0]\n";
 			emit( new CMove( s, munchExp( dstMem->GetExp() ),  munchExp( srcMem->GetExp() ) ) );
 		} else if( c != 0 ) {
 			//MOVE(MEM(CONST), d)
 			string s = "STORE M[r0+" + to_string( c->GetValue() ) + "] <- 's0\n";
-			//emit( new COper( s, 0, new Temp::CTempList( munchExp( stm->GetSrc() ), 0 ) ) );
-			emit( new CMove( s, munchExp( c ),  munchExp( srcMem->GetExp() ) ) );
+			emit( new COper( s, 0, new Temp::CTempList( munchExp( stm->GetSrc() ), 0 ) ) );
+			//emit( new CMove( s, munchExp( c ),  munchExp( srcMem->GetExp() ) ) );
 		
 		} else {
 		    //MOVE(MEM(a),d)
 			string s = "STORE M['s0] <- 's1\n";
-		//	Temp::CTempList* list = new Temp::CTempList( munchExp( dstMem->GetExp() ),
-		//		new Temp::CTempList( munchExp( stm->GetSrc() ), 0 ) );
-			//emit( new COper( s, 0, list ) );
-			emit( new CMove( s, munchExp( dstMem->GetExp() ), munchExp( stm->GetSrc() ) ) );
+			Temp::CTempList* list = new Temp::CTempList( munchExp( dstMem->GetExp() ),
+				new Temp::CTempList( munchExp( stm->GetSrc() ), 0 ) );
+			emit( new COper( s, 0, list ) );
+		//	emit( new CMove( s, munchExp( dstMem->GetExp() ), munchExp( stm->GetSrc() ) ) );
 		}
 	} else if( temp != 0 && call != 0 ) {
 		//MOVE(TEMP, CALL )
 		const Temp::CTemp* t = munchExp( call->GetExp() );
 		Temp::CTempList* args = munchArgs( call->GetArgs() );
-		string s = "CALL 's0\n";
-		//emit( new COper( s, 0, new Temp::CTempList( t, args ) ) );
-		emit( new COper( s, 0, args ) );
+		string s = "CALL 'f\n";
+		emit( new COper( s, 0, args, t->Name() ) );
+		//emit( new COper( s, 0, args ) );
 		s = "ADD 'd0 <- r0 + rv\n";
-		//emit( new COper( s, new Temp::CTempList( temp->GetTemp(), 0 ), 0 ) );
+		emit( new COper( s, new Temp::CTempList( temp->GetTemp(), 0 ), 0 ) );
 		//emit( new CMove( s, temp->GetTemp(), t ) );
 	} else if( temp != 0 ) {
 		//MOVE(TEMP,e)
 		string s = "ADD 'd0 <- 's0 + r0\n";
-		//emit( new COper( s, new Temp::CTempList( temp->GetTemp(), 0 ), new Temp::CTempList( munchExp( stm->GetSrc() ), 0 ) ) );
-		emit( new CMove( s, temp->GetTemp(), munchExp( stm->GetSrc() ) ) );
+		emit( new COper( s, new Temp::CTempList( temp->GetTemp(), 0 ), new Temp::CTempList( munchExp( stm->GetSrc() ), 0 ) ) );
+		//emit( new CMove( s, temp->GetTemp(), munchExp( stm->GetSrc() ) ) );
 	} else {
 		assert( false );
 	}
@@ -308,10 +314,10 @@ void CCodeGenerator::munchStm( const IRTree::CExp* stm )
 {
 	const IRTree::CCall* exp = dynamic_cast<const IRTree::CCall*>( stm->GetExp() );
 	if( exp != 0 ) {
-		const Temp::CTemp* r = munchExp( exp->GetExp() ); 
+		const Temp::CTemp* r = munchExp( exp->GetExp() );
 		Temp::CTempList* l = munchArgs( exp->GetArgs() );
 		//emit( new CodeGeneration::COper( "CALL 's0\n", 0, new const Temp::CTempList( r, l ) ) );
-		emit( new CodeGeneration::COper( "CALL 's0\n", 0, l ) );
+		emit( new CodeGeneration::COper( "CALL 'f\n", 0, l, r->Name() ) );
 		return;
 	}
 	assert(false);

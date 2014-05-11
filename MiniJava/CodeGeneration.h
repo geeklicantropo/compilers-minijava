@@ -72,13 +72,17 @@ namespace CodeGeneration {
 	public:
 		COper( string _assem, const Temp::CTempList* _dst, const Temp::CTempList* _src ): dst( _dst ), src( _src ), jump(0) { asmCode = _assem; }
 		COper( string _assem, const Temp::CTempList* _dst, const Temp::CTempList* _src, const Temp::CLabelList* _jump ) : dst( _dst ), src( _src ), jump(new CTargets( _jump )) { asmCode = _assem; }
+		COper( string _assem, const Temp::CTempList* _dst, const Temp::CTempList* _src, string fName ): dst( _dst ), src( _src ), jump(0), funcName( fName ) { asmCode = _assem; }
+		
 		virtual const Temp::CTempList* UsedVars() const { return src; }
 		virtual const Temp::CTempList* DefinedVars() const { return dst; }
 		virtual const CTargets* JumpTargets() const { return jump; }
+		string GetFuncName() const { return funcName; }
 	private:
 		const Temp::CTempList* dst;
 		const Temp::CTempList* src;
 		const CTargets* jump;
+		string funcName;
 	};
 
 	class CCodeGenerator {
