@@ -206,12 +206,12 @@ void CCodeGenerator::munchStm( const IRTree::CMove* stm )
 			}
 		} else if( srcMem != 0 ) {
 			//MOVE(MEM(a), MEM(a))
-		//	string s = "MOVE M['s0] <- M['s1]\n";
-		//	Temp::CTempList* list = new Temp::CTempList( munchExp( dstMem->GetExp() ),
-		//		new Temp::CTempList( munchExp( srcMem->GetExp() ), 0 ) );
-		//	emit( new COper( s, 0, list ) );
-			string s = "MOVE M['d0] <- M['s0]\n";
-			emit( new CMove( s, munchExp( dstMem->GetExp() ),  munchExp( srcMem->GetExp() ) ) );
+			string s = "MOVE M['s0] <- M['s1]\n";
+			Temp::CTempList* list = new Temp::CTempList( munchExp( dstMem->GetExp() ),
+				new Temp::CTempList( munchExp( srcMem->GetExp() ), 0 ) );
+			emit( new COper( s, 0, list ) );
+		//	string s = "MOVE M['d0] <- M['s0]\n";
+		//	emit( new CMove( s, munchExp( dstMem->GetExp() ),  munchExp( srcMem->GetExp() ) ) );
 		} else if( c != 0 ) {
 			//MOVE(MEM(CONST), d)
 			string s = "STORE M[r0+" + to_string( c->GetValue() ) + "] <- 's0\n";
@@ -239,8 +239,8 @@ void CCodeGenerator::munchStm( const IRTree::CMove* stm )
 	} else if( temp != 0 ) {
 		//MOVE(TEMP,e)
 		string s = "ADD 'd0 <- 's0 + r0\n";
-		emit( new COper( s, new Temp::CTempList( temp->GetTemp(), 0 ), new Temp::CTempList( munchExp( stm->GetSrc() ), 0 ) ) );
-		//emit( new CMove( s, temp->GetTemp(), munchExp( stm->GetSrc() ) ) );
+		//emit( new COper( s, new Temp::CTempList( temp->GetTemp(), 0 ), new Temp::CTempList( munchExp( stm->GetSrc() ), 0 ) ) );
+		emit( new CMove( s, temp->GetTemp(), munchExp( stm->GetSrc() ) ) );
 	} else {
 		assert( false );
 	}
