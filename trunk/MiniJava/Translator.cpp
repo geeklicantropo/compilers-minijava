@@ -250,12 +250,20 @@ int CTranslator::Visit( const CMethodDeclare* n )
 	
 	if( n->GetFormalList() != 0 ) n->GetFormalList()->Accept( this );
 	if( n->GetVarDeclareStar() != 0 ) n->GetVarDeclareStar()->Accept( this );
-
+	lastValue = 0;
 	if( n->GetStatementStar() != 0 ) n->GetStatementStar()->Accept( this );
-	const IRTree::IStatement* stm = lastValue->ToStm();
+	const IRTree::IStatement* stm = 0;
+	
+	if( lastValue != 0 )
+		const IRTree::IStatement* stm = lastValue->ToStm();
+	
 	n->GetExpression()->Accept( this );
 	const IRTree::IExpression* exp = lastValue->ToExp();
-	*lastCodeFragment = new CCodeFragment( currentFrame,  new IRTree::CMove( new IRTree::CTemp( new Temp::CTemp( CSymbol::CSymbolGet( "RV" ) ) ), new IRTree::CEseq( stm, exp ) ), *lastCodeFragment );
+	if( stm != 0 ) {
+		*lastCodeFragment = new CCodeFragment( currentFrame, new IRTree::CMove( new IRTree::CTemp( new Temp::CTemp( CSymbol::CSymbolGet( "RV" ) ) ), new IRTree::CEseq( stm, exp ) ), *lastCodeFragment );
+	} else {
+		*lastCodeFragment = new CCodeFragment( currentFrame, new IRTree::CMove( new IRTree::CTemp( new Temp::CTemp( CSymbol::CSymbolGet( "RV" ) ) ), exp ), *lastCodeFragment );
+	}
 	currentMethod = 0;
 	currentFrame = 0;
 	return 0;
