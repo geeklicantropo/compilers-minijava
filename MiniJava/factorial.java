@@ -15,8 +15,4 @@ class Fac {
 	return num_aux ;
     }
 
-    public boolean GetHas_Left(){
-		return true ;
-    }
-
 }
