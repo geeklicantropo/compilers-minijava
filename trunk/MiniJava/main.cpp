@@ -65,7 +65,7 @@ int main()
 
 		AssemFlowGraph afg( instrList );
 
-		CInterferenceGraph* inteferenceGraph = new CInterferenceGraph( afg.GetNodes(), &afg );
+		CInterferenceGraph* inteferenceGraph = new CInterferenceGraph( afg.GetNodes(), &afg, cf->GetFrame() );
 		inteferenceGraph->WriteGraph("interference" + to_string( i )  + ".txt", false, 0);
 		inteferenceGraph->SetColors(4);
 		while( !inteferenceGraph->IsColored(4) ) {
@@ -79,18 +79,19 @@ int main()
 			assemout << "----" << endl;
 
 			afg = AssemFlowGraph( instrList );
-			inteferenceGraph = new CInterferenceGraph( afg.GetNodes(), &afg );
+			inteferenceGraph = new CInterferenceGraph( afg.GetNodes(), &afg, cf->GetFrame() );
 			inteferenceGraph->SetColors(4);
 		}
+	
 		inteferenceGraph->WriteGraph("interferenceColored" + to_string( i )  + ".txt", true, 4);
-
-		/*while( instrList != NULL ) {
+/*
+		while( instrList != NULL ) {
 			assemout << instrList->GetInstr()->Format();
 			instrList  = instrList -> GetNext();
 		}
 		
 		assemout << endl;
-		*/
+*/		
 		//tmpStm->Accept( new IRTreeGraphVizPrinter( out, labels ) );
 		out << "digraph trace {" << endl;
 		ts.stms->Accept( new IRTreeGraphVizPrinter( out, labels ) );

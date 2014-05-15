@@ -60,6 +60,10 @@ class CInterferenceGraph
 
 private:
 	int nextId;
+
+	const CFrame* frame;
+	CInterferenceGraphNode* fpNode;
+
 	std::map<const Temp::CTemp*, CInterferenceGraphNode*> nodeMap;
 	
 	CInterferenceGraphNode* simplify(int K); //названия взяты из лекции
@@ -71,7 +75,7 @@ private:
 	void addRegisterClique (int k);
 
 public:
-	CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flowGraph);
+	CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flowGraph, const CFrame* fr);
 	CInterferenceGraph(CInterferenceGraph* graph);
 	void AddNode(const Temp::CTemp *t);
 	void AddNode(CInterferenceGraphNode *n);
