@@ -27,7 +27,7 @@ int main()
 	const CCodeFragment* cf = 0;
 	progr->Accept( new Translator::CTranslator( &st, &cf ) );
 	ofstream out( "output.txt" );
-	ofstream assemout( "assem.txt" );
+	ofstream assemout( "assem1.txt" );
 	int i = 0;
 	while( cf != 0 ) {
 		++i;
@@ -67,16 +67,30 @@ int main()
 
 		CInterferenceGraph* inteferenceGraph = new CInterferenceGraph( afg.GetNodes(), &afg );
 		inteferenceGraph->WriteGraph("interference" + to_string( i )  + ".txt", false, 0);
-		inteferenceGraph->SetColors(7);
-		inteferenceGraph->WriteGraph("interferenceColored" + to_string( i )  + ".txt", true, 7);
+		inteferenceGraph->SetColors(4);
+		while( !inteferenceGraph->IsColored(4) ) {
+			instrList = inteferenceGraph->UpdateInstructionList( instrList, 4, cf->GetFrame(), afg );
+			CodeGeneration::IInstructionList* tmp = instrList;
+			while( tmp != NULL ) {
+				assemout << tmp->GetInstr()->Format();
+				tmp  = tmp -> GetNext();
+			}
 
-		while( instrList != NULL ) {
+			assemout << "----" << endl;
+
+			afg = AssemFlowGraph( instrList );
+			inteferenceGraph = new CInterferenceGraph( afg.GetNodes(), &afg );
+			inteferenceGraph->SetColors(4);
+		}
+		inteferenceGraph->WriteGraph("interferenceColored" + to_string( i )  + ".txt", true, 4);
+
+		/*while( instrList != NULL ) {
 			assemout << instrList->GetInstr()->Format();
 			instrList  = instrList -> GetNext();
 		}
-
-		assemout << endl;
 		
+		assemout << endl;
+		*/
 		//tmpStm->Accept( new IRTreeGraphVizPrinter( out, labels ) );
 		out << "digraph trace {" << endl;
 		ts.stms->Accept( new IRTreeGraphVizPrinter( out, labels ) );

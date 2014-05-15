@@ -34,9 +34,10 @@ public:
 	Temp::CTemp* GetThis() const;
 	Temp::CTemp* GetFP() const;
 
-	const IAccess* GetFormal( int index );
+	const IAccess* GetFormal( int index ) const;
 	const IAccess* AllocLocal( int );
-
+	int GetOffSet() const { return offset; }
+	void IncOffSet() { offset += GetWordSize(); }
 	int GetWordSize() const;
 
 	IRTree::IExpression* ExternalCall( std::string func, IRTree::CExpList* args );
@@ -49,6 +50,8 @@ private:
 	CAccessList* locals;
 	
 	Temp::CTemp* th;
+
+	int offset;
 };
 
-
+class CInFrame;

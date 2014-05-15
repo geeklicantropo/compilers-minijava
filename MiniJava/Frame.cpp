@@ -21,6 +21,7 @@ public:
 	CInFrame( const Temp::CTemp* _fp, int _offset );
 	const IRTree::IExpression* GetVar() const;
 	const IRTree::IExpression* GetVar( int off ) const;
+	const int GetOffSet() const { return offset; }
 private:
 	const Temp::CTemp* const fp;
 	const int offset;
@@ -88,7 +89,8 @@ CFrame::CFrame( Temp::CLabel* _name, int formalsCount )
 		IAccess* newAccess = new CInFrame( pointer, (i + 1) * GetWordSize() );
 		CAccessList* newFormals = new CAccessList( newAccess, formals );
 		formals = newFormals;
-	}		
+	}
+	offset = (formalsCount + 1) * GetWordSize();
 	locals = 0;
 }
 	
@@ -112,7 +114,7 @@ Temp::CTemp* CFrame::GetFP() const
 	return pointer;
 }
 
-const IAccess* CFrame::GetFormal( int index )
+const IAccess* CFrame::GetFormal( int index ) const
 {
 	const CAccessList* currentList = formals;
 	for ( int i = 0; i < index; ++i )
@@ -128,6 +130,7 @@ const IAccess* CFrame::AllocLocal( int index )
 	IAccess* temp = new CInFrame( pointer, index * GetWordSize() );
 	CAccessList* tempList = new CAccessList(temp, locals);
 	locals = tempList;
+	IncOffSet();
 	return temp;
 }
 	
