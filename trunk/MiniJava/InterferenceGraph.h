@@ -91,4 +91,9 @@ public:
 	void WriteGraph(string path, bool enableColors, int k);
 
 	void SetColors(int K);
+
+	CodeGeneration::IInstructionList* UpdateInstructionList( CodeGeneration::IInstructionList* instrList, int K, const CFrame* frame, AssemFlowGraph& );
+	void CleanColor();
+
+	bool IsColored(int K);
 };

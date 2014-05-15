@@ -4,6 +4,8 @@
 #include <fstream>
 #include <stack>
 #include "Symbols.h"
+#include "Frame.h"
+
 
 CInterferenceGraphNode :: CInterferenceGraphNode(const Temp::CTemp *t, int _id)
 {
@@ -521,5 +523,76 @@ void CInterferenceGraph::SetColors(int K)
 				getNode(t)->SetColor(c);
 		}
 
+	}
+}
+
+CodeGeneration::IInstructionList*  CInterferenceGraph::UpdateInstructionList( CodeGeneration::IInstructionList* instrList, int K, const CFrame* frame, AssemFlowGraph& afg )
+{
+	CodeGeneration::IInstructionList* newInstrList = 0;
+	CodeGeneration::IInstructionList* head = 0;
+	for( auto n : nodeMap ) {
+		if( n.second->GetColor() == K ) {
+			const Temp::CTemp* currentTemp = n.second->GetTemp();
+			while( instrList != 0 ) {
+				const CodeGeneration::IInstruction* currentInstr = instrList->GetInstr();
+				if( head == 0 ) {
+					newInstrList = new CodeGeneration::IInstructionList( currentInstr, 0 );
+					head = newInstrList;
+				} else {
+					newInstrList->SetNext( new CodeGeneration::IInstructionList( currentInstr, 0 ) );
+					newInstrList = newInstrList->GetNext();
+				}
+				
+				const Temp::CTempList* varList = currentInstr->DefinedVars();
+				std::set<const Temp::CTemp*> defSet, usedSet;
+				for( const Temp::CTempList* p = varList; p != 0; p = p->Next() ) {
+					const Temp::CTemp* currentVar = p->Temp();
+					defSet.insert( currentVar );
+				}
+				varList = currentInstr->UsedVars();
+				for( const Temp::CTempList* p = varList; p != 0; p = p->Next() ) {
+					const Temp::CTemp* currentVar = p->Temp();
+					usedSet.insert( currentVar );
+				}
+				for( const Temp::CTemp* temp : defSet ) {
+					if( temp == n.second->GetTemp() ) {
+						int offset = frame->GetOffSet();
+						string s = "STORE M['s0+" + to_string( offset ) + "] <- 's1\n";
+						Temp::CTempList* list = new Temp::CTempList( frame->GetFP(), new Temp::CTempList( temp, 0 ) );
+						newInstrList->SetNext( new CodeGeneration::IInstructionList( new CodeGeneration::COper( s, 0, list ), 0 ));
+						newInstrList = newInstrList->GetNext();
+					}
+				}
+
+				for( const Temp::CTemp* temp : usedSet) {
+					if( temp == n.second->GetTemp() ) {
+						int offset = frame->GetOffSet();
+						string s = "LOAD M['s0+" + to_string( offset ) + "] <- 's1\n";
+						Temp::CTempList* list = new Temp::CTempList( frame->GetFP(), new Temp::CTempList( temp, 0 ) );
+						newInstrList->SetNext( new CodeGeneration::IInstructionList( new CodeGeneration::COper( s, 0, list ), 0 ));
+						newInstrList = newInstrList->GetNext();
+					}
+				}
+				instrList = instrList->GetNext();
+			}
+		}
+	}
+	return head;
+}
+
+bool CInterferenceGraph::IsColored(int K)
+{
+	for (auto n : nodeMap)
+	{
+		if (n.second->GetColor() == K) 
+			return false;
+	}
+	return true;
+}
+
+void CInterferenceGraph::CleanColor( )
+{
+	for( auto n : nodeMap ) {
+		n.second->SetColor(0);	
 	}
 }
