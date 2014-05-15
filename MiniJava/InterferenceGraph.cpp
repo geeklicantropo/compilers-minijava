@@ -210,8 +210,9 @@ CInterferenceGraphNode* CInterferenceGraph::PopEdge(CInterferenceGraphEdge* edge
 	return NULL;
 }
 
-CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flowGraph)
+CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flowGraph, const CFrame* fr)
 { 
+	frame = fr;
 	nextId = 1;
 	nodeMap.clear();
 
@@ -424,8 +425,10 @@ CInterferenceGraphNode* CInterferenceGraph::spill()
 
 	for (auto n : nodeMap)
 	{
-		if (n.second->GetEdgeMap().size() < min)
+		if (n.second->GetEdgeMap().size() < min) {
 			node = n.second;
+			min = n.second->GetEdgeMap().size();
+		}
 	}
 
 	DeleteNode(node);
@@ -435,7 +438,7 @@ CInterferenceGraphNode* CInterferenceGraph::spill()
 void CInterferenceGraph::addRegisterClique (int k)
 {
 	vector <CInterferenceGraphNode*> regNodes;
-	for (int i = 1; i <= k; i++)
+	for (int i = 1; i < k; i++)
 	{
 		string name = "R" + to_string(i);
 		const Temp::CTemp* temp = new Temp::CTemp( CSymbol::CSymbolGet(name) );
@@ -443,13 +446,34 @@ void CInterferenceGraph::addRegisterClique (int k)
 		regNodes.push_back(node);
 		AddNode(node);
 	}
+
+	CInterferenceGraphNode* fp = getNode( frame->GetFP() );
+
+	//regNodes.push_back(node);
+	//AddNode(node);
+	
+	if ( fp == NULL )
+	{
+		const Temp::CTemp* temp = new Temp::CTemp( CSymbol::CSymbolGet("FP") );
+		fp = new CInterferenceGraphNode( temp, nextId++ );
+		AddNode(fp);
+	}
+	fpNode = fp;
+	CInterferenceGraphNode* node = getNode( frame->GetFP() );
+		
+	nodeMap;
+
 	for ( auto n1 : regNodes )
+	{
+		n1->AddEdge(fp, false);
+		fp->AddEdge(n1, false);
 		for ( auto n2 : regNodes )
 			if (n1 != n2)
 			{
 				n1->AddEdge(n2, false);
 				n2->AddEdge(n1, false);
 			}
+	}
 }
 
 void CInterferenceGraph::SetColors(int K)
@@ -480,11 +504,15 @@ void CInterferenceGraph::SetColors(int K)
 		//stack.push ( temp );
 	}
 
+	fpNode->SetColor(0);
+
 	while (!stack.empty())
 	{
 		CInterferenceGraphNode* node = stack.top();
 		const Temp::CTemp* temp = node->GetTemp();
 		stack.pop();
+
+		if (node->GetColor() != -1 ) continue;
 
 		std::vector<bool> posColor(K + 1, true);
 		
@@ -567,9 +595,10 @@ CodeGeneration::IInstructionList*  CInterferenceGraph::UpdateInstructionList( Co
 				for( const Temp::CTemp* temp : usedSet) {
 					if( temp == n.second->GetTemp() ) {
 						int offset = frame->GetOffSet();
-						string s = "LOAD M['s0+" + to_string( offset ) + "] <- 's1\n";
-						Temp::CTempList* list = new Temp::CTempList( frame->GetFP(), new Temp::CTempList( temp, 0 ) );
-						newInstrList->SetNext( new CodeGeneration::IInstructionList( new CodeGeneration::COper( s, 0, list ), 0 ));
+						string s = "LOAD 'd0 <- M['s0+" + to_string( offset ) + "]\n";
+						Temp::CTempList* slist = new Temp::CTempList( frame->GetFP(), 0 );
+						Temp::CTempList* dlist = new Temp::CTempList( temp, 0 );
+						newInstrList->SetNext( new CodeGeneration::IInstructionList( new CodeGeneration::COper( s, dlist, slist ), 0 ) );
 						newInstrList = newInstrList->GetNext();
 					}
 				}
