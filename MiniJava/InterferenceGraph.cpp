@@ -13,6 +13,7 @@ CInterferenceGraphNode :: CInterferenceGraphNode(const Temp::CTemp *t, int _id)
 	color = -1;
 	id = _id;
 	freezed = false;
+	candidate = false;
 	edgeMap.clear();
 }
 
@@ -84,6 +85,16 @@ int CInterferenceGraphNode::GetColor()
 void CInterferenceGraphNode::SetColor(int c)
 {
 	color = c;
+}
+
+void CInterferenceGraphNode::SetCandidate(bool c)
+{
+	candidate = c;
+}
+
+bool CInterferenceGraphNode::IsCandidate()
+{
+	return candidate;
 }
 
 CInterferenceGraphEdge::CInterferenceGraphEdge (CInterferenceGraphNode *f, CInterferenceGraphNode *s, bool _isMove)
@@ -210,8 +221,10 @@ CInterferenceGraphNode* CInterferenceGraph::PopEdge(CInterferenceGraphEdge* edge
 	return NULL;
 }
 
-CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flowGraph, const CFrame* fr)
+CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flowGraph, const CFrame* fr, std::map<const Temp::CTemp*, bool> onStack_)
 { 
+	onStack = onStack_;
+
 	frame = fr;
 	nextId = 1;
 	nodeMap.clear();
@@ -222,7 +235,8 @@ CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flo
 	{
 		for ( auto temp : flowGraph->GetUseSet(flowNodes->GetNode()) )
 		{
-			AddNode(temp);
+			if ( !OnStack(temp) )
+				AddNode(temp);
 		}
 		flowNodes = flowNodes->GetNext();
 	}
@@ -232,7 +246,8 @@ CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flo
 	{
 		for ( auto temp : flowGraph->GetDefSet(flowNodes->GetNode()) )
 		{
-			AddNode(temp);
+			if ( !OnStack(temp) )
+				AddNode(temp);
 		}
 		flowNodes = flowNodes->GetNext();
 	}
@@ -246,10 +261,16 @@ CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flo
 			const Temp::CTemp* dst = ( dynamic_cast <const CodeGeneration::CMove*> ( flowGraph->GetInstruction( flowNodes->GetNode() ) ) ) -> GetDst();
 			const Temp::CTemp* src = ( dynamic_cast <const CodeGeneration::CMove*> ( flowGraph->GetInstruction( flowNodes->GetNode() ) ) ) -> GetSrc();
 			
+			if ( OnStack(dst) ) 
+			{
+				flowNodes = flowNodes->GetNext();
+				continue;
+			}
+
 			//if ( getNode( src ) == NULL ) AddNode( src );
 			//if ( getNode( dst ) == NULL ) AddNode( dst );
 
-			if (src != dst)
+			if (src != dst && !OnStack(src) )
 			//if (src != dst && getNode( src ) != NULL && getNode( dst ) != NULL)
 			{
 				getNode( dst )->AddEdge( getNode( src ), true );
@@ -258,7 +279,7 @@ CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flo
 
 			for ( auto to : flowGraph->GetLiveOut( flowNodes->GetNode() ) )
 			{
-				if (to != src && to != dst)
+				if (to != src && to != dst && !OnStack(to))
 				//if (to != src && to != dst && getNode( src ) != NULL && getNode( dst ) != NULL && getNode( to ) != NULL)
 				{
 					getNode( dst )->AddEdge( getNode( to ), false );
@@ -278,7 +299,7 @@ CInterferenceGraph::CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flo
 				
 						//if ( getNode( to ) == NULL ) AddNode( to );
 						//if (to != from && getNode( to ) != NULL)
-						if (to != from)
+						if (to != from && !OnStack(to) && !OnStack(from) )
 						{
 							getNode( from )->AddEdge( getNode( to ), false );
 							getNode( to )->AddEdge( getNode( from ), false );
@@ -499,7 +520,11 @@ void CInterferenceGraph::SetColors(int K)
 
 		if (!simplifyResult && !coalesceResult) freezeResult = graph.freeze(K);
 
-		if (!simplifyResult && !coalesceResult && !freezeResult) stack.push( graph.spill() );
+		if (!simplifyResult && !coalesceResult && !freezeResult) 
+		{
+			stack.push( graph.spill() );
+			stack.top()->SetCandidate(true);
+		}
 		
 		//stack.push ( temp );
 	}
@@ -530,6 +555,7 @@ void CInterferenceGraph::SetColors(int K)
 				if (posColor[i]) c = i;
 
 			getNode(temp)->SetColor(c);
+			getNode(temp)->SetCandidate( node->IsCandidate() );
 		}
 		else
 		{
@@ -548,7 +574,10 @@ void CInterferenceGraph::SetColors(int K)
 				if (posColor[i]) c = i;
 
 			for (auto t : node->innerTemps)
+			{
 				getNode(t)->SetColor(c);
+				getNode(t)->SetCandidate( node->IsCandidate() );
+			}
 		}
 
 	}
@@ -558,9 +587,13 @@ CodeGeneration::IInstructionList*  CInterferenceGraph::UpdateInstructionList( Co
 {
 	CodeGeneration::IInstructionList* newInstrList = 0;
 	CodeGeneration::IInstructionList* head = 0;
+	int toStack = 0;
 	for( auto n : nodeMap ) {
-		if( n.second->GetColor() == K ) {
+		if( n.second->GetColor() == K && n.second->IsCandidate() ) {
+			toStack++;
 			const Temp::CTemp* currentTemp = n.second->GetTemp();
+			onStack[currentTemp] = true;
+			
 			while( instrList != 0 ) {
 				const CodeGeneration::IInstruction* currentInstr = instrList->GetInstr();
 				if( head == 0 ) {
@@ -606,6 +639,59 @@ CodeGeneration::IInstructionList*  CInterferenceGraph::UpdateInstructionList( Co
 			}
 		}
 	}
+	if( toStack == 0) {
+		for( auto n : nodeMap ) {
+			if( n.second->GetColor() == K ) {
+				toStack++;
+				const Temp::CTemp* currentTemp = n.second->GetTemp();
+				onStack[currentTemp] = true;
+			
+				while( instrList != 0 ) {
+					const CodeGeneration::IInstruction* currentInstr = instrList->GetInstr();
+					if( head == 0 ) {
+						newInstrList = new CodeGeneration::IInstructionList( currentInstr, 0 );
+						head = newInstrList;
+					} else {
+						newInstrList->SetNext( new CodeGeneration::IInstructionList( currentInstr, 0 ) );
+						newInstrList = newInstrList->GetNext();
+					}
+				
+					const Temp::CTempList* varList = currentInstr->DefinedVars();
+					std::set<const Temp::CTemp*> defSet, usedSet;
+					for( const Temp::CTempList* p = varList; p != 0; p = p->Next() ) {
+						const Temp::CTemp* currentVar = p->Temp();
+						defSet.insert( currentVar );
+					}
+					varList = currentInstr->UsedVars();
+					for( const Temp::CTempList* p = varList; p != 0; p = p->Next() ) {
+						const Temp::CTemp* currentVar = p->Temp();
+						usedSet.insert( currentVar );
+					}
+					for( const Temp::CTemp* temp : defSet ) {
+						if( temp == n.second->GetTemp() ) {
+							int offset = frame->GetOffSet();
+							string s = "STORE M['s0+" + to_string( offset ) + "] <- 's1\n";
+							Temp::CTempList* list = new Temp::CTempList( frame->GetFP(), new Temp::CTempList( temp, 0 ) );
+							newInstrList->SetNext( new CodeGeneration::IInstructionList( new CodeGeneration::COper( s, 0, list ), 0 ));
+							newInstrList = newInstrList->GetNext();
+						}
+					}
+
+					for( const Temp::CTemp* temp : usedSet) {
+						if( temp == n.second->GetTemp() ) {
+							int offset = frame->GetOffSet();
+							string s = "LOAD 'd0 <- M['s0+" + to_string( offset ) + "]\n";
+							Temp::CTempList* slist = new Temp::CTempList( frame->GetFP(), 0 );
+							Temp::CTempList* dlist = new Temp::CTempList( temp, 0 );
+							newInstrList->SetNext( new CodeGeneration::IInstructionList( new CodeGeneration::COper( s, dlist, slist ), 0 ) );
+							newInstrList = newInstrList->GetNext();
+						}
+					}
+					instrList = instrList->GetNext();
+				}
+			}
+		}
+	}
 	return head;
 }
 
@@ -622,6 +708,14 @@ bool CInterferenceGraph::IsColored(int K)
 void CInterferenceGraph::CleanColor( )
 {
 	for( auto n : nodeMap ) {
-		n.second->SetColor(0);	
+		n.second->SetColor(-1);	
 	}
+}
+
+bool CInterferenceGraph::OnStack(const Temp::CTemp* t)
+{
+	if ( onStack.find(t) != onStack.end() ) 
+		onStack.insert ( make_pair(t, false ) );
+
+	return onStack[t];
 }

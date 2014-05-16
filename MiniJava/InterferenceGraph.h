@@ -31,6 +31,7 @@ private:
 	int color; //для раскрашивания графа
 	const Temp::CTemp *temp;
 	bool freezed;
+	bool candidate;
 
 	std::map<CInterferenceGraphNode*, CInterferenceGraphEdge*> edgeMap;
 
@@ -52,6 +53,9 @@ public:
 	int GetColor();
 	void SetColor(int c);
 
+	void SetCandidate(bool c);
+	bool IsCandidate();
+
 	std::vector<const Temp::CTemp*> innerTemps;
 };
 
@@ -65,7 +69,8 @@ private:
 	CInterferenceGraphNode* fpNode;
 
 	std::map<const Temp::CTemp*, CInterferenceGraphNode*> nodeMap;
-	
+	std::map<const Temp::CTemp*, bool> onStack;
+
 	CInterferenceGraphNode* simplify(int K); //названия взяты из лекции
  	CInterferenceGraphNode* coalesce(int k);
 	bool freeze(int k);
@@ -73,9 +78,8 @@ private:
 	void select();
 
 	void addRegisterClique (int k);
-
 public:
-	CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flowGraph, const CFrame* fr);
+	CInterferenceGraph(CNodeList* flowNodes, AssemFlowGraph* flowGraph, const CFrame* fr, std::map<const Temp::CTemp*, bool> onStack_);
 	CInterferenceGraph(CInterferenceGraph* graph);
 	void AddNode(const Temp::CTemp *t);
 	void AddNode(CInterferenceGraphNode *n);
@@ -100,4 +104,7 @@ public:
 	void CleanColor();
 
 	bool IsColored(int K);
+
+	bool OnStack(const Temp::CTemp* t);
+	std::map<const Temp::CTemp*, bool> GetOnStack () { return onStack; }	
 };

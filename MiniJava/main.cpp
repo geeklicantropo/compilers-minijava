@@ -65,11 +65,23 @@ int main()
 
 		AssemFlowGraph afg( instrList );
 
-		CInterferenceGraph* inteferenceGraph = new CInterferenceGraph( afg.GetNodes(), &afg, cf->GetFrame() );
+		std::map<const Temp::CTemp*, bool> onStack;
+
+
+		CInterferenceGraph* inteferenceGraph = new CInterferenceGraph( afg.GetNodes(), &afg, cf->GetFrame(), onStack );
 		inteferenceGraph->WriteGraph("interference" + to_string( i )  + ".txt", false, 0);
-		inteferenceGraph->SetColors(4);
-		while( !inteferenceGraph->IsColored(4) ) {
+		int colorNum = 4;
+		int step = 0;
+		
+		inteferenceGraph->SetColors(colorNum);
+		inteferenceGraph->WriteGraph("interferenceColored" + to_string( i ) + "step" + to_string( step ) + ".txt", true, colorNum);
+
+		while( !inteferenceGraph->IsColored(colorNum) ) {
+			
+			step++;
 			instrList = inteferenceGraph->UpdateInstructionList( instrList, 4, cf->GetFrame(), afg );
+			onStack = inteferenceGraph->GetOnStack();
+
 			CodeGeneration::IInstructionList* tmp = instrList;
 			while( tmp != NULL ) {
 				assemout << tmp->GetInstr()->Format();
@@ -79,11 +91,12 @@ int main()
 			assemout << "----" << endl;
 
 			afg = AssemFlowGraph( instrList );
-			inteferenceGraph = new CInterferenceGraph( afg.GetNodes(), &afg, cf->GetFrame() );
-			inteferenceGraph->SetColors(4);
+			inteferenceGraph = new CInterferenceGraph( afg.GetNodes(), &afg, cf->GetFrame(), onStack );
+			inteferenceGraph->SetColors(colorNum);
+			inteferenceGraph->WriteGraph("interferenceColored" + to_string( i ) + "step" + to_string( step ) + ".txt", true, colorNum);
 		}
 	
-		inteferenceGraph->WriteGraph("interferenceColored" + to_string( i )  + ".txt", true, 4);
+		inteferenceGraph->WriteGraph("interferenceColored" + to_string( i )  + ".txt", true, colorNum);
 /*
 		while( instrList != NULL ) {
 			assemout << instrList->GetInstr()->Format();
