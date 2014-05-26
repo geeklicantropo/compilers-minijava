@@ -107,4 +107,6 @@ public:
 
 	bool OnStack(const Temp::CTemp* t);
 	std::map<const Temp::CTemp*, bool> GetOnStack () { return onStack; }	
+
+	std::map<const Temp::CTemp*, int> GetColorMap ();
 };
