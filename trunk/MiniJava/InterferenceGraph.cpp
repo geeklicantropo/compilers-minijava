@@ -363,6 +363,9 @@ void CInterferenceGraph::WriteGraph(string path, bool enableColors, int k)
 		
 		if ( enableColors && n.second->GetColor() == k)
 			out << "\",fillcolor=\"" << "grey" << "\",style=\"filled";
+
+		if ( n.second->IsCandidate() )
+			out << "\",shape=\"rectangle" ;
 		
 		out << "\"]" << endl;
 	}
@@ -718,4 +721,14 @@ bool CInterferenceGraph::OnStack(const Temp::CTemp* t)
 		onStack.insert ( make_pair(t, false ) );
 
 	return onStack[t];
+}
+
+std::map<const Temp::CTemp*, int> CInterferenceGraph::GetColorMap ()
+{
+	std::map<const Temp::CTemp*, int> result;
+	for ( auto n : nodeMap )
+	{
+		result.insert ( make_pair ( n.second->GetTemp(), n.second->GetColor() ) );
+	}
+	return result;
 }
