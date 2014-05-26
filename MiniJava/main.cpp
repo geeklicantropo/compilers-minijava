@@ -81,7 +81,7 @@ int main()
 			step++;
 			instrList = inteferenceGraph->UpdateInstructionList( instrList, 4, cf->GetFrame(), afg );
 			onStack = inteferenceGraph->GetOnStack();
-
+			/*
 			CodeGeneration::IInstructionList* tmp = instrList;
 			while( tmp != NULL ) {
 				assemout << tmp->GetInstr()->Format();
@@ -89,22 +89,37 @@ int main()
 			}
 
 			assemout << "----" << endl;
-
+			*/
 			afg = AssemFlowGraph( instrList );
 			inteferenceGraph = new CInterferenceGraph( afg.GetNodes(), &afg, cf->GetFrame(), onStack );
 			inteferenceGraph->SetColors(colorNum);
 			inteferenceGraph->WriteGraph("interferenceColored" + to_string( i ) + "step" + to_string( step ) + ".txt", true, colorNum);
 		}
 	
-		inteferenceGraph->WriteGraph("interferenceColored" + to_string( i )  + ".txt", true, colorNum);
-/*
+		//inteferenceGraph->WriteGraph("interferenceColored" + to_string( i )  + ".txt", true, colorNum);
+
+		CodeGeneration::IInstructionList* instListhead = instrList;
+		CodeGeneration::IInstructionList* prev = instrList;
+		
+		// убрали MOVE a <- a
+		for( CodeGeneration::IInstructionList* curr = instListhead; curr != 0; curr = curr->GetNext() ) {
+			const CodeGeneration::CMove* instr = dynamic_cast<const CodeGeneration::CMove*>( curr->GetInstr() );
+			if( ( instr != 0 && inteferenceGraph->GetColorMap()[instr->GetDst()] == inteferenceGraph->GetColorMap()[instr->GetSrc()] ) ) {
+				prev->SetNext( curr->GetNext() );
+			} else {
+				prev = curr;
+			}
+		}
+
+
+		
+		instrList = instListhead;
 		while( instrList != NULL ) {
-			assemout << instrList->GetInstr()->Format();
+			assemout << instrList->GetInstr()->Format( inteferenceGraph->GetColorMap() );
 			instrList  = instrList -> GetNext();
 		}
-		
 		assemout << endl;
-*/		
+
 		//tmpStm->Accept( new IRTreeGraphVizPrinter( out, labels ) );
 		out << "digraph trace {" << endl;
 		ts.stms->Accept( new IRTreeGraphVizPrinter( out, labels ) );
