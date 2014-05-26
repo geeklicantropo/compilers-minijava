@@ -25,7 +25,7 @@ string IInstruction::GetAssemblerCode() const
 	return asmCode;
 }
 
-string IInstruction::Format() const
+string IInstruction::Format( std::map<const Temp::CTemp*, int> colors ) const
 {
 	const Temp::CTempList* dst = DefinedVars();
 	const Temp::CTempList* src = UsedVars();
@@ -39,11 +39,11 @@ string IInstruction::Format() const
 			switch( asmCode[++i] ) {
 			case 's': 
 				n = atoi( (char*)(&asmCode[++i]) );
-				result.append( getAt( src, n )->Name() );
+				result.append( "R" + to_string( colors[getAt( src, n )] + 1) );
 				break;
 			case 'd':
 				n = atoi( (char*)(&asmCode[++i]) );
-				result.append( getAt( dst, n )->Name() );
+				result.append( "R" + to_string( colors[getAt( dst, n )] + 1) );
 				break;
 			case 'j': 
 				n = atoi( (char*)(&asmCode[++i]) );
@@ -238,7 +238,7 @@ void CCodeGenerator::munchStm( const IRTree::CMove* stm )
 		//emit( new CMove( s, temp->GetTemp(), t ) );
 	} else if( temp != 0 ) {
 		//MOVE(TEMP,e)
-		string s = "ADD 'd0 <- 's0 + r0\n";
+		string s = "MOVE 'd0 <- 's0\n";
 		//emit( new COper( s, new Temp::CTempList( temp->GetTemp(), 0 ), new Temp::CTempList( munchExp( stm->GetSrc() ), 0 ) ) );
 		emit( new CMove( s, temp->GetTemp(), munchExp( stm->GetSrc() ) ) );
 	} else {

@@ -23,7 +23,7 @@ namespace CodeGeneration {
 		virtual const Temp::CTempList* UsedVars() const = 0;
 		virtual const Temp::CTempList* DefinedVars() const = 0;
 		virtual const CTargets* JumpTargets() const = 0;
-		string Format() const;
+		string Format( std::map<const Temp::CTemp*, int> colors ) const;
 		string GetAssemblerCode() const;
 	protected:
 		const Temp::CTemp* getAt(const Temp::CTempList* list, int i) const ;
